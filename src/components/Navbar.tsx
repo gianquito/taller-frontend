@@ -3,7 +3,7 @@ import SearchBar from './SearchBar'
 
 export default function Navbar() {
     return (
-        <div className="mt-2 flex flex-shrink-0 flex-col items-center justify-evenly px-20 text-center tracking-tight md:flex-row md:gap-4 lg:px-40 lg:text-lg">
+        <div className="mt-2 flex flex-shrink-0 flex-col items-center justify-evenly px-12 text-center tracking-tight md:flex-row md:gap-4 lg:px-40 lg:text-lg">
             <Link href="/" className="text-xl font-bold">
                 LibrosCdelU
             </Link>
