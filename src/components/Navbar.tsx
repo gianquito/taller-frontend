@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import SearchBar from './SearchBar'
+import UserNavbar from './UserNavbar'
 
 export default function Navbar() {
     return (
@@ -7,9 +8,7 @@ export default function Navbar() {
             <Link href="/" className="text-xl font-bold">
                 LibrosCdelU
             </Link>
-            <Link href="#" className="hidden md:block">
-                Preguntas frecuentes
-            </Link>
+            <UserNavbar />
             <div className="order-1 ml-4 flex items-center justify-around gap-8">
                 <Link href="#">Lista de deseos</Link>
                 <Link href="#">Favoritos</Link>
