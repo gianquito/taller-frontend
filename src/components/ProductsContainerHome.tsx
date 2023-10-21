@@ -26,78 +26,91 @@ export default function ProductsHome() {
                     author="J. K. Rowling"
                     price={99}
                     image="https://images.bajalibros.com/MBod5kOZT6hAhICPJ13UP40PLug=/fit-in/140x216/filters:fill(f8f8f8):quality(90):format(webp)/d2d6tho5fth6q4.cloudfront.net/extast2145006_67697bbc4ce6c1a5bdd9b32492a918f4c76a6668.jpg"
+                    id={1}
                 />
                 <ProductCardHome
                     title="Harry Potter y la piedra filosofal"
                     author="J. K. Rowling"
                     price={99}
                     image="https://images.bajalibros.com/MBod5kOZT6hAhICPJ13UP40PLug=/fit-in/140x216/filters:fill(f8f8f8):quality(90):format(webp)/d2d6tho5fth6q4.cloudfront.net/extast2145006_67697bbc4ce6c1a5bdd9b32492a918f4c76a6668.jpg"
+                    id={1}
                 />
                 <ProductCardHome
                     title="Harry Potter y la piedra filosofal"
                     author="J. K. Rowling"
                     price={99}
                     image="https://images.bajalibros.com/MBod5kOZT6hAhICPJ13UP40PLug=/fit-in/140x216/filters:fill(f8f8f8):quality(90):format(webp)/d2d6tho5fth6q4.cloudfront.net/extast2145006_67697bbc4ce6c1a5bdd9b32492a918f4c76a6668.jpg"
+                    id={1}
                 />
                 <ProductCardHome
                     title="Harry Potter y la piedra filosofal"
                     author="J. K. Rowling"
                     price={99}
                     image="https://images.bajalibros.com/MBod5kOZT6hAhICPJ13UP40PLug=/fit-in/140x216/filters:fill(f8f8f8):quality(90):format(webp)/d2d6tho5fth6q4.cloudfront.net/extast2145006_67697bbc4ce6c1a5bdd9b32492a918f4c76a6668.jpg"
+                    id={1}
                 />
                 <ProductCardHome
                     title="Harry Potter y la piedra filosofal"
                     author="J. K. Rowling"
                     price={99}
                     image="https://images.bajalibros.com/MBod5kOZT6hAhICPJ13UP40PLug=/fit-in/140x216/filters:fill(f8f8f8):quality(90):format(webp)/d2d6tho5fth6q4.cloudfront.net/extast2145006_67697bbc4ce6c1a5bdd9b32492a918f4c76a6668.jpg"
+                    id={1}
                 />
                 <ProductCardHome
                     title="Harry Potter y la piedra filosofal"
                     author="J. K. Rowling"
                     price={99}
                     image="https://images.bajalibros.com/MBod5kOZT6hAhICPJ13UP40PLug=/fit-in/140x216/filters:fill(f8f8f8):quality(90):format(webp)/d2d6tho5fth6q4.cloudfront.net/extast2145006_67697bbc4ce6c1a5bdd9b32492a918f4c76a6668.jpg"
+                    id={1}
                 />
                 <ProductCardHome
                     title="Harry Potter y la piedra filosofal"
                     author="J. K. Rowling"
                     price={99}
                     image="https://images.bajalibros.com/MBod5kOZT6hAhICPJ13UP40PLug=/fit-in/140x216/filters:fill(f8f8f8):quality(90):format(webp)/d2d6tho5fth6q4.cloudfront.net/extast2145006_67697bbc4ce6c1a5bdd9b32492a918f4c76a6668.jpg"
+                    id={1}
                 />
                 <ProductCardHome
                     title="Harry Potter y la piedra filosofal"
                     author="J. K. Rowling"
                     price={99}
                     image="https://images.bajalibros.com/MBod5kOZT6hAhICPJ13UP40PLug=/fit-in/140x216/filters:fill(f8f8f8):quality(90):format(webp)/d2d6tho5fth6q4.cloudfront.net/extast2145006_67697bbc4ce6c1a5bdd9b32492a918f4c76a6668.jpg"
+                    id={1}
                 />
                 <ProductCardHome
                     title="Harry Potter y la piedra filosofal"
                     author="J. K. Rowling"
                     price={99}
                     image="https://images.bajalibros.com/MBod5kOZT6hAhICPJ13UP40PLug=/fit-in/140x216/filters:fill(f8f8f8):quality(90):format(webp)/d2d6tho5fth6q4.cloudfront.net/extast2145006_67697bbc4ce6c1a5bdd9b32492a918f4c76a6668.jpg"
+                    id={1}
                 />
                 <ProductCardHome
                     title="Harry Potter y la piedra filosofal"
                     author="J. K. Rowling"
                     price={99}
                     image="https://images.bajalibros.com/MBod5kOZT6hAhICPJ13UP40PLug=/fit-in/140x216/filters:fill(f8f8f8):quality(90):format(webp)/d2d6tho5fth6q4.cloudfront.net/extast2145006_67697bbc4ce6c1a5bdd9b32492a918f4c76a6668.jpg"
+                    id={1}
                 />
                 <ProductCardHome
                     title="Harry Potter y la piedra filosofal"
                     author="J. K. Rowling"
                     price={99}
                     image="https://images.bajalibros.com/MBod5kOZT6hAhICPJ13UP40PLug=/fit-in/140x216/filters:fill(f8f8f8):quality(90):format(webp)/d2d6tho5fth6q4.cloudfront.net/extast2145006_67697bbc4ce6c1a5bdd9b32492a918f4c76a6668.jpg"
+                    id={1}
                 />
                 <ProductCardHome
                     title="Harry Potter y la piedra filosofal"
                     author="J. K. Rowling"
                     price={99}
                     image="https://images.bajalibros.com/MBod5kOZT6hAhICPJ13UP40PLug=/fit-in/140x216/filters:fill(f8f8f8):quality(90):format(webp)/d2d6tho5fth6q4.cloudfront.net/extast2145006_67697bbc4ce6c1a5bdd9b32492a918f4c76a6668.jpg"
+                    id={1}
                 />
                 <ProductCardHome
                     title="Harry Potter y la piedra filosofal"
                     author="J. K. Rowling"
                     price={99}
                     image="https://images.bajalibros.com/MBod5kOZT6hAhICPJ13UP40PLug=/fit-in/140x216/filters:fill(f8f8f8):quality(90):format(webp)/d2d6tho5fth6q4.cloudfront.net/extast2145006_67697bbc4ce6c1a5bdd9b32492a918f4c76a6668.jpg"
+                    id={1}
                 />
             </div>
         </div>
