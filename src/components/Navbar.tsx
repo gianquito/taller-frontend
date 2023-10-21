@@ -12,7 +12,7 @@ export default function Navbar() {
             <div className="order-1 ml-4 flex items-center justify-around gap-8">
                 <Link href="#">Lista de deseos</Link>
                 <Link href="#">Favoritos</Link>
-                <img alt="cart" src="CartIcon.svg" />
+                <img alt="cart" src="/CartIcon.svg" />
             </div>
             <SearchBar />
         </div>
