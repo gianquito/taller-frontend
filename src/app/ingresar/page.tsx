@@ -49,7 +49,7 @@ export default function Ingresar() {
 
     return (
         <div className="flex h-screen items-center justify-center">
-            <div className="flex h-[305px] w-[460px] flex-col justify-center gap-4 rounded-lg border bg-[url('../../public/LoginBg.png')] bg-cover bg-center bg-no-repeat px-12">
+            <div className="flex h-[260px] w-[360px] flex-col justify-center gap-4 rounded-lg border bg-[url('../../public/LoginBg.png')] bg-cover bg-center bg-no-repeat px-6 md:h-[305px] md:w-[460px] md:px-12">
                 <p className="text-center text-2xl font-semibold text-white">Ingresar</p>
                 <div className="flex cursor-pointer justify-center gap-2 rounded-md bg-white py-3">
                     <img src="Facebook.svg" />

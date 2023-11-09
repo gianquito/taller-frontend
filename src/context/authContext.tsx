@@ -58,12 +58,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const logout = () => {
-        dispatch({ type: 'LOGOUT' })
-
         fetch('http://localhost:5000/logout', {
             method: 'POST',
             body: getCookie('sesionId'),
         })
+        dispatch({ type: 'LOGOUT' })
         router.push('/')
     }
 
