@@ -3,10 +3,10 @@ import BlackButton from '@/components/BlackButton'
 
 export default function Libro({ params }: { params: { id: number } }) {
     return (
-        <div className="mt-6 flex flex-1 flex-col items-center justify-around lg:mt-20 lg:flex-row">
+        <div className="mb-32 mt-6 flex flex-1 flex-col items-center justify-evenly px-12 lg:mt-20 lg:flex-row">
             <div>
                 <img
-                    className="w-[240px] lg:w-96"
+                    className="w-[240px] lg:w-[350px]"
                     src="https://images.bajalibros.com/etIywzV904aWEB6I5u6w8xZgQXs=/fit-in/292x446/filters:fill(f8f8f8):quality(90):format(webp)/d2d6tho5fth6q4.cloudfront.net/extast2138527_a43e5f7300a463171d4b54946a622b26d3b49359.jpg"
                 />
                 <div className="mt-0.5 flex items-center gap-2">

@@ -4,14 +4,14 @@ export default function ProductsHome() {
     return (
         <div className="flex max-w-[1500px] flex-col gap-4">
             <div className="flex w-max gap-4 self-end">
-                <div className="flex border border-black px-3 py-2">
+                <div className="flex items-center border border-black px-3 py-2">
                     <p className="text-sm text-gray-600">Genero</p>
                     <select className="outline-none">
                         <option>Todos</option>
                         <option>Ficcion</option>
                     </select>
                 </div>
-                <div className="mr-12 flex border border-black px-3 py-2 xl:mr-40">
+                <div className="mr-12 flex items-center border border-black px-3 py-2 xl:mr-40">
                     <p className="text-sm text-gray-600">Ordenar</p>
                     <select className="outline-none">
                         <option>Popular</option>
