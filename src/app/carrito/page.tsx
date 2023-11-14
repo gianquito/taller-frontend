@@ -26,7 +26,7 @@ export default function Carrito() {
                 </div>
                 <div className="my-12 ml-4 flex w-max flex-col justify-center gap-12 lg:my-0">
                     <p className="text-2xl font-semibold">Resumen</p>
-                    <div className="flex w-96 flex-col gap-2">
+                    <div className="flex w-80 flex-col gap-2 sm:w-96">
                         <div className="flex justify-between">
                             <p>Subtotal</p>
                             <p>$198</p>
