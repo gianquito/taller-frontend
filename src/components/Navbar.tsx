@@ -18,13 +18,17 @@ export default function Navbar() {
                     <>
                         <Link href="#">Lista de deseos</Link>
                         <Link href="#">Favoritos</Link>
-                        <img alt="cart" src="/CartIcon.svg" />
+                        <Link href="/carrito">
+                            <img alt="cart" src="/CartIcon.svg" />
+                        </Link>
                     </>
                 ) : (
                     <>
                         <Link href="/ingresar">Registrate</Link>
                         <Link href="/ingresar">Ingresa</Link>
-                        <img alt="cart" src="/CartIcon.svg" />
+                        <Link href="/carrito">
+                            <img alt="cart" src="/CartIcon.svg" />
+                        </Link>
                     </>
                 )}
             </div>

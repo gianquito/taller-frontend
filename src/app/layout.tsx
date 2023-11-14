@@ -2,7 +2,6 @@
 
 import Navbar from '@/components/Navbar'
 import './globals.css'
-import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Footer from '@/components/Footer'
 import { AuthProvider } from '@/context/authContext'
@@ -17,7 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <title>LibrosCdelU</title>
                 <meta name="description" content="E-Commerce LibrosCdelU" />
             </head>
-            <body className={inter.className + 'bg-red flex h-screen flex-col justify-between'}>
+            <body className={inter.className + ' bg-red flex h-screen flex-col justify-between'}>
                 <GoogleOAuthProvider clientId="922082614639-te6q4juqlgmiqomf96n0jq2p2go4bnqa.apps.googleusercontent.com">
                     <AuthProvider>
                         <Navbar />
