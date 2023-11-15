@@ -4,12 +4,17 @@ import BlackButton from '@/components/BlackButton'
 import ProductCart from '@/components/ProductCart'
 import { useAuth } from '@/context/authContext'
 import { getProductsInCart } from '@/services/graphql'
+import { formatPrice } from '@/utils'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 export default function Carrito() {
     const { user, isAuthenticated } = useAuth()
     const [products, setProducts] = useState<any[]>([])
+    const [amounts, setAmounts] = useState<any>({})
+    const [subtotal, setSubtotal] = useState(0)
+
     const router = useRouter()
 
     function fetchProducts() {
@@ -17,6 +22,13 @@ export default function Carrito() {
             .then(p => setProducts(p))
             .catch(() => router.push('/ingresar'))
     }
+
+    useEffect(() => {
+        console.log('asdasd')
+        let acc = 0
+        Object.keys(amounts).forEach(id => (acc += amounts[id].amount * amounts[id].price))
+        setSubtotal(acc)
+    }, [products, amounts])
 
     useEffect(() => {
         if (!products.length && !user) return
@@ -41,6 +53,7 @@ export default function Carrito() {
                                 cart_id={user.idCarrito}
                                 stock={product.libro.stock}
                                 fetch_products={fetchProducts}
+                                setAmounts={setAmounts}
                             />
                         ))
                     ) : (
@@ -52,15 +65,17 @@ export default function Carrito() {
                     <div className="flex w-80 flex-col gap-2 sm:w-96">
                         <div className="flex justify-between">
                             <p>Subtotal</p>
-                            <p>$198</p>
+                            <p>{formatPrice(subtotal)}</p>
                         </div>
                         <div className="h-0.5 bg-black"></div>
                         <div className="flex  justify-between">
                             <p>Total</p>
-                            <p>$198</p>
+                            <p>{formatPrice(subtotal)}</p>
                         </div>
                     </div>
-                    <BlackButton text="Continuar" />
+                    <Link href="/checkout">
+                        <BlackButton text="Continuar" />
+                    </Link>
                 </div>
             </div>
         </div>

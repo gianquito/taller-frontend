@@ -3,7 +3,7 @@
 import { addProductToCart, deleteProductFromCart } from '@/services/graphql'
 import { formatPrice } from '@/utils'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
 interface ProductCartProps {
@@ -16,6 +16,7 @@ interface ProductCartProps {
     cart_id: number
     stock: number
     fetch_products: () => void
+    setAmounts: React.Dispatch<any>
 }
 
 export default function ProductCart({
@@ -28,18 +29,24 @@ export default function ProductCart({
     cart_id,
     stock,
     fetch_products,
+    setAmounts,
 }: ProductCartProps) {
     const [amountInput, setAmountInput] = useState(amount)
 
     function updateAmount(newAmount: number, exact: boolean) {
+        if (!Number.isInteger(newAmount)) return
         if (newAmount < 0 && amountInput <= 1) return
         if (newAmount < 1 && exact) return
         if (newAmount > 0 && amountInput >= stock) return
         if (newAmount > stock && exact) return
 
-        addProductToCart(id, cart_id, newAmount, exact)
         setAmountInput(prev => (exact ? newAmount : (prev += newAmount)))
+        addProductToCart(id, cart_id, newAmount, exact)
     }
+
+    useEffect(() => {
+        setAmounts(prev => ({ ...prev, [id]: { amount: amountInput, price } }))
+    }, [amountInput])
 
     return (
         <div className="flex flex-shrink-0 translate-x-8 gap-6">
@@ -49,7 +56,7 @@ export default function ProductCart({
                 <p className="text-sm text-gray-600">por: {author}</p>
                 <div className="flex items-center gap-2">
                     <p className="text-sm">Cantidad: </p>
-                    <button className="text-lg" onClick={() => updateAmount(-1, false)}>
+                    <button className="select-none text-lg" onClick={() => updateAmount(-1, false)}>
                         -
                     </button>
                     <input
@@ -60,11 +67,13 @@ export default function ProductCart({
                         value={amountInput}
                         onChange={e => updateAmount(Number(e.target.value), true)}
                     />
-                    <button onClick={() => updateAmount(1, false)}>+</button>
+                    <button className="select-none text-lg" onClick={() => updateAmount(1, false)}>
+                        +
+                    </button>
                 </div>
                 <p className="text-sm">Stock: {stock}</p>
                 <div className="flex flex-col justify-between sm:flex-row">
-                    <p className="text-xl font-black">{formatPrice(price)}</p>
+                    <p className="text-xl font-black">{formatPrice(price * amountInput)}</p>
                     <p
                         className="cursor-pointer text-sm underline"
                         onClick={() =>
