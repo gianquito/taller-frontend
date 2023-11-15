@@ -6,6 +6,7 @@ import { Inter } from 'next/font/google'
 import Footer from '@/components/Footer'
 import { AuthProvider } from '@/context/authContext'
 import { GoogleOAuthProvider } from '@react-oauth/google'
+import { Toaster } from 'react-hot-toast'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <GoogleOAuthProvider clientId="922082614639-te6q4juqlgmiqomf96n0jq2p2go4bnqa.apps.googleusercontent.com">
                     <AuthProvider>
                         <Navbar />
+                        <Toaster position="top-center" reverseOrder={false} />
                         <main className="mb-auto">{children}</main>
                         <Footer />
                     </AuthProvider>

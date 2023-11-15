@@ -28,7 +28,7 @@ export default function Ingresar() {
                 .then(async data => {
                     const d = new Date()
                     d.setTime(d.getTime() + 30 * 24 * 60 * 60 * 1000)
-                    document.cookie = `sesionId=${data}; expires=${d.toUTCString()}; path=/`
+                    document.cookie = `sesionId=${data}; expires=${d.toUTCString()}; path=/; SameSite=None; Secure`
 
                     const user = await getUser(data)
                     if (!user) return
