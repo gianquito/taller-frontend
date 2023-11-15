@@ -5,5 +5,5 @@ export type userType = {
     imagen: string
     rol: number
     email: string
-    idCarrito: string
+    idCarrito: number
 }

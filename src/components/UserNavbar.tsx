@@ -18,7 +18,7 @@ export default function UserNavbar() {
                 <img className={`w-4 transition-all ${toggledMenu && 'rotate-180'}`} src="/ArrowDown.svg" />
             </div>
             {toggledMenu && (
-                <div className="absolute border border-black bg-white px-6 py-3">
+                <div className="absolute z-10 border border-black bg-white px-6 py-3">
                     <div className="flex items-center gap-4">
                         <img className="w-10 rounded-full border" src={user.imagen} />
                         <p>{user.nombre + ' ' + user.apellido}</p>
