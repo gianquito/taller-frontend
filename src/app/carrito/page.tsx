@@ -24,7 +24,6 @@ export default function Carrito() {
     }
 
     useEffect(() => {
-        console.log('asdasd')
         let acc = 0
         Object.keys(amounts).forEach(id => (acc += amounts[id].amount * amounts[id].price))
         setSubtotal(acc)
@@ -73,7 +72,7 @@ export default function Carrito() {
                             <p>{formatPrice(subtotal)}</p>
                         </div>
                     </div>
-                    <Link href="/checkout">
+                    <Link href={`${products.length ? '/checkout' : '#'}`}>
                         <BlackButton text="Continuar" />
                     </Link>
                 </div>

@@ -1,33 +1,65 @@
 'use client'
 
 import BlackButton from '@/components/BlackButton'
-import CheckoutAdress from '@/components/CheckoutAdress'
+import CheckoutAddress from '@/components/CheckoutAddress'
 import ProductCheckout from '@/components/ProductCheckout'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
+import { getDirecciones, getProductsInCart } from '@/services/graphql'
+import { useAuth } from '@/context/authContext'
+import { formatPrice } from '@/utils'
 
 export default function Checkout() {
-    const [selectedAdress, setSelectedAdress] = useState<number | null>(null)
+    const [selectedAddress, setSelectedAddress] = useState<number | null>(null)
+    const [cartProducts, setCartProducts] = useState([])
     const router = useRouter()
+    const { user } = useAuth()
+    const [subtotal, setSubtotal] = useState(0)
+    const [addresses, setAddresses] = useState([])
+    const [costoEnvios, setCostoEnvios] = useState<any>({})
 
     function handlePayment() {
+        if (!user) {
+            router.push('/ingresar')
+            return
+        }
+        if (selectedAddress === null) {
+            toast.error('Debe seleccionar una direccíon para el envío')
+            return
+        }
+        console.log(costoEnvios)
+        if (!costoEnvios.hasOwnProperty(selectedAddress)) return
+
         fetch('http://localhost:3000/pago', {
             method: 'POST',
             body: JSON.stringify({
-                products: [
-                    {
-                        quantity: 1,
-                        unit_price: 60,
-                    },
-                ],
+                products: cartProducts.map((product: any) => ({
+                    quantity: product.cantidad,
+                    unit_price: product.libro.precio,
+                })),
+                envio: costoEnvios[selectedAddress],
             }),
         })
             .then(res => res.text())
             .then(payment_url => router.push(payment_url))
             .catch(() => toast.error('Error al crear pago'))
     }
+
+    useEffect(() => {
+        if (!user) return
+        getProductsInCart(user.idCarrito).then(p => (p.length ? setCartProducts(p) : router.push('/')))
+        getDirecciones(user.idUsuario)
+            .then(add => setAddresses(add))
+            .catch(() => router.push('/ingresar'))
+    }, [user])
+
+    useEffect(() => {
+        let acc = 0
+        cartProducts.forEach((p: any) => (acc += p.cantidad * p.libro.precio))
+        setSubtotal(acc)
+    }, [cartProducts])
 
     return (
         <div className="flex w-screen justify-center lg:block">
@@ -40,22 +72,35 @@ export default function Checkout() {
                         <p>Pago</p>
                     </div>
                     <div className="mt-6 flex flex-col gap-4">
-                        <CheckoutAdress
+                        <CheckoutAddress
+                            local
                             calle="9 de Julio"
                             numero={389}
-                            cp={3260}
                             ciudad="Concepcion del Uruguay"
-                            isSelected={selectedAdress === 123}
-                            toggle={() => (selectedAdress === 123 ? setSelectedAdress(null) : setSelectedAdress(123))}
-                        />
-                        <CheckoutAdress
-                            calle="9 de Julio"
-                            numero={389}
                             cp={3260}
-                            ciudad="Concepcion del Uruguay"
-                            isSelected={selectedAdress === 456}
-                            toggle={() => (selectedAdress === 456 ? setSelectedAdress(null) : setSelectedAdress(456))}
+                            id={-1}
+                            isSelected={selectedAddress === -1}
+                            setCostoEnvios={setCostoEnvios}
+                            key={-1}
+                            toggle={() => (selectedAddress === -1 ? setSelectedAddress(null) : setSelectedAddress(-1))}
                         />
+                        {addresses.map((dir: any) => (
+                            <CheckoutAddress
+                                calle={dir.calle}
+                                numero={dir.numero}
+                                cp={dir.cpCiudad}
+                                ciudad={dir.ciudad.nombreCiudad}
+                                isSelected={selectedAddress === dir.idDireccion}
+                                toggle={() =>
+                                    selectedAddress === dir.idDireccion
+                                        ? setSelectedAddress(null)
+                                        : setSelectedAddress(dir.idDireccion)
+                                }
+                                key={dir.idDireccion}
+                                setCostoEnvios={setCostoEnvios}
+                                id={dir.idDireccion}
+                            />
+                        ))}
                         <Link href="/mi-cuenta" className="text-sm underline">
                             Editar direcciones
                         </Link>
@@ -64,33 +109,37 @@ export default function Checkout() {
                 </div>
                 <div className="mt-10 flex flex-col items-center gap-4">
                     <p className="mb-2 self-start text-xl">Tu carrito</p>
-                    <ProductCheckout
-                        title="Harry Potter y la piedra filosofal"
-                        author="J. K. Rowling"
-                        price={99}
-                        image="https://images.bajalibros.com/MBod5kOZT6hAhICPJ13UP40PLug=/fit-in/140x216/filters:fill(f8f8f8):quality(90):format(webp)/d2d6tho5fth6q4.cloudfront.net/extast2145006_67697bbc4ce6c1a5bdd9b32492a918f4c76a6668.jpg"
-                        amount={1}
-                    />
-                    <ProductCheckout
-                        title="Harry Potter y la piedra filosofal"
-                        author="J. K. Rowling"
-                        price={99}
-                        image="https://images.bajalibros.com/MBod5kOZT6hAhICPJ13UP40PLug=/fit-in/140x216/filters:fill(f8f8f8):quality(90):format(webp)/d2d6tho5fth6q4.cloudfront.net/extast2145006_67697bbc4ce6c1a5bdd9b32492a918f4c76a6668.jpg"
-                        amount={1}
-                    />
+                    {cartProducts.map((product: any) => (
+                        <ProductCheckout
+                            title={product.libro.titulo}
+                            author={product.libro.autores[0].autor.nombreAutor}
+                            price={product.libro.precio}
+                            image={atob(product.libro.imagen)}
+                            amount={product.cantidad}
+                            key={product.libro.isbn}
+                        />
+                    ))}
                     <div className="my-12 flex w-80 flex-col gap-2 sm:w-96">
                         <div className="flex justify-between">
                             <p>Subtotal</p>
-                            <p>$198</p>
+                            <p>{formatPrice(subtotal)}</p>
                         </div>
                         <div className="flex justify-between">
                             <p>Envío</p>
-                            <p>$1200</p>
+                            <p>
+                                {selectedAddress && costoEnvios.hasOwnProperty(selectedAddress)
+                                    ? formatPrice(costoEnvios[selectedAddress])
+                                    : '$0'}
+                            </p>
                         </div>
                         <div className="h-0.5 bg-black"></div>
                         <div className="flex  justify-between">
                             <p>Total</p>
-                            <p>$198</p>
+                            <p>
+                                {selectedAddress && costoEnvios.hasOwnProperty(selectedAddress)
+                                    ? formatPrice(subtotal + costoEnvios[selectedAddress])
+                                    : formatPrice(subtotal)}
+                            </p>
                         </div>
                     </div>
                 </div>
