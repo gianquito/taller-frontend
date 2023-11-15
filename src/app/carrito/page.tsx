@@ -30,9 +30,14 @@ export default function Carrito() {
     }, [products, amounts])
 
     useEffect(() => {
-        if (!products.length && !user) return
+        if (isAuthenticated === false) {
+            router.push('/ingresar')
+            return
+        }
         fetchProducts()
     }, [user])
+
+    if (!isAuthenticated) return null
 
     return (
         <div>

@@ -15,7 +15,7 @@ export default function Checkout() {
     const [selectedAddress, setSelectedAddress] = useState<number | null>(null)
     const [cartProducts, setCartProducts] = useState([])
     const router = useRouter()
-    const { user } = useAuth()
+    const { user, isAuthenticated } = useAuth()
     const [subtotal, setSubtotal] = useState(0)
     const [addresses, setAddresses] = useState([])
     const [costoEnvios, setCostoEnvios] = useState<any>({})
@@ -48,18 +48,24 @@ export default function Checkout() {
     }
 
     useEffect(() => {
-        if (!user) return
+        if (isAuthenticated === null) return
+        if (isAuthenticated === false) {
+            router.push('/ingresar')
+            return
+        }
         getProductsInCart(user.idCarrito).then(p => (p.length ? setCartProducts(p) : router.push('/')))
         getDirecciones(user.idUsuario)
             .then(add => setAddresses(add))
             .catch(() => router.push('/ingresar'))
-    }, [user])
+    }, [user, isAuthenticated])
 
     useEffect(() => {
         let acc = 0
         cartProducts.forEach((p: any) => (acc += p.cantidad * p.libro.precio))
         setSubtotal(acc)
     }, [cartProducts])
+
+    if (!isAuthenticated) return null
 
     return (
         <div className="flex w-screen justify-center lg:block">
