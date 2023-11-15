@@ -16,6 +16,25 @@ export const getUser = async (id_session: string): Promise<userType | undefined>
     return data.data.sesiones[0].usuario
 }
 
+export const getUsers = async () => {
+    const request = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `{
+            usuarios{
+              idUsuario
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    const data = await request.json()
+    if (data.errors) throw 'Error in request'
+    return data.data.usuarios
+}
+
 export const updateUser = async (
     id_usuario: string,
     nombre: string,
@@ -430,4 +449,24 @@ export const deleteDireccion = async (id_direccion: number) => {
     const direccion = await response.json()
     if (direccion.errors) throw 'Error in request'
     return direccion.data
+}
+
+export const getPedidos = async () => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `{
+            pedidos{
+              total
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const pedidos = await response.json()
+    if (pedidos.errors) throw 'Error in request'
+    return pedidos.data.pedidos
 }

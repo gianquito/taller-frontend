@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { getUser } from '@/services/graphql'
 import { getCookie } from '@/utils'
 const initialState = {
-    isAuthenticated: false,
+    isAuthenticated: null,
     user: null,
 }
 
@@ -18,7 +18,7 @@ const AuthContext = createContext<{
     logout: () => void
 }>()
 
-const authReducer = (state: any, action: { type: 'LOGIN' | 'LOGOUT'; payload?: userType }) => {
+const authReducer = (state: any, action: { type: 'LOGIN' | 'LOGOUT' | 'NOT LOGGED'; payload?: userType }) => {
     switch (action.type) {
         case 'LOGIN':
             return {
@@ -44,9 +44,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         async function setUser() {
             const sesionId = getCookie('sesionId')
-            if (!sesionId) return
+            if (!sesionId) {
+                dispatch({ type: 'LOGOUT' })
+                return
+            }
             const user = await getUser(sesionId)
-            if (!user) return
+            if (!user) {
+                dispatch({ type: 'LOGOUT' })
+                return
+            }
             dispatch({ type: 'LOGIN', payload: { ...user } })
         }
         setUser()
