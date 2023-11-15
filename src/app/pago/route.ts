@@ -6,12 +6,15 @@ const client = new MercadoPagoConfig({
 })
 
 export async function POST(request: Request) {
-    const { products } = await request.json()
+    const { products, envio } = await request.json()
 
     const preference = new Preference(client)
     // add payer info with id_usuario; validate cookie?; create webhook endpoint to confirm payment
     const body = {
         items: [...products],
+        shipments: {
+            cost: envio,
+        },
     }
     try {
         const res = await preference.create({ body })

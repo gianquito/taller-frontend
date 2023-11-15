@@ -16,6 +16,32 @@ export const getUser = async (id_session: string): Promise<userType | undefined>
     return data.data.sesiones[0].usuario
 }
 
+export const updateUser = async (
+    id_usuario: string,
+    nombre: string,
+    apellido: string,
+    email: string
+): Promise<userType | undefined> => {
+    const request = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+            updateUsuario(idUsuario: "${id_usuario}",nombre:"${nombre}",apellido: "${apellido}",email:"${email}"){
+              usuario{
+                idUsuario
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    const data = await request.json()
+    if (data.errors) throw 'Error in request'
+    return data.data
+}
+
 export const getProducts = async () => {
     const request = await fetch('http://127.0.0.1:5000/graphql', {
         method: 'POST',
@@ -280,4 +306,128 @@ export const deleteProductFromCart = async (id_carrito: number, id_producto: num
     const products = await response.json()
     if (products.errors) throw 'Error in request'
     return products.data
+}
+
+export const getDirecciones = async (id_usuario: string) => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `{
+            direcciones(idUsuario:"${id_usuario}"){
+              idDireccion,
+              calle,
+              numero,
+              cpCiudad,
+              ciudad{
+                nombreCiudad
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const direcciones = await response.json()
+    if (direcciones.errors) throw 'Error in request'
+    return direcciones.data.direcciones
+}
+
+export const addDireccion = async (id_usuario: string, calle: string, numero: number, cp: number) => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+            createDireccion(calle:"${calle}", numero: ${numero}, cpCiudad: ${cp},idUsuario: "${id_usuario}"){
+              direccion{
+                idDireccion
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const direcciones = await response.json()
+    if (direcciones.errors) throw 'Error in request'
+    return direcciones.data.direcciones
+}
+
+export const getDireccion = async (id_usuario: string, id_direccion: number) => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `{
+          direcciones(idUsuario:"${id_usuario}", idDireccion: ${id_direccion}){
+            idDireccion,
+            calle,
+            numero,
+            cpCiudad,
+            ciudad{
+              nombreCiudad
+            }
+          }
+        }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const direcciones = await response.json()
+    if (direcciones.errors) throw 'Error in request'
+    return direcciones.data.direcciones[0]
+}
+
+export const updateDireccion = async (
+    id_usuario: string,
+    id_direccion: number,
+    calle: string,
+    numero: number,
+    cp: number
+) => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+            updateDireccion(idDireccion: ${id_direccion},calle: "${calle}", numero: ${numero}, cpCiudad: ${cp},idUsuario: "${id_usuario}"){
+              direccion{
+                idDireccion
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const direccion = await response.json()
+    if (direccion.errors) throw 'Error in request'
+    return direccion.data
+}
+
+export const deleteDireccion = async (id_direccion: number) => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+            deleteDireccion(idDireccion: ${id_direccion}){
+              direccion{
+                idDireccion
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const direccion = await response.json()
+    if (direccion.errors) throw 'Error in request'
+    return direccion.data
 }

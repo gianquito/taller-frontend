@@ -17,7 +17,7 @@ export default function ProductCheckout({ amount, author, image, price, title }:
                 <p className="text-xl font-semibold tracking-tighter">{title}</p>
                 <p className="text-sm text-gray-600">por: {author}</p>
                 <p className="text-sm text-gray-600">Cantidad: {amount}</p>
-                <p className="text-xl font-black">{formatPrice(price)}</p>
+                <p className="text-xl font-black">{formatPrice(price * amount)}</p>
             </div>
         </div>
     )

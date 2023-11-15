@@ -24,7 +24,7 @@ export default function UserNavbar() {
                         <p>{user.nombre + ' ' + user.apellido}</p>
                     </div>
                     <div className="mt-2 flex flex-col text-left text-sm">
-                        <Link className="mt-1 hover:underline" href="#">
+                        <Link className="mt-1 hover:underline" href="/mi-cuenta">
                             Mi cuenta
                         </Link>
                         <Link className="mt-1 hover:underline" href="#">
