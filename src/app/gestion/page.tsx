@@ -1,6 +1,8 @@
 'use client'
 
 import GestionCards from '@/components/GestionCards'
+import LibrosGestion from '@/components/LibrosGestion'
+import PromocionGestion from '@/components/PromocionGestion'
 import { useAuth } from '@/context/authContext'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
@@ -24,6 +26,8 @@ export default function Gestion() {
             <div>
                 <GestionCards />
             </div>
+            <LibrosGestion />
+            <PromocionGestion />
         </div>
     )
 }

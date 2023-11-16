@@ -13,7 +13,7 @@ export default function GestionCards() {
         getUsers().then(clientes => setClientes(clientes.length))
     }, [])
     return (
-        <div className="flex flex-wrap items-center justify-evenly gap-4 md:flex-row">
+        <div className="my-28 flex flex-wrap items-center justify-evenly gap-4 md:flex-row">
             <div className="flex w-44 flex-shrink-0 flex-col justify-between border border-black p-4 text-center text-2xl xl:w-80 xl:flex-row">
                 <p className="font-medium">Stock</p>
                 <p>{stock ?? ''}</p>

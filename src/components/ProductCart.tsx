@@ -45,7 +45,7 @@ export default function ProductCart({
     }
 
     useEffect(() => {
-        setAmounts(prev => ({ ...prev, [id]: { amount: amountInput, price } }))
+        setAmounts((prev: any) => ({ ...prev, [id]: { amount: amountInput, price } }))
     }, [amountInput])
 
     return (
@@ -80,6 +80,7 @@ export default function ProductCart({
                             deleteProductFromCart(cart_id, id)
                                 .then(() => {
                                     toast.success(`Se eliminó ${title} de tu carrito`)
+                                    setAmounts((prev: any) => ({ ...prev, [id]: { amount: 0, price: 0 } }))
                                     fetch_products()
                                 })
                                 .catch(() => toast.error(`No se pudo eliminar ${title} de tu carrito`))

@@ -24,16 +24,17 @@ export default async function Libro({ params }: { params: { id: number } }) {
                 <div className="mt-2 flex w-full items-center justify-evenly lg:mt-0 lg:flex-col lg:items-baseline">
                     <p className="mt-1 text-2xl">${libro.precio}</p>
                     <div className="mt-1 flex flex-col gap-0.5 text-sm text-neutral-500">
-                        <p>Autores: {libro.autores.map(({ autor }: any) => `${autor.nombreAutor} `)}</p>
+                        <p>Autores: {libro.autores.map(({ autor }: any) => autor.nombreAutor).join(', ')}</p>
                         <p>Dimensiones: {libro.dimensiones}</p>
                         <p>
                             Editoriales:{' '}
-                            {libro.editoriales.map(({ editorial }: any) => `${editorial.nombreEditorial} `)}
+                            {libro.editoriales.map(({ editorial }: any) => editorial.nombreEditorial).join(', ')}
                         </p>
                         <p>Páginas: {libro.paginas}</p>
-                        <p>Géneros: {libro.generos.map(({ genero }: any) => `${genero.nombreGenero} `)}</p>
+                        <p>Géneros: {libro.generos.map(({ genero }: any) => genero.nombreGenero).join(', ')}</p>
                         <p>
-                            Encuadernados: {libro.encuadernados.map(({ encuadernado }: any) => `${encuadernado.tipo} `)}
+                            Encuadernados:{' '}
+                            {libro.encuadernados.map(({ encuadernado }: any) => encuadernado.tipo).join(', ')}
                         </p>
                     </div>
                 </div>
