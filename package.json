@@ -1,35 +1,35 @@
 {
-  "name": "taller-frontend",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@react-oauth/google": "^0.11.1",
-    "ldrs": "^1.0.1",
-    "mercadopago": "^2.0.4",
-    "next": "13.5.4",
-    "react": "^18",
-    "react-detect-click-outside": "^1.1.7",
-    "react-dom": "^18",
-    "react-hot-toast": "^2.4.1",
-    "use-file-picker": "^2.1.1"
-  },
-  "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "autoprefixer": "^10",
-    "eslint": "^8",
-    "eslint-config-next": "13.5.4",
-    "postcss": "^8",
-    "prettier": "^3.0.3",
-    "prettier-plugin-tailwindcss": "^0.5.5",
-    "tailwindcss": "^3",
-    "typescript": "^5"
-  }
+    "name": "taller-frontend",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint"
+    },
+    "dependencies": {
+        "@react-oauth/google": "^0.11.1",
+        "ldrs": "^1.0.1",
+        "mercadopago": "^2.0.4",
+        "next": "13.5.4",
+        "react": "^18",
+        "react-detect-click-outside": "^1.1.7",
+        "react-dom": "^18",
+        "react-hot-toast": "^2.4.1",
+        "use-file-picker": "^2.1.1"
+    },
+    "devDependencies": {
+        "@types/node": "^20",
+        "@types/react": "^18",
+        "@types/react-dom": "^18",
+        "autoprefixer": "^10",
+        "eslint": "^8",
+        "eslint-config-next": "13.5.4",
+        "postcss": "^8",
+        "prettier": "^3.0.3",
+        "prettier-plugin-tailwindcss": "^0.5.5",
+        "tailwindcss": "^3",
+        "typescript": "^5"
+    }
 }

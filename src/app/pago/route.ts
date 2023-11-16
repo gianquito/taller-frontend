@@ -6,23 +6,40 @@ const client = new MercadoPagoConfig({
 })
 
 export async function POST(request: Request) {
-    const { products, envio } = await request.json()
-
+    const {
+        products,
+        envio,
+        id_usuario,
+    }: {
+        products: { quantity: number; unit_price: number; title: string; id: string; currency_id: string }[]
+        envio: number
+        id_usuario: string
+    } = await request.json()
+    console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+    console.log(products)
+    console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$')
     const preference = new Preference(client)
     // add payer info with id_usuario; validate cookie?; create webhook endpoint to confirm payment
-    const body = {
-        items: [...products],
-        shipments: {
-            cost: envio,
-        },
-    }
     try {
-        const res = await preference.create({ body })
+        const res = await preference.create({
+            body: {
+                items: products,
+                shipments: {
+                    cost: envio,
+                },
+                additional_info: id_usuario,
+                notification_url: 'https://c70d-200-115-25-69.ngrok-free.app/webhook',
+                auto_return: 'approved',
+                back_urls: {
+                    success: 'http://localhost:3000',
+                },
+            },
+        })
         return new Response(res.init_point, {
             status: 200,
         })
     } catch (error) {
-        return new Response('Error al crear pago', {
+        return new Response('Error al crear pago ' + JSON.stringify(error), {
             status: 400,
         })
     }
