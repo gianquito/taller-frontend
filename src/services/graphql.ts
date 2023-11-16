@@ -72,12 +72,43 @@ export const getProducts = async () => {
                   precio,
                   imagen,
                   stock,
+                  descripcion,
+                  dimensiones,
+                  paginas,
+                  usuariosFavoritos{
+                    idUsuario
+                  },
+                  editoriales{
+                    editorial{
+                      nombreEditorial
+                    }
+                  },
+                  encuadernados{
+                    encuadernado{
+                      tipo
+                    }
+                  },
+                  generos{
+                    genero{
+                      nombreGenero
+                    }
+                  },
+                  promociones{
+                    promocionDescuento{
+                      porcentaje
+                    }
+                  },
+                  usuariosDeseados{
+                    idUsuario
+                  },
                   autores{
                     autor{
                       nombreAutor
                     }
                   }
                 }
+              
+                
               }`,
         }),
         headers: {
@@ -146,6 +177,27 @@ export const getProduct = async (isbn: number) => {
     const products = await request.json()
     if (products.errors) throw 'Error in request'
     return products.data.libros[0]
+}
+
+export const getProductsByName = async (nombre: string) => {
+    const request = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `{
+              libros(titulo: "${nombre}") {
+                isbn,
+                titulo,
+              }
+            }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const products = await request.json()
+    if (products.errors) throw 'Error in request'
+    return products.data.libros
 }
 
 export const deleteFavorite = async (isbn: number, id_usuario: string) => {
@@ -469,4 +521,481 @@ export const getPedidos = async () => {
     const pedidos = await response.json()
     if (pedidos.errors) throw 'Error in request'
     return pedidos.data.pedidos
+}
+
+export const getProductsSales = async () => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `{
+            lineasPedidos{
+              idLibro
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const pedidos = await response.json()
+    if (pedidos.errors) throw 'Error in request'
+    return pedidos.data.lineasPedidos
+}
+
+export const getPromociones = async () => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `{
+            promocionesDescuento{
+              idPromocionDescuento,
+              nombrePromocion,
+              porcentaje,
+              fechaInicio,
+              fechaFin,
+              libros{
+                idLibro
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const promocion = await response.json()
+    if (promocion.errors) throw 'Error in request'
+    return promocion.data.promocionesDescuento
+}
+
+export const getEditoriales = async (nombre: string) => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `{
+            editoriales(nombreEditorial: "${nombre}"){
+              nombreEditorial,
+              idEditorial
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const editoriales = await response.json()
+    if (editoriales.errors) throw 'Error in request'
+    return editoriales.data.editoriales
+}
+
+export const getAutores = async (nombre: string) => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `{
+              autores(nombreAutor: "${nombre}"){
+                nombreAutor,
+                idAutor
+              }
+            }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const autores = await response.json()
+    if (autores.errors) throw 'Error in request'
+    return autores.data.autores
+}
+
+export const getGeneros = async (nombre: string) => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `{
+            generos(nombreGenero: "${nombre}"){
+              nombreGenero,
+              idGenero
+            }
+            }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const generos = await response.json()
+    if (generos.errors) throw 'Error in request'
+    return generos.data.generos
+}
+
+export const getEncuadernados = async (nombre: string) => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `{
+            encuadernados(tipo: "${nombre}"){
+              tipo,
+              idEncuadernado
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const encuadernados = await response.json()
+    if (encuadernados.errors) throw 'Error in request'
+    return encuadernados.data.encuadernados
+}
+
+export const addAutor = async (nombre: string) => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+            createAutor(nombreAutor: "${nombre}"){
+              autor{
+                idAutor
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const autor = await response.json()
+    if (autor.errors) throw 'Error in request'
+    return autor.data
+}
+
+export const addEditorial = async (nombre: string) => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+              createEditorial(nombreEditorial: "${nombre}"){
+                editorial{
+                  idEditorial
+                }
+              }
+            }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const editorial = await response.json()
+    if (editorial.errors) throw 'Error in request'
+    return editorial.data
+}
+
+export const addGenero = async (nombre: string) => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+            createGenero(nombreGenero:"${nombre}"){
+              genero{
+                idGenero
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const genero = await response.json()
+    if (genero.errors) throw 'Error in request'
+    return genero.data
+}
+
+export const addEncuadernado = async (nombre: string) => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+            createEncuadernado(tipo: "${nombre}"){
+              encuadernado{
+                idEncuadernado
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const encuadernado = await response.json()
+    if (encuadernado.errors) throw 'Error in request'
+    return encuadernado.data
+}
+
+export const addLibroAutor = async (id_autor: number, id_libro: number) => {
+    await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+            createLibroAutor(idAutor: ${id_autor}, idLibro: ${id_libro}){
+              libroAutor{
+                idLibro
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+}
+
+export const addLibroGenero = async (id_genero: number, id_libro: number) => {
+    await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+            createLibroGenero(idGenero: ${id_genero}, idLibro: ${id_libro}){
+              libroGenero{
+                idLibro
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+}
+
+export const addLibroEditorial = async (id_editorial: number, id_libro: number) => {
+    await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+            createLibroEditorial(idEditorial: ${id_editorial}, idLibro: ${id_libro}){
+              libroEditorial{
+                idLibro
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+}
+
+export const addLibroEncuadernado = async (id_encuadernado: number, id_libro: number) => {
+    await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+            createLibroEncuadernado(idEncuadernado: ${id_encuadernado}, idLibro: ${id_libro}){
+              libroEncuadernado{
+                idLibro
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+}
+
+export const addProduct = async (
+    autor: string,
+    editorial: string,
+    genero: string,
+    encuadernado: string,
+    descripcion: string,
+    dimensiones: string,
+    imagen: string,
+    isbn: number,
+    paginas: number,
+    precio: number,
+    stock: number,
+    titulo: string
+) => {
+    const dbAutores = await getAutores('')
+    const dbEditoriales = await getEditoriales('')
+    const dbGeneros = await getGeneros('')
+    const dbEncuadernados = await getEncuadernados('')
+
+    const newAutores = autor.split(',').filter(a => !dbAutores.find((dbA: any) => dbA.nombreAutor === a))
+    const newEditoriales = editorial
+        .split(',')
+        .filter(e => !dbEditoriales.find((dbE: any) => dbE.nombreEditorial === e))
+    const newGeneros = genero.split(',').filter(g => !dbGeneros.find((dbG: any) => dbG.nombreGenero === g))
+    const newEncuadernados = encuadernado.split(',').filter(e => !dbEncuadernados.find((dbE: any) => dbE.tipo === e))
+
+    //Crear nuevos autores, editoriales, generos, encuadernados
+    newAutores.forEach(a =>
+        addAutor(a.trim()).then(created =>
+            dbAutores.push({ nombreAutor: a.trim(), idAutor: created.createAutor.autor.idAutor })
+        )
+    )
+    newEditoriales.forEach(e =>
+        addEditorial(e.trim()).then(created =>
+            dbEditoriales.push({
+                nombreEditorial: e.trim(),
+                idEditorial: created.createEditorial.editorial.idEditorial,
+            })
+        )
+    )
+    newGeneros.forEach(g =>
+        addGenero(g.trim()).then(created =>
+            dbGeneros.push({ nombreGenero: g.trim(), idGenero: created.createGenero.genero.idGenero })
+        )
+    )
+    newEncuadernados.forEach(e =>
+        addEncuadernado(e.trim()).then(created =>
+            dbEncuadernados.push({
+                tipo: e.trim(),
+                idEncuadernado: created.createEncuadernado.encuadernado.idEncuadernado,
+            })
+        )
+    )
+
+    //Crear libro
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+              createLibro(descripcion: "${descripcion}", dimensiones: "${dimensiones}", imagen: "${imagen}", isbn: ${isbn}, paginas: ${paginas}, precio: ${precio}, stock: ${stock}, titulo: "${titulo}"){
+                libro{
+                  isbn
+                }
+              }
+            }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+
+    //Crear lineas
+    dbAutores
+        .filter((dbA: any) => autor.split(',').find(a => a.trim() === dbA.nombreAutor))
+        .forEach((autor: any) => addLibroAutor(autor.idAutor, isbn))
+    dbEditoriales
+        .filter((dbE: any) => editorial.split(',').find(e => e.trim() === dbE.nombreEditorial))
+        .forEach((editorial: any) => addLibroEditorial(editorial.idEditorial, isbn))
+    dbGeneros
+        .filter((dbG: any) => genero.split(',').find(g => g.trim() === dbG.nombreGenero))
+        .forEach((genero: any) => addLibroGenero(genero.idGenero, isbn))
+    dbEncuadernados
+        .filter((dbE: any) => encuadernado.split(',').find(e => e.trim() === dbE.tipo))
+        .forEach((encuadernado: any) => addLibroEncuadernado(encuadernado.idEncuadernado, isbn))
+
+    const libro = await response.json()
+    if (libro.errors) throw 'Error en request'
+    return libro.data
+}
+
+export const updateProduct = async (
+    autor: string,
+    editorial: string,
+    genero: string,
+    encuadernado: string,
+    descripcion: string,
+    dimensiones: string,
+    imagen: string,
+    isbn: number,
+    paginas: number,
+    precio: number,
+    stock: number,
+    titulo: string
+) => {
+    const dbAutores = await getAutores('')
+    const dbEditoriales = await getEditoriales('')
+    const dbGeneros = await getGeneros('')
+    const dbEncuadernados = await getEncuadernados('')
+
+    const newAutores = autor.split(',').filter(a => !dbAutores.find((dbA: any) => dbA.nombreAutor === a))
+    const newEditoriales = editorial
+        .split(',')
+        .filter(e => !dbEditoriales.find((dbE: any) => dbE.nombreEditorial === e))
+    const newGeneros = genero.split(',').filter(g => !dbGeneros.find((dbG: any) => dbG.nombreGenero === g))
+    const newEncuadernados = encuadernado.split(',').filter(e => !dbEncuadernados.find((dbE: any) => dbE.tipo === e))
+
+    //Crear nuevos autores, editoriales, generos, encuadernados
+    newAutores.forEach(a =>
+        addAutor(a.trim()).then(created =>
+            dbAutores.push({ nombreAutor: a.trim(), idAutor: created.createAutor.autor.idAutor })
+        )
+    )
+    newEditoriales.forEach(e =>
+        addEditorial(e.trim()).then(created =>
+            dbEditoriales.push({
+                nombreEditorial: e.trim(),
+                idEditorial: created.createEditorial.editorial.idEditorial,
+            })
+        )
+    )
+    newGeneros.forEach(g =>
+        addGenero(g.trim()).then(created =>
+            dbGeneros.push({ nombreGenero: g.trim(), idGenero: created.createGenero.genero.idGenero })
+        )
+    )
+    newEncuadernados.forEach(e =>
+        addEncuadernado(e.trim()).then(created =>
+            dbEncuadernados.push({
+                tipo: e.trim(),
+                idEncuadernado: created.createEncuadernado.encuadernado.idEncuadernado,
+            })
+        )
+    )
+
+    //Crear libro
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+            updateLibro(descripcion: "${descripcion}", dimensiones: "${dimensiones}", imagen: "${imagen}", isbn: ${isbn}, paginas: ${paginas}, precio: ${precio}, stock: ${stock}, titulo: "${titulo}"){
+              libro{
+                isbn
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+
+    //Crear lineas
+    dbAutores
+        .filter((dbA: any) => autor.split(',').find(a => a.trim() === dbA.nombreAutor))
+        .forEach((autor: any) => addLibroAutor(autor.idAutor, isbn))
+    dbEditoriales
+        .filter((dbE: any) => editorial.split(',').find(e => e.trim() === dbE.nombreEditorial))
+        .forEach((editorial: any) => addLibroEditorial(editorial.idEditorial, isbn))
+    dbGeneros
+        .filter((dbG: any) => genero.split(',').find(g => g.trim() === dbG.nombreGenero))
+        .forEach((genero: any) => addLibroGenero(genero.idGenero, isbn))
+    dbEncuadernados
+        .filter((dbE: any) => encuadernado.split(',').find(e => e.trim() === dbE.tipo))
+        .forEach((encuadernado: any) => addLibroEncuadernado(encuadernado.idEncuadernado, isbn))
+
+    const libro = await response.json()
+    if (libro.errors) throw 'Error en request'
+    return libro.data
 }

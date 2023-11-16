@@ -16,7 +16,8 @@
     "react": "^18",
     "react-detect-click-outside": "^1.1.7",
     "react-dom": "^18",
-    "react-hot-toast": "^2.4.1"
+    "react-hot-toast": "^2.4.1",
+    "use-file-picker": "^2.1.1"
   },
   "devDependencies": {
     "@types/node": "^20",
