@@ -928,12 +928,14 @@ export const updateProduct = async (
     const dbGeneros = await getGeneros('')
     const dbEncuadernados = await getEncuadernados('')
 
-    const newAutores = autor.split(',').filter(a => !dbAutores.find((dbA: any) => dbA.nombreAutor === a))
+    const newAutores = autor.split(',').filter(a => !dbAutores.find((dbA: any) => dbA.nombreAutor === a.trim()))
     const newEditoriales = editorial
         .split(',')
-        .filter(e => !dbEditoriales.find((dbE: any) => dbE.nombreEditorial === e))
-    const newGeneros = genero.split(',').filter(g => !dbGeneros.find((dbG: any) => dbG.nombreGenero === g))
-    const newEncuadernados = encuadernado.split(',').filter(e => !dbEncuadernados.find((dbE: any) => dbE.tipo === e))
+        .filter(e => !dbEditoriales.find((dbE: any) => dbE.nombreEditorial === e.trim()))
+    const newGeneros = genero.split(',').filter(g => !dbGeneros.find((dbG: any) => dbG.nombreGenero === g.trim()))
+    const newEncuadernados = encuadernado
+        .split(',')
+        .filter(e => !dbEncuadernados.find((dbE: any) => dbE.tipo === e.trim()))
 
     //Crear nuevos autores, editoriales, generos, encuadernados
     newAutores.forEach(a =>
@@ -998,4 +1000,128 @@ export const updateProduct = async (
     const libro = await response.json()
     if (libro.errors) throw 'Error en request'
     return libro.data
+}
+
+export const addLibroPromocion = async (id_libro: number, id_promocion: number) => {
+    await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+            createLibroPromocion(idLibro: ${id_libro}, idPromocionDescuento: ${id_promocion}){
+              libroPromocion{
+                idLibro
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+}
+
+export const addPromocion = async (
+    nombre: string,
+    porcentaje: number,
+    imagen: string,
+    fechaFin: string,
+    fechaInicio: string,
+    libros: string
+) => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+              createPromocionDescuento(fechaFin: "${fechaFin}", fechaInicio: "${fechaInicio}",imagen: "${imagen}", nombrePromocion: "${nombre}", porcentaje: ${porcentaje}){
+               promocionDescuento{
+                 idPromocionDescuento
+               }
+             }
+           }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const promocion = await response.json()
+    if (promocion.errors) throw 'Error in request'
+
+    const dbLibros = await getProducts()
+    const librosList = libros.split(',')
+    dbLibros
+        .filter((dbL: any) => librosList.find(l => dbL.titulo === l.trim()))
+        .forEach((dbL: any) =>
+            addLibroPromocion(dbL.isbn, promocion.data.createPromocionDescuento.promocionDescuento.idPromocionDescuento)
+        )
+
+    return promocion.data
+}
+
+export const getPromocion = async (id_promocion: number) => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `{
+            promocionesDescuento(idPromocionDescuento: ${id_promocion}){
+              idPromocionDescuento,
+              nombrePromocion,
+              porcentaje,
+              fechaFin,
+              fechaInicio,
+              imagen,
+              libros{
+                libro{
+                  titulo
+                }
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const promocion = await response.json()
+    if (promocion.errors) throw 'Error in request'
+    return promocion.data.promocionesDescuento[0]
+}
+
+export const updatePromocion = async (
+    nombre: string,
+    porcentaje: number,
+    imagen: string,
+    fechaFin: string,
+    fechaInicio: string,
+    libros: string,
+    id_promocion: number
+) => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+            updatePromocionDescuento(idPromocionDescuento: ${id_promocion},fechaFin: "${fechaFin}", fechaInicio: "${fechaInicio}",imagen: "${imagen}", nombrePromocion: "${nombre}", porcentaje: ${porcentaje}){
+             promocionDescuento{
+               idPromocionDescuento
+             }
+           }
+         }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const promocion = await response.json()
+    if (promocion.errors) throw 'Error in request'
+
+    const dbLibros = await getProducts()
+    const librosList = libros.split(',')
+    dbLibros
+        .filter((dbL: any) => librosList.find(l => dbL.titulo === l.trim()))
+        .forEach((dbL: any) => addLibroPromocion(dbL.isbn, id_promocion))
+
+    return promocion.data
 }

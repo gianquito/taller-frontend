@@ -4,17 +4,18 @@ import { useFilePicker } from 'use-file-picker'
 import { useEffect, useState, ChangeEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/authContext'
-import { addPromocion, getProducts, getProductsByName } from '@/services/graphql'
+import { getProductsByName, getPromocion, updatePromocion } from '@/services/graphql'
 import { useDetectClickOutside } from 'react-detect-click-outside'
 import BlackButton from '@/components/BlackButton'
 import toast from 'react-hot-toast'
 
-export default function NuevaPromocion() {
+export default function EditarPromocion({ params }: { params: { id: number } }) {
     const [nombre, setNombre] = useState('')
     const [fechaInicio, setFechaInicio] = useState('')
     const [fechaFin, setFechaFin] = useState('')
     const [porcentaje, setPorcentaje] = useState<number | undefined>()
     const [libros, setLibros] = useState('')
+    const [imagen, setImagen] = useState('')
 
     const [autocompletado, setAutocompletado] = useState<any[]>([])
     const [showAutocompletado, setShowAutocompletado] = useState(false)
@@ -41,7 +42,21 @@ export default function NuevaPromocion() {
             router.push('/')
             return
         }
+
+        getPromocion(params.id).then(promo => {
+            setNombre(promo.nombrePromocion)
+            setPorcentaje(promo.porcentaje)
+            setFechaInicio(promo.fechaInicio.slice(0, 10))
+            setFechaFin(promo.fechaFin.slice(0, 10))
+            setImagen(atob(promo.imagen))
+            setLibros(promo.libros.map(({ libro }: any) => libro.titulo).join(','))
+        })
     }, [user, isAuthenticated])
+
+    useEffect(() => {
+        if (!filesContent.length) return
+        setImagen(filesContent[0].content)
+    }, [filesContent])
 
     function handleLibroSearch(e: ChangeEvent) {
         const value = (e.target as HTMLInputElement).value
@@ -51,14 +66,14 @@ export default function NuevaPromocion() {
         )
     }
 
-    function addPromo() {
-        if (!nombre.trim() || !filesContent.length || !fechaInicio || !fechaFin || !porcentaje || !libros.trim()) {
+    function updatePromo() {
+        if (!nombre.trim() || !imagen || !fechaInicio || !fechaFin || !porcentaje || !libros.trim()) {
             toast.error('Los datos están incompletos')
             return
         }
-        addPromocion(nombre, porcentaje, btoa(filesContent[0].content), fechaFin, fechaInicio, libros)
-            .then(() => toast.success(`Se creó la promoción ${nombre}`))
-            .catch(() => toast.error('Error al crear promoción'))
+        updatePromocion(nombre, porcentaje, btoa(imagen), fechaFin, fechaInicio, libros, params.id)
+            .then(() => toast.success(`Se actualizó la promoción ${nombre}`))
+            .catch(() => toast.error('Error al actualizar promoción'))
     }
 
     if (!isAuthenticated || user.rol !== 1) return null
@@ -67,8 +82,8 @@ export default function NuevaPromocion() {
         <div className="my-20 flex flex-col items-center justify-evenly lg:flex-row">
             <div className="w-max">
                 <p className=" text-center text-2xl font-semibold">Imagen</p>
-                {filesContent.length ? (
-                    <img className="w-[240px] lg:w-[350px]" src={filesContent[0].content} />
+                {imagen ? (
+                    <img className="w-[240px] lg:w-[350px]" src={imagen} />
                 ) : (
                     <div className="h-[550px] w-[240px] bg-neutral-300 lg:w-[350px]"></div>
                 )}
@@ -138,7 +153,7 @@ export default function NuevaPromocion() {
                         </div>
                     )}
                 </div>
-                <BlackButton text="Confirmar" onClick={addPromo} />
+                <BlackButton text="Confirmar" onClick={updatePromo} />
             </div>
         </div>
     )

@@ -6,7 +6,7 @@ import ProductCheckout from '@/components/ProductCheckout'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import toast from 'react-hot-toast'
+import { toast } from 'react-hot-toast'
 import { getDirecciones, getProductsInCart } from '@/services/graphql'
 import { useAuth } from '@/context/authContext'
 import { formatPrice } from '@/utils'
@@ -29,7 +29,6 @@ export default function Checkout() {
             toast.error('Debe seleccionar una direccíon para el envío')
             return
         }
-        console.log(costoEnvios)
         if (!costoEnvios.hasOwnProperty(selectedAddress)) return
 
         fetch('http://localhost:3000/pago', {
@@ -38,8 +37,12 @@ export default function Checkout() {
                 products: cartProducts.map((product: any) => ({
                     quantity: product.cantidad,
                     unit_price: product.libro.precio,
+                    title: product.libro.titulo,
+                    id: product.libro.isbn,
+                    currency_id: 'ARS',
                 })),
                 envio: costoEnvios[selectedAddress],
+                id_usuario: user.idUsuario,
             }),
         })
             .then(res => res.text())

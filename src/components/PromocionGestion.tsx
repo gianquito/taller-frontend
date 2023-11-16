@@ -3,9 +3,12 @@ import ActionButton from './ActionButton'
 import Kebab from './Kebab'
 import { useState, useEffect } from 'react'
 import { getPromociones } from '@/services/graphql'
+import { useRouter } from 'next/navigation'
 
 export default function PromocionGestion() {
     const [promociones, setPromociones] = useState<any[]>([])
+    const router = useRouter()
+
     useEffect(() => {
         getPromociones().then(p => setPromociones(p))
     }, [])
@@ -37,8 +40,12 @@ export default function PromocionGestion() {
                             <div className="flex justify-center">
                                 <Kebab
                                     actionList={[
-                                        { name: 'Editar', function: () => {} },
-                                        { name: 'Eliminar', function: () => {} },
+                                        {
+                                            name: 'Editar',
+                                            function: () => {
+                                                router.push(`/nueva-promocion/${promo.idPromocionDescuento}`)
+                                            },
+                                        },
                                     ]}
                                 />
                             </div>
