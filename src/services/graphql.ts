@@ -178,6 +178,9 @@ export const getProduct = async (isbn: number) => {
 }
 
 export const getProductsByName = async (nombre: string) => {
+    if (!nombre) {
+        nombre = ''
+    }
     const request = await fetch('http://127.0.0.1:5000/graphql', {
         method: 'POST',
         body: JSON.stringify({
@@ -647,7 +650,7 @@ export const getAutores = async (nombre: string) => {
     return autores.data.autores
 }
 
-export const getGeneros = async (nombre: string) => {
+export const getGeneros = async (nombre = '') => {
     const response = await fetch('http://127.0.0.1:5000/graphql', {
         method: 'POST',
         body: JSON.stringify({

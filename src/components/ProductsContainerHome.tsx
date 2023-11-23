@@ -1,17 +1,55 @@
-import { getProducts, getProductsByName } from '@/services/graphql'
+'use client'
+
+import { getGeneros, getProducts, getProductsByName } from '@/services/graphql'
 import ProductCardHome from './ProductCardHome'
 import CargarLibroHome from './CargarLibroHome'
+import { useEffect, useState } from 'react'
 
-export default async function ProductsHome({ nombre }: { nombre?: string }) {
-    const products = nombre ? await getProductsByName(nombre) : await getProducts()
+export default function ProductsHome({ nombre }: { nombre?: string }) {
+    const [products, setProducts] = useState<any[]>([])
+    const [generos, setGeneros] = useState<any[]>([])
+    const [generoFilter, setGeneroFilter] = useState('Todos')
+    const [loading, setLoading] = useState(true)
+    useEffect(() => {
+        getProductsByName(nombre!).then(products => {
+            setProducts(products)
+            setLoading(false)
+        })
+        getGeneros().then(generos => setGeneros(generos))
+    }, [])
+
+    useEffect(() => {
+        getProductsByName(nombre!).then(products => {
+            if (generoFilter === 'Todos') {
+                setProducts(products)
+                return
+            }
+            setProducts(
+                products.filter(product =>
+                    product.generos.find(({ genero }: any) => genero.nombreGenero === generoFilter)
+                )
+            )
+        })
+    }, [generoFilter])
+
+    if (loading) return null
+
     return (
         <div className="mb-12 flex max-w-[1500px] flex-col gap-4">
             <div className="flex w-max gap-4 self-end">
                 <div className="flex items-center border border-black px-3 py-2">
                     <p className="text-sm text-gray-600">Genero</p>
-                    <select className="outline-none">
-                        <option>Todos</option>
-                        <option>Ficcion</option>
+                    <select
+                        className="outline-none"
+                        value={generoFilter}
+                        onChange={e => setGeneroFilter(e.target.value)}
+                    >
+                        <option value="Todos">Todos</option>
+                        {generos.map(genero => (
+                            <option value={genero.nombreGenero} key={genero.nombreGenero}>
+                                {genero.nombreGenero}
+                            </option>
+                        ))}
                     </select>
                 </div>
                 <div className="mr-8 flex items-center border border-black px-3 py-2 lg:mr-40">

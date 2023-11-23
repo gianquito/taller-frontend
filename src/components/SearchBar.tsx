@@ -14,7 +14,7 @@ export default function SearchBar() {
                 type="text"
                 onKeyDown={e => e.key === 'Enter' && handleSubmit(e)}
                 onSubmit={e => handleSubmit(e)}
-                placeholder="Buscar por Titulo, Autor"
+                placeholder="Buscar"
             />
         </div>
     )
