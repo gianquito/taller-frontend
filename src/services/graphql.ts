@@ -1161,3 +1161,34 @@ export const updatePromocion = async (
 
     return promocion.data
 }
+
+export const getFavoritos = async (id_usuario: string) => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `{
+              favoritosLibro(idUsuario: "${id_usuario}"){
+                libro{
+                  isbn,
+                  titulo,
+                  precio,
+                  imagen,
+                  autores{
+                    autor{
+                      nombreAutor
+                    }
+                  }
+                }
+              }
+            }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const favoritos = await response.json()
+    console.log(favoritos)
+    if (favoritos.errors) throw 'Error in request'
+    return favoritos.data.favoritosLibro
+}

@@ -17,7 +17,7 @@ export default function Navbar() {
                 {isAuthenticated ? (
                     <>
                         <Link href="#">Lista de deseos</Link>
-                        <Link href="#">Favoritos</Link>
+                        <Link href="/favoritos">Favoritos</Link>
                         <Link href="/carrito">
                             <img alt="cart" src="/CartIcon.svg" />
                         </Link>
