@@ -15,20 +15,20 @@ export async function POST(request: Request) {
         envio: number
         id_usuario: string
     } = await request.json()
-    console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$')
-    console.log(products)
-    console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$')
     const preference = new Preference(client)
     // add payer info with id_usuario; validate cookie?; create webhook endpoint to confirm payment
     try {
         const res = await preference.create({
             body: {
                 items: products,
+                metadata: {
+                    user_id: id_usuario,
+                },
                 shipments: {
                     cost: envio,
                 },
                 additional_info: id_usuario,
-                notification_url: 'https://59d6-2a09-bac1-680-28-00-2c-b5.ngrok-free.app/webhook',
+                notification_url: 'https://eeaa-45-70-223-88.ngrok-free.app/webhook',
                 auto_return: 'approved',
                 back_urls: {
                     success: 'http://localhost:3000',

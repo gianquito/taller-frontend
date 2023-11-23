@@ -1,3 +1,4 @@
+import { addPedido } from '@/services/graphql'
 import { MercadoPagoConfig, Payment, Preference } from 'mercadopago'
 
 const client = new MercadoPagoConfig({
@@ -9,15 +10,11 @@ export async function POST(request: Request) {
     const body = await request.json()
     if (body.type === 'payment') {
         const payment = new Payment(client)
-        console.log(body)
-        const p = await payment.search(body.data.id)
-        console.log(p.results![0])
-        console.log('---------------------')
-        console.log(p.results![0].additional_info)
-        body.data.id
+        const p = await payment.get({ id: body.data.id })
+        addPedido(p.shipping_amount ?? 0, p.metadata.user_id, p.transaction_amount ?? 0)
     }
 
-    return new Response('Hola', {
+    return new Response('OK', {
         status: 200,
     })
 }

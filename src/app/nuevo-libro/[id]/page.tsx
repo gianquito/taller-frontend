@@ -79,20 +79,25 @@ export default function NuevoLibro({ params }: { params: { id: number } }) {
             return
         }
 
-        getProduct(params.id).then(libro => {
-            setImagen(atob(libro.imagen))
-            setIsbn(params.id)
-            setTitulo(libro.titulo)
-            setPaginas(libro.paginas)
-            setDimensiones(libro.dimensiones)
-            setPrecio(libro.precio)
-            setStock(libro.stock)
-            setDescripcion(libro.descripcion)
-            setAutor(libro.autores.map(({ autor }: any) => autor.nombreAutor).join(','))
-            setEditorial(libro.editoriales.map(({ editorial }: any) => editorial.nombreEditorial).join(','))
-            setGenero(libro.generos.map(({ genero }: any) => genero.nombreGenero).join(','))
-            setEncuadernado(libro.encuadernados.map(({ encuadernado }: any) => encuadernado.tipo).join(','))
-        })
+        getProduct(params.id)
+            .then(libro => {
+                setImagen(atob(libro.imagen))
+                setIsbn(params.id)
+                setTitulo(libro.titulo)
+                setPaginas(libro.paginas)
+                setDimensiones(libro.dimensiones)
+                setPrecio(libro.precio)
+                setStock(libro.stock)
+                setDescripcion(libro.descripcion)
+                setAutor(libro.autores.map(({ autor }: any) => autor.nombreAutor).join(','))
+                setEditorial(libro.editoriales.map(({ editorial }: any) => editorial.nombreEditorial).join(','))
+                setGenero(libro.generos.map(({ genero }: any) => genero.nombreGenero).join(','))
+                setEncuadernado(libro.encuadernados.map(({ encuadernado }: any) => encuadernado.tipo).join(','))
+            })
+            .catch(() => {
+                toast.error('No se puede obtener el libro solicitado')
+                router.push('/')
+            })
     }, [user, isAuthenticated])
 
     useEffect(() => {

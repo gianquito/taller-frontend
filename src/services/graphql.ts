@@ -1190,7 +1190,32 @@ export const getFavoritos = async (id_usuario: string) => {
         },
     })
     const favoritos = await response.json()
-    console.log(favoritos)
     if (favoritos.errors) throw 'Error in request'
+    return favoritos.data.favoritosLibro
+}
+
+export const addPedido = async (envio: number, id_usuario: number, total: number) => {
+    const fecha = new Date().toISOString()
+    let id_envio = 2
+    if (envio === 0) {
+        id_envio = 1
+    }
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+            createPedido(costoEnvio: ${envio},fecha: "${fecha}",idEnvio: ${id_envio},idUsuario:"${id_usuario}",total: ${total}){
+              pedido{
+                idPedido
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    const favoritos = await response.json()
+    if (favoritos.errors) throw favoritos.errors
     return favoritos.data.favoritosLibro
 }

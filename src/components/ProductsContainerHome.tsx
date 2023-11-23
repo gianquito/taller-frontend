@@ -25,7 +25,7 @@ export default function ProductsHome({ nombre }: { nombre?: string }) {
                 return
             }
             setProducts(
-                products.filter(product =>
+                products.filter((product: any) =>
                     product.generos.find(({ genero }: any) => genero.nombreGenero === generoFilter)
                 )
             )
