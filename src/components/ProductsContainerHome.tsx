@@ -1,9 +1,8 @@
-import { getProducts } from '@/services/graphql'
+import { getProducts, getProductsByName } from '@/services/graphql'
 import ProductCardHome from './ProductCardHome'
 
-export default async function ProductsHome() {
-    const products = await getProducts()
-
+export default async function ProductsHome({ nombre }: { nombre?: string }) {
+    const products = nombre ? await getProductsByName(nombre) : await getProducts()
     return (
         <div className="mb-12 flex max-w-[1500px] flex-col gap-4">
             <div className="flex w-max gap-4 self-end">

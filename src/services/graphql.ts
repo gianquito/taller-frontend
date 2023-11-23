@@ -107,8 +107,6 @@ export const getProducts = async () => {
                     }
                   }
                 }
-              
-                
               }`,
         }),
         headers: {
@@ -186,9 +184,46 @@ export const getProductsByName = async (nombre: string) => {
             query: `{
               libros(titulo: "${nombre}") {
                 isbn,
-                titulo,
-              }
-            }`,
+                  titulo,
+                  precio,
+                  imagen,
+                  stock,
+                  descripcion,
+                  dimensiones,
+                  paginas,
+                  usuariosFavoritos{
+                    idUsuario
+                  },
+                  editoriales{
+                    editorial{
+                      nombreEditorial
+                    }
+                  },
+                  encuadernados{
+                    encuadernado{
+                      tipo
+                    }
+                  },
+                  generos{
+                    genero{
+                      nombreGenero
+                    }
+                  },
+                  promociones{
+                    promocionDescuento{
+                      porcentaje
+                    }
+                  },
+                  usuariosDeseados{
+                    idUsuario
+                  },
+                  autores{
+                    autor{
+                      nombreAutor
+                    }
+                  }
+                }
+              }`,
         }),
         headers: {
             'Content-Type': 'application/json',
@@ -196,6 +231,7 @@ export const getProductsByName = async (nombre: string) => {
         },
     })
     const products = await request.json()
+    console.log(products)
     if (products.errors) throw 'Error in request'
     return products.data.libros
 }
