@@ -21,7 +21,7 @@ export default async function Libro({ params }: { params: { id: number } }) {
                     <ActionButton href="/" icon="/Reseña.png" text="Reseñas" />
                 </div>
             </div>
-            <div className="mt-6 flex min-w-[400px] max-w-xl flex-col items-center lg:mt-0 lg:items-baseline">
+            <div className="mt-4 flex min-w-[400px] max-w-xl flex-col items-center lg:mt-0 lg:items-baseline">
                 <div className="flex items-center gap-2">
                     <h1 className="text-center text-4xl font-semibold lg:text-left">{libro.titulo}</h1>
                     <EditarLibroProducto isbn={libro.isbn} />

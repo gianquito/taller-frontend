@@ -34,8 +34,9 @@ export default function Carrito() {
             router.push('/ingresar')
             return
         }
+        if (!user || !isAuthenticated) return
         fetchProducts()
-    }, [user])
+    }, [isAuthenticated])
 
     if (!isAuthenticated) return null
 
