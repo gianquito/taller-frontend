@@ -154,24 +154,27 @@ export default function NuevoLibro({ params }: { params: { id: number } }) {
                     Cargar imagen
                 </button>
             </div>
-            <div className="flex w-[450px] flex-col gap-4">
-                <p className="text-center text-2xl font-semibold">Información del producto</p>
+            <div className="flex w-[450px] flex-col">
+                <p className="mb-3 text-center text-2xl font-semibold">Información del producto</p>
+                <label className="text-sm">ISBN</label>
                 <input
-                    className="border border-black px-5 py-3"
+                    className="mb-3 border border-black px-5 py-3"
                     placeholder="ISBN"
                     value={isbn}
                     type="number"
                     onChange={e => setIsbn(Number(e.target.value))}
                 />
+                <label className="text-sm">Título</label>
                 <input
-                    className="border border-black px-5 py-3"
+                    className="mb-3 border border-black px-5 py-3"
                     placeholder="Título"
                     value={titulo}
                     onChange={e => setTitulo(e.target.value)}
                 />
+                <label className="text-sm">Autores</label>
                 <div ref={ref}>
                     <input
-                        className="w-full border border-black px-5 py-3"
+                        className="mb-3 w-full border border-black px-5 py-3"
                         placeholder="Autores"
                         value={autor}
                         onChange={handleAutorSearch}
@@ -204,10 +207,10 @@ export default function NuevoLibro({ params }: { params: { id: number } }) {
                         </div>
                     )}
                 </div>
-
+                <label className="text-sm">Editoriales</label>
                 <div ref={ref}>
                     <input
-                        className="w-full border border-black px-5 py-3"
+                        className="mb-3 w-full border border-black px-5 py-3"
                         placeholder="Editoriales"
                         value={editorial}
                         onChange={handleEditorialSearch}
@@ -238,39 +241,44 @@ export default function NuevoLibro({ params }: { params: { id: number } }) {
                         </div>
                     )}
                 </div>
+                <label className="text-sm">Páginas</label>
                 <input
-                    className="border border-black px-5 py-3"
+                    className="mb-3 border border-black px-5 py-3"
                     placeholder="Páginas"
                     value={paginas}
                     type="number"
                     min={0}
                     onChange={e => setPaginas(Number(e.target.value))}
                 />
+                <label className="text-sm">Dimensiones</label>
                 <input
-                    className="border border-black px-5 py-3"
+                    className="mb-3 border border-black px-5 py-3"
                     placeholder="Dimensiones"
                     value={dimensiones}
                     onChange={e => setDimensiones(e.target.value)}
                 />
+                <label className="text-sm">Precio</label>
                 <input
-                    className="border border-black px-5 py-3"
+                    className="mb-3 border border-black px-5 py-3"
                     placeholder="Precio"
                     value={precio}
                     min={0}
                     type="number"
                     onChange={e => setPrecio(Number(e.target.value))}
                 />
+                <label className="text-sm">Stock</label>
                 <input
-                    className="border border-black px-5 py-3"
+                    className="mb-3 border border-black px-5 py-3"
                     placeholder="Stock"
                     value={stock}
                     min={0}
                     type="number"
                     onChange={e => setStock(Number(e.target.value))}
                 />
+                <label className="text-sm">Géneros</label>
                 <div ref={ref}>
                     <input
-                        className="w-full border border-black px-5 py-3"
+                        className="mb-3 w-full border border-black px-5 py-3"
                         placeholder="Géneros"
                         value={genero}
                         onChange={handleGeneroSearch}
@@ -301,9 +309,10 @@ export default function NuevoLibro({ params }: { params: { id: number } }) {
                         </div>
                     )}
                 </div>
+                <label className="text-sm">Encuadernado</label>
                 <div ref={ref}>
                     <input
-                        className="w-full border border-black px-5 py-3"
+                        className="mb-3 w-full border border-black px-5 py-3"
                         placeholder="Encuadernado"
                         value={encuadernado}
                         onChange={handleEncuadernadoSearch}
@@ -334,8 +343,9 @@ export default function NuevoLibro({ params }: { params: { id: number } }) {
                         </div>
                     )}
                 </div>
+                <label className="text-sm">Descipción</label>
                 <textarea
-                    className="w-full border border-black px-5 py-3"
+                    className="mb-3 w-full border border-black px-5 py-3"
                     value={descripcion}
                     onChange={e => setDescripcion(e.target.value)}
                     placeholder="Descripción"

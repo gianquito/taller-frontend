@@ -28,7 +28,7 @@ export async function POST(request: Request) {
                     cost: envio,
                 },
                 additional_info: id_usuario,
-                notification_url: 'https://c70d-200-115-25-69.ngrok-free.app/webhook',
+                notification_url: 'https://59d6-2a09-bac1-680-28-00-2c-b5.ngrok-free.app/webhook',
                 auto_return: 'approved',
                 back_urls: {
                     success: 'http://localhost:3000',
