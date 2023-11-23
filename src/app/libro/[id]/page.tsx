@@ -1,8 +1,10 @@
 import ActionButton from '@/components/ActionButton'
 import AddToCartButton from '@/components/AddToCartButton'
+import EditarLibroProducto from '@/components/EditarLibroProducto'
 import FavoritoButton from '@/components/FavoritoButton'
 import WishListButton from '@/components/WishListButton'
 import { getProduct } from '@/services/graphql'
+import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,7 +22,10 @@ export default async function Libro({ params }: { params: { id: number } }) {
                 </div>
             </div>
             <div className="mt-6 flex min-w-[400px] max-w-xl flex-col items-center lg:mt-0 lg:items-baseline">
-                <h1 className="text-center text-4xl font-semibold lg:text-left">{libro.titulo}</h1>
+                <div className="flex items-center gap-2">
+                    <h1 className="text-center text-4xl font-semibold lg:text-left">{libro.titulo}</h1>
+                    <EditarLibroProducto isbn={libro.isbn} />
+                </div>
                 <div className="mt-2 flex w-full items-center justify-evenly lg:mt-0 lg:flex-col lg:items-baseline">
                     <p className="mt-1 text-2xl">${libro.precio}</p>
                     <div className="mt-1 flex flex-col gap-0.5 text-sm text-neutral-500">

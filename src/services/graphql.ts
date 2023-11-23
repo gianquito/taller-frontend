@@ -231,7 +231,6 @@ export const getProductsByName = async (nombre: string) => {
         },
     })
     const products = await request.json()
-    console.log(products)
     if (products.errors) throw 'Error in request'
     return products.data.libros
 }
