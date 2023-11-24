@@ -13,7 +13,6 @@ export function calculateDiscount(libro: any) {
     const currentDate = new Date().getTime()
     //Obtiene las promociones activas actualmente
     const currentPromotions = libro.promociones.filter((promocion: any) => {
-        console.log(promocion)
         return (
             new Date(promocion.promocionDescuento.fechaFin).getTime() >= currentDate &&
             new Date(promocion.promocionDescuento.fechaInicio).getTime() <= currentDate

@@ -463,12 +463,16 @@ export const getDirecciones = async (id_usuario: string) => {
     return direcciones.data.direcciones
 }
 
-export const addDireccion = async (id_usuario: string, calle: string, numero: number, cp: number) => {
+export const addDireccion = async (id_usuario: string, calle: string, numero: number, cp: number, ciudad: string) => {
+    const dbCiudades: any[] = await getCiudad('')
+    if (!dbCiudades.find(dbCiudad => dbCiudad.nombreCiudad === ciudad)) {
+        await addCiudad(ciudad, cp)
+    }
     const response = await fetch('http://127.0.0.1:5000/graphql', {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
-            createDireccion(calle:"${calle}", numero: ${numero}, cpCiudad: ${cp},idUsuario: "${id_usuario}"){
+            createDireccion(calle:"${calle}", numero: ${numero}, cpCiudad: ${cp}, idUsuario: "${id_usuario}"){
               direccion{
                 idDireccion
               }
@@ -516,8 +520,14 @@ export const updateDireccion = async (
     id_direccion: number,
     calle: string,
     numero: number,
-    cp: number
+    cp: number,
+    ciudad: string
 ) => {
+    const dbCiudades: any[] = await getCiudad('')
+    if (!dbCiudades.find(dbCiudad => dbCiudad.nombreCiudad === ciudad)) {
+        await addCiudad(ciudad, cp)
+    }
+
     const response = await fetch('http://127.0.0.1:5000/graphql', {
         method: 'POST',
         body: JSON.stringify({
@@ -559,6 +569,48 @@ export const deleteDireccion = async (id_direccion: number) => {
     const direccion = await response.json()
     if (direccion.errors) throw 'Error in request'
     return direccion.data
+}
+
+export const getCiudad = async (nombre: string) => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `{
+            ciudades(nombreCiudad: "${nombre}"){
+              nombreCiudad
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const ciudades = await response.json()
+    if (ciudades.errors) throw 'Error in request'
+    return ciudades.data.ciudades
+}
+
+export const addCiudad = async (nombre: string, cp: number) => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+            createCiudad(cp: ${cp}, nombreCiudad: "${nombre}"){
+              ciudad{
+                cp
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const ciudad = await response.json()
+    if (ciudad.errors) throw 'Error in request'
+    return ciudad.data
 }
 
 export const getPedidos = async () => {
@@ -1242,7 +1294,7 @@ export const addPedido = async (envio: number, id_usuario: number, total: number
             'Content-Type': 'application/json',
         },
     })
-    const favoritos = await response.json()
-    if (favoritos.errors) throw favoritos.errors
-    return favoritos.data.favoritosLibro
+    const pedido = await response.json()
+    if (pedido.errors) throw pedido.errors
+    return pedido.data
 }
