@@ -68,6 +68,7 @@ export default function ProductsHome({ nombre }: { nombre?: string }) {
                     .map(product => (
                         <>
                             <ProductCardHome
+                                libro={product}
                                 title={product.titulo}
                                 image={atob(product.imagen)}
                                 id={product.isbn}

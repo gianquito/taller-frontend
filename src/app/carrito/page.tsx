@@ -48,6 +48,7 @@ export default function Carrito() {
                     {products.length ? (
                         products.map(product => (
                             <ProductCart
+                                libro={product.libro}
                                 title={product.libro.titulo}
                                 author={product.libro.autores[0].autor.nombreAutor}
                                 price={product.libro.precio}

@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'react-hot-toast'
 import { getDirecciones, getProductsInCart } from '@/services/graphql'
 import { useAuth } from '@/context/authContext'
-import { formatPrice } from '@/utils'
+import { calculateDiscount, formatPrice } from '@/utils'
 
 export default function Checkout() {
     const [selectedAddress, setSelectedAddress] = useState<number | null>(null)
@@ -64,7 +64,10 @@ export default function Checkout() {
 
     useEffect(() => {
         let acc = 0
-        cartProducts.forEach((p: any) => (acc += p.cantidad * p.libro.precio))
+        cartProducts.forEach((p: any) => {
+            const discount = calculateDiscount(p.libro)
+            acc += p.cantidad * (discount.hasDiscount ? discount.discountedPrice : p.libro.precio)
+        })
         setSubtotal(acc)
     }, [cartProducts])
 
@@ -126,6 +129,7 @@ export default function Checkout() {
                             image={atob(product.libro.imagen)}
                             amount={product.cantidad}
                             key={product.libro.isbn}
+                            libro={product.libro}
                         />
                     ))}
                     <div className="my-12 flex w-80 flex-col gap-2 sm:w-96">

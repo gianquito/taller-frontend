@@ -1,7 +1,7 @@
 'use client'
 
 import { addProductToCart, deleteProductFromCart } from '@/services/graphql'
-import { formatPrice } from '@/utils'
+import { calculateDiscount, formatPrice } from '@/utils'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
@@ -17,6 +17,7 @@ interface ProductCartProps {
     stock: number
     fetch_products: () => void
     setAmounts: React.Dispatch<any>
+    libro: any
 }
 
 export default function ProductCart({
@@ -30,8 +31,11 @@ export default function ProductCart({
     stock,
     fetch_products,
     setAmounts,
+    libro,
 }: ProductCartProps) {
     const [amountInput, setAmountInput] = useState(amount)
+
+    const discount = calculateDiscount(libro)
 
     function updateAmount(newAmount: number, exact: boolean) {
         if (!Number.isInteger(newAmount)) return
@@ -45,7 +49,10 @@ export default function ProductCart({
     }
 
     useEffect(() => {
-        setAmounts((prev: any) => ({ ...prev, [id]: { amount: amountInput, price } }))
+        setAmounts((prev: any) => ({
+            ...prev,
+            [id]: { amount: amountInput, price: discount.hasDiscount ? discount.discountedPrice : price },
+        }))
     }, [amountInput])
 
     return (
@@ -73,9 +80,23 @@ export default function ProductCart({
                 </div>
                 <p className="text-sm">Stock: {stock}</p>
                 <div className="flex flex-col justify-between sm:flex-row">
-                    <p className="text-xl font-black">{formatPrice(price * amountInput)}</p>
+                    {discount.hasDiscount ? (
+                        <div>
+                            <div className="flex gap-1">
+                                <p className="text-sm font-medium text-neutral-600 line-through">
+                                    {formatPrice(discount.originalPrice * amountInput)}
+                                </p>
+                                <p className="rounded bg-red-500 px-1 py-0.5 text-xs font-medium text-white">
+                                    {discount.porcentaje}
+                                </p>
+                            </div>
+                            <p className="text-xl font-black">{formatPrice(discount.discountedPrice! * amountInput)}</p>
+                        </div>
+                    ) : (
+                        <p className="text-xl font-black">{formatPrice(price * amountInput)}</p>
+                    )}
                     <p
-                        className="cursor-pointer text-sm underline"
+                        className="cursor-pointer self-end text-sm underline"
                         onClick={() =>
                             deleteProductFromCart(cart_id, id)
                                 .then(() => {
