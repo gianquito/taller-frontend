@@ -95,7 +95,9 @@ export const getProducts = async () => {
                   },
                   promociones{
                     promocionDescuento{
-                      porcentaje
+                      porcentaje,
+                      fechaFin,
+                      fechaInicio
                     }
                   },
                   usuariosDeseados{
@@ -153,7 +155,9 @@ export const getProduct = async (isbn: number) => {
                   },
                   promociones{
                     promocionDescuento{
-                      porcentaje
+                      porcentaje,
+                      fechaFin,
+                      fechaInicio
                     }
                   },
                   usuariosDeseados{
@@ -163,7 +167,14 @@ export const getProduct = async (isbn: number) => {
                     autor{
                       nombreAutor
                     }
-                  }
+                  },
+                  promociones{
+                    promocionDescuento{
+                      porcentaje,
+                      fechaFin,
+                      fechaInicio
+                    }
+                  },
                 }
               }`,
         }),
@@ -214,7 +225,9 @@ export const getProductsByName = async (nombre: string) => {
                   },
                   promociones{
                     promocionDescuento{
-                      porcentaje
+                      porcentaje,
+                      fechaFin,
+                      fechaInicio
                     }
                   },
                   usuariosDeseados{
@@ -342,6 +355,13 @@ export const getProductsInCart = async (id_carrito: number) => {
                   autores{
                     autor{
                       nombreAutor
+                    }
+                  },
+                  promociones{
+                    promocionDescuento{
+                      porcentaje,
+                      fechaFin,
+                      fechaInicio
                     }
                   },
                 }
@@ -1179,7 +1199,14 @@ export const getFavoritos = async (id_usuario: string) => {
                     autor{
                       nombreAutor
                     }
-                  }
+                  },
+                  promociones{
+                    promocionDescuento{
+                      porcentaje,
+                      fechaFin,
+                      fechaInicio
+                    }
+                  },
                 }
               }
             }`,

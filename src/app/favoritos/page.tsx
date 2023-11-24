@@ -47,6 +47,7 @@ export default function Favoritos() {
                             key={libro.isbn}
                             id_usuario={user.idUsuario}
                             fetch_products={fetchProducts}
+                            libro={libro}
                         />
                     ))}
                 </div>
