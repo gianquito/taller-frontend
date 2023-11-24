@@ -2,6 +2,7 @@
 import { formatPrice } from '@/utils'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
+import { toast } from 'react-hot-toast'
 
 interface CheckoutAdressProps {
     calle: string
@@ -56,6 +57,10 @@ export default function CheckoutAdress({
             .then(data => {
                 setEnvio(data[1].tarifaSinIva)
                 setCostoEnvios(prev => ({ ...prev, [id]: data[1].tarifaSinIva }))
+            })
+            .catch(() => {
+                setEnvio(undefined)
+                toast.error(`No se pudo calcular el envío de ${ciudad} CP ${cp}`)
             })
     }, [])
 
