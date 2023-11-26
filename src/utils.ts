@@ -21,7 +21,7 @@ export function calculateDiscount(libro: any) {
     if (currentPromotions.length === 0) return { hasDiscount: false, originalPrice: libro.precio }
 
     //Obtiene el descuento mas alto de las promociones activas
-    const descuento: number = currentPromotions.sort((a, b) => {
+    const descuento: number = currentPromotions.sort((a: any, b: any) => {
         if (a.promocionDescuento.porcentaje > b.promocionDescuento.porcentaje) {
             return 1
         } else if (a.promocionDescuento.porcentaje > b.promocionDescuento.porcentaje) {

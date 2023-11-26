@@ -184,7 +184,7 @@ export const getProduct = async (isbn: number) => {
         },
     })
     const products = await request.json()
-    if (products.errors) throw 'Error in request'
+    if (products.errors) throw 'Error in request ' + JSON.stringify(products.errors)
     return products.data.libros[0]
 }
 
@@ -928,6 +928,82 @@ export const addLibroEncuadernado = async (id_encuadernado: number, id_libro: nu
     })
 }
 
+export const deleteLibroAutores = async (id_libro: number) => {
+    await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+            deleteLibroAutor(idLibro: ${id_libro}){
+              libroAutor{
+                idLibro
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+}
+
+export const deleteLibroGeneros = async (id_libro: number) => {
+    await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+          deleteLibroGenero(idLibro: ${id_libro}){
+            libroGenero{
+              idLibro
+            }
+          }
+        }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+}
+
+export const deleteLibroEditoriales = async (id_libro: number) => {
+    await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+          deleteLibroEditorial(idLibro: ${id_libro}){
+            libroEditorial{
+              idLibro
+            }
+          }
+        }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+}
+
+export const deleteLibroEncuadernados = async (id_libro: number) => {
+    await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+          deleteLibroEncuadernado(idLibro: ${id_libro}){
+            libroEncuadernado{
+              idLibro
+            }
+          }
+        }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+}
+
 export const addProduct = async (
     autor: string,
     editorial: string,
@@ -1094,6 +1170,18 @@ export const updateProduct = async (
     })
 
     //Crear lineas
+
+    //borrar todas las lineas??
+
+    //loop through lines
+
+    //buscar que esté en las lineas pero no en autor.split y borrar la linea
+
+    await deleteLibroAutores(isbn)
+    await deleteLibroGeneros(isbn)
+    await deleteLibroEditoriales(isbn)
+    await deleteLibroEncuadernados(isbn)
+
     dbAutores
         .filter((dbA: any) => autor.split(',').find(a => a.trim() === dbA.nombreAutor))
         .forEach((autor: any) => addLibroAutor(autor.idAutor, isbn))

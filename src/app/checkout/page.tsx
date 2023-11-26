@@ -74,7 +74,7 @@ export default function Checkout() {
     if (!isAuthenticated) return null
 
     return (
-        <div className="flex w-screen justify-center lg:block">
+        <div className="my-16 flex w-full justify-center lg:block">
             <div className="mt-8 flex flex-col items-center justify-evenly lg:flex-row">
                 <div className="flex flex-col gap-4">
                     <h1 className="self-start text-4xl font-semibold tracking-tighter">Checkout</h1>

@@ -1,6 +1,6 @@
 'use client'
 
-import { getGeneros, getProducts, getProductsByName } from '@/services/graphql'
+import { getGeneros, getProductsByName } from '@/services/graphql'
 import ProductCardHome from './ProductCardHome'
 import CargarLibroHome from './CargarLibroHome'
 import { useEffect, useState } from 'react'
@@ -11,15 +11,12 @@ export default function ProductsHome({ nombre }: { nombre?: string }) {
     const [generoFilter, setGeneroFilter] = useState('Todos')
     const [loading, setLoading] = useState(true)
     useEffect(() => {
-        getProductsByName(nombre!).then(products => {
-            setProducts(products)
-            setLoading(false)
-        })
         getGeneros().then(generos => setGeneros(generos))
     }, [])
 
     useEffect(() => {
         getProductsByName(nombre!).then(products => {
+            setLoading(false)
             if (generoFilter === 'Todos') {
                 setProducts(products)
                 return
