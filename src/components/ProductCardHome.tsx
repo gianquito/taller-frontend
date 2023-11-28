@@ -13,7 +13,7 @@ interface ProductCardHomeProps {
 export default function ProductCardHome({ title, image, author, price, id, libro }: ProductCardHomeProps) {
     const discount = calculateDiscount(libro)
     return (
-        <Link className="flex w-40 flex-col gap-0.5 leading-7" href={`/libro/${id}`}>
+        <Link className="flex w-40 flex-col gap-0.5 leading-7" href={`/libro/${id}`} prefetch={false}>
             <img className="w-40" alt={title + ' portada'} src={image} />
             <p className="leading-5">{title}</p>
             <p className="text-sm text-gray-600">por: {author}</p>

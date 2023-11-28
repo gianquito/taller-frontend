@@ -29,7 +29,11 @@ export default function UserNavbar() {
                         <Link className="mt-1 hover:underline" href="/mi-cuenta" onClick={() => setToggledMenu(false)}>
                             Mi cuenta
                         </Link>
-                        <Link className="mt-1 hover:underline" href="#" onClick={() => setToggledMenu(false)}>
+                        <Link
+                            className="mt-1 hover:underline"
+                            href="/preguntas-frecuentes"
+                            onClick={() => setToggledMenu(false)}
+                        >
                             Preguntas frecuentes
                         </Link>
                         {user.rol === 1 && (
