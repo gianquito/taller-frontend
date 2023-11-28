@@ -12,7 +12,7 @@ export default function Navbar() {
             <Link href="/" className="text-xl font-bold">
                 LibrosCdelU
             </Link>
-            {isAuthenticated ? <UserNavbar /> : <Link href="#">Preguntas frecuentes</Link>}
+            {isAuthenticated ? <UserNavbar /> : <Link href="/preguntas-frecuentes">Preguntas frecuentes</Link>}
             <div className="order-1 ml-4 flex flex-shrink-0  items-center gap-4 xl:ml-0 xl:gap-8">
                 {isAuthenticated ? (
                     <>

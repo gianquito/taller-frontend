@@ -680,6 +680,27 @@ export const getPromociones = async () => {
     return promocion.data.promocionesDescuento
 }
 
+export const getPromocionImagen = async () => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `{
+            promocionesDescuento{
+              imagen
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const promocion = await response.json()
+    if (promocion.errors) throw 'Error in request'
+    if (!promocion.data.promocionesDescuento.length) return null
+    return promocion.data.promocionesDescuento[0].imagen
+}
+
 export const getEditoriales = async (nombre: string) => {
     const response = await fetch('http://127.0.0.1:5000/graphql', {
         method: 'POST',
@@ -1004,6 +1025,25 @@ export const deleteLibroEncuadernados = async (id_libro: number) => {
     })
 }
 
+export const deleteLibroPromociones = async (id_promocion: number) => {
+    await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+            deleteLibroPromocion(idPromocionDescuento: ${id_promocion}){
+              libroPromocion{
+                idLibro
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+}
+
 export const addProduct = async (
     autor: string,
     editorial: string,
@@ -1314,6 +1354,8 @@ export const updatePromocion = async (
     })
     const promocion = await response.json()
     if (promocion.errors) throw 'Error in request'
+
+    await deleteLibroPromociones(id_promocion)
 
     const dbLibros = await getProducts()
     const librosList = libros.split(',')

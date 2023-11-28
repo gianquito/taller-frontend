@@ -153,13 +153,13 @@ export default function NuevoLibro({ params }: { params: { id: number } }) {
                 {imagen ? (
                     <img className="w-[240px] lg:w-[350px]" src={imagen} />
                 ) : (
-                    <div className="h-[550px] w-[240px] bg-neutral-300 lg:w-[350px]"></div>
+                    <div className="h-[400px] w-[240px] bg-neutral-300 md:h-[550px] lg:w-[350px]"></div>
                 )}
                 <button className="float-right text-lg underline" onClick={openFilePicker}>
                     Cargar imagen
                 </button>
             </div>
-            <div className="flex w-[450px] flex-col">
+            <div className="flex w-96 flex-col md:w-[450px]">
                 <p className="mb-3 text-center text-2xl font-semibold">Información del producto</p>
                 <label className="text-sm">ISBN</label>
                 <input

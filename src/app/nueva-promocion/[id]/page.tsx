@@ -91,7 +91,7 @@ export default function EditarPromocion({ params }: { params: { id: number } }) 
                     Cargar imagen
                 </button>
             </div>
-            <div className="flex w-[450px] flex-col gap-4">
+            <div className="flex w-96 flex-col gap-4 md:w-[450px]">
                 <p className="text-center text-2xl font-semibold">Información de la promoción</p>
                 <input
                     className="border border-black px-5 py-3"
