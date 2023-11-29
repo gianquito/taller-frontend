@@ -1,7 +1,7 @@
 import { userType } from '@/types/user'
 import { getCookie } from '@/utils'
 
-export const getUser = async (id_session: string): Promise<userType | undefined> => {
+export const getUserBySesion = async (id_session: string): Promise<userType | undefined> => {
     const request = await fetch('http://127.0.0.1:5000/graphql', {
         method: 'POST',
         body: JSON.stringify({
@@ -14,6 +14,25 @@ export const getUser = async (id_session: string): Promise<userType | undefined>
     const data = await request.json()
     if (!data.data.sesiones[0]) return undefined
     return data.data.sesiones[0].usuario
+}
+
+export const getUserById = async (id_usuario: string) => {
+    const request = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `{
+              usuarios(idUsuario: "${id_usuario}"){
+                nombre
+              }
+            }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    const data = await request.json()
+    if (!data.data.usuarios[0]) return undefined
+    return data.data.usuarios[0]
 }
 
 export const getUsers = async () => {
@@ -1403,7 +1422,7 @@ export const getFavoritos = async (id_usuario: string) => {
     return favoritos.data.favoritosLibro
 }
 
-export const addPedido = async (envio: number, id_usuario: number, total: number) => {
+export const addPedido = async (envio: number, id_usuario: string, total: number) => {
     const fecha = new Date().toISOString()
     let id_envio = 2
     if (envio === 0) {
@@ -1427,4 +1446,41 @@ export const addPedido = async (envio: number, id_usuario: number, total: number
     const pedido = await response.json()
     if (pedido.errors) throw pedido.errors
     return pedido.data
+}
+
+export const getWishlist = async (id_usuario: string) => {
+    const response = await fetch('http://127.0.0.1:5000/graphql', {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `{
+            deseosLibro(idUsuario:"${id_usuario}"){
+              idUsuario
+              libro{
+                isbn,
+                titulo,
+                precio,
+                imagen,
+                autores{
+                  autor{
+                    nombreAutor
+                  }
+                },
+                promociones{
+                  promocionDescuento{
+                    porcentaje,
+                    fechaFin,
+                    fechaInicio
+                  }
+                },
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    const lista_deseos = await response.json()
+    if (lista_deseos.errors) throw lista_deseos.errors
+    return lista_deseos.data.deseosLibro
 }

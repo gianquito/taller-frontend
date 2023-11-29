@@ -1,7 +1,7 @@
 'use client'
 
 import { useAuth } from '@/context/authContext'
-import { getUser } from '@/services/graphql'
+import { getUserBySesion } from '@/services/graphql'
 import { useGoogleLogin } from '@react-oauth/google'
 import { useEffect, useState } from 'react'
 
@@ -30,7 +30,7 @@ export default function Ingresar() {
                     d.setTime(d.getTime() + 30 * 24 * 60 * 60 * 1000)
                     document.cookie = `sesionId=${data}; expires=${d.toUTCString()}; path=/; SameSite=None; Secure`
 
-                    const user = await getUser(data)
+                    const user = await getUserBySesion(data)
                     if (!user) return
                     login({
                         ...user,

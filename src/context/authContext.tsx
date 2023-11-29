@@ -3,7 +3,7 @@
 import React, { ReactNode, createContext, useContext, useReducer, useEffect } from 'react'
 import { userType } from '@/types/user'
 import { useRouter } from 'next/navigation'
-import { getUser } from '@/services/graphql'
+import { getUserBySesion } from '@/services/graphql'
 import { getCookie } from '@/utils'
 const initialState = {
     isAuthenticated: null,
@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 dispatch({ type: 'LOGOUT' })
                 return
             }
-            const user = await getUser(sesionId)
+            const user = await getUserBySesion(sesionId)
             if (!user) {
                 dispatch({ type: 'LOGOUT' })
                 return
