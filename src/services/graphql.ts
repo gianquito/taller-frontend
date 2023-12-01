@@ -1,8 +1,8 @@
 import { userType } from '@/types/user'
-import { getCookie } from '@/utils'
+import { SERVER_URL, getCookie } from '@/utils'
 
 export const getUserBySesion = async (id_session: string): Promise<userType | undefined> => {
-    const request = await fetch('http://127.0.0.1:5000/graphql', {
+    const request = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{ sesiones(idSesion:"${id_session}"){ usuario{ idUsuario, nombre, apellido, email, imagen, rol, idCarrito} }}`,
@@ -17,7 +17,7 @@ export const getUserBySesion = async (id_session: string): Promise<userType | un
 }
 
 export const getUserById = async (id_usuario: string) => {
-    const request = await fetch('http://127.0.0.1:5000/graphql', {
+    const request = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{
@@ -36,7 +36,7 @@ export const getUserById = async (id_usuario: string) => {
 }
 
 export const getUsers = async () => {
-    const request = await fetch('http://127.0.0.1:5000/graphql', {
+    const request = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{
@@ -60,7 +60,7 @@ export const updateUser = async (
     apellido: string,
     email: string
 ): Promise<userType | undefined> => {
-    const request = await fetch('http://127.0.0.1:5000/graphql', {
+    const request = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -81,7 +81,7 @@ export const updateUser = async (
 }
 
 export const getProducts = async () => {
-    const request = await fetch('http://127.0.0.1:5000/graphql', {
+    const request = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{
@@ -141,7 +141,7 @@ export const getProducts = async () => {
 }
 
 export const getProduct = async (isbn: number) => {
-    const request = await fetch('http://127.0.0.1:5000/graphql', {
+    const request = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{
@@ -211,7 +211,7 @@ export const getProductsByName = async (nombre: string) => {
     if (!nombre) {
         nombre = ''
     }
-    const request = await fetch('http://127.0.0.1:5000/graphql', {
+    const request = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{
@@ -271,7 +271,7 @@ export const getProductsByName = async (nombre: string) => {
 }
 
 export const deleteFavorite = async (isbn: number, id_usuario: string) => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -293,7 +293,7 @@ export const deleteFavorite = async (isbn: number, id_usuario: string) => {
 }
 
 export const addFavorite = async (isbn: number, id_usuario: string) => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -315,7 +315,7 @@ export const addFavorite = async (isbn: number, id_usuario: string) => {
 }
 
 export const deleteWishlisted = async (isbn: number, id_usuario: string) => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -337,7 +337,7 @@ export const deleteWishlisted = async (isbn: number, id_usuario: string) => {
 }
 
 export const addWishlisted = async (isbn: number, id_usuario: string) => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -359,7 +359,7 @@ export const addWishlisted = async (isbn: number, id_usuario: string) => {
 }
 
 export const getProductsInCart = async (id_carrito: number) => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{
@@ -401,7 +401,7 @@ export const addProductToCart = async (id_producto: number, id_carrito: number, 
     const libros = await getProductsInCart(id_carrito)
     const productInCart = libros.find((prod: any) => prod.libro.isbn == id_producto)
     if (productInCart) {
-        const res = await fetch('http://127.0.0.1:5000/graphql', {
+        const res = await fetch(`${SERVER_URL}/graphql`, {
             method: 'POST',
             body: JSON.stringify({
                 query: `mutation{updateLineaCarrito(idCarrito: ${id_carrito}, idLibro: ${id_producto}, cantidad: ${
@@ -418,7 +418,7 @@ export const addProductToCart = async (id_producto: number, id_carrito: number, 
         if (data.errors) throw 'Error in request'
         return data.data
     } else {
-        const res = await fetch('http://127.0.0.1:5000/graphql', {
+        const res = await fetch(`${SERVER_URL}/graphql`, {
             method: 'POST',
             body: JSON.stringify({
                 query: `mutation{createLineaCarrito(idLibro: ${id_producto}, idCarrito: ${id_carrito}, cantidad: ${amount}){ lineaCarrito{ cantidad } }}`,
@@ -435,7 +435,7 @@ export const addProductToCart = async (id_producto: number, id_carrito: number, 
 }
 
 export const deleteProductFromCart = async (id_carrito: number, id_producto: number) => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -457,7 +457,7 @@ export const deleteProductFromCart = async (id_carrito: number, id_producto: num
 }
 
 export const getDirecciones = async (id_usuario: string) => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{
@@ -487,7 +487,7 @@ export const addDireccion = async (id_usuario: string, calle: string, numero: nu
     if (!dbCiudades.find(dbCiudad => dbCiudad.nombreCiudad === ciudad)) {
         await addCiudad(ciudad, cp)
     }
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -509,7 +509,7 @@ export const addDireccion = async (id_usuario: string, calle: string, numero: nu
 }
 
 export const getDireccion = async (id_usuario: string, id_direccion: number) => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{
@@ -547,7 +547,7 @@ export const updateDireccion = async (
         await addCiudad(ciudad, cp)
     }
 
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -569,7 +569,7 @@ export const updateDireccion = async (
 }
 
 export const deleteDireccion = async (id_direccion: number) => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -591,7 +591,7 @@ export const deleteDireccion = async (id_direccion: number) => {
 }
 
 export const getCiudad = async (nombre: string) => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{
@@ -611,7 +611,7 @@ export const getCiudad = async (nombre: string) => {
 }
 
 export const addCiudad = async (nombre: string, cp: number) => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -633,7 +633,7 @@ export const addCiudad = async (nombre: string, cp: number) => {
 }
 
 export const getPedidos = async () => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{
@@ -653,7 +653,7 @@ export const getPedidos = async () => {
 }
 
 export const getProductsSales = async () => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{
@@ -673,7 +673,7 @@ export const getProductsSales = async () => {
 }
 
 export const getPromociones = async () => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{
@@ -700,7 +700,7 @@ export const getPromociones = async () => {
 }
 
 export const getPromocionImagen = async () => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{
@@ -721,7 +721,7 @@ export const getPromocionImagen = async () => {
 }
 
 export const getEditoriales = async (nombre: string) => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{
@@ -742,7 +742,7 @@ export const getEditoriales = async (nombre: string) => {
 }
 
 export const getAutores = async (nombre: string) => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{
@@ -763,7 +763,7 @@ export const getAutores = async (nombre: string) => {
 }
 
 export const getGeneros = async (nombre = '') => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{
@@ -784,7 +784,7 @@ export const getGeneros = async (nombre = '') => {
 }
 
 export const getEncuadernados = async (nombre: string) => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{
@@ -805,7 +805,7 @@ export const getEncuadernados = async (nombre: string) => {
 }
 
 export const addAutor = async (nombre: string) => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -827,7 +827,7 @@ export const addAutor = async (nombre: string) => {
 }
 
 export const addEditorial = async (nombre: string) => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -849,7 +849,7 @@ export const addEditorial = async (nombre: string) => {
 }
 
 export const addGenero = async (nombre: string) => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -871,7 +871,7 @@ export const addGenero = async (nombre: string) => {
 }
 
 export const addEncuadernado = async (nombre: string) => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -893,7 +893,7 @@ export const addEncuadernado = async (nombre: string) => {
 }
 
 export const addLibroAutor = async (id_autor: number, id_libro: number) => {
-    await fetch('http://127.0.0.1:5000/graphql', {
+    await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -912,7 +912,7 @@ export const addLibroAutor = async (id_autor: number, id_libro: number) => {
 }
 
 export const addLibroGenero = async (id_genero: number, id_libro: number) => {
-    await fetch('http://127.0.0.1:5000/graphql', {
+    await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -931,7 +931,7 @@ export const addLibroGenero = async (id_genero: number, id_libro: number) => {
 }
 
 export const addLibroEditorial = async (id_editorial: number, id_libro: number) => {
-    await fetch('http://127.0.0.1:5000/graphql', {
+    await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -950,7 +950,7 @@ export const addLibroEditorial = async (id_editorial: number, id_libro: number) 
 }
 
 export const addLibroEncuadernado = async (id_encuadernado: number, id_libro: number) => {
-    await fetch('http://127.0.0.1:5000/graphql', {
+    await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -969,7 +969,7 @@ export const addLibroEncuadernado = async (id_encuadernado: number, id_libro: nu
 }
 
 export const deleteLibroAutores = async (id_libro: number) => {
-    await fetch('http://127.0.0.1:5000/graphql', {
+    await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -988,7 +988,7 @@ export const deleteLibroAutores = async (id_libro: number) => {
 }
 
 export const deleteLibroGeneros = async (id_libro: number) => {
-    await fetch('http://127.0.0.1:5000/graphql', {
+    await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -1007,7 +1007,7 @@ export const deleteLibroGeneros = async (id_libro: number) => {
 }
 
 export const deleteLibroEditoriales = async (id_libro: number) => {
-    await fetch('http://127.0.0.1:5000/graphql', {
+    await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -1026,7 +1026,7 @@ export const deleteLibroEditoriales = async (id_libro: number) => {
 }
 
 export const deleteLibroEncuadernados = async (id_libro: number) => {
-    await fetch('http://127.0.0.1:5000/graphql', {
+    await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -1045,7 +1045,7 @@ export const deleteLibroEncuadernados = async (id_libro: number) => {
 }
 
 export const deleteLibroPromociones = async (id_promocion: number) => {
-    await fetch('http://127.0.0.1:5000/graphql', {
+    await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -1118,7 +1118,7 @@ export const addProduct = async (
     )
 
     //Crear libro
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -1211,7 +1211,7 @@ export const updateProduct = async (
     )
 
     //Crear libro
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -1260,7 +1260,7 @@ export const updateProduct = async (
 }
 
 export const addLibroPromocion = async (id_libro: number, id_promocion: number) => {
-    await fetch('http://127.0.0.1:5000/graphql', {
+    await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -1286,7 +1286,7 @@ export const addPromocion = async (
     fechaInicio: string,
     libros: string
 ) => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -1317,7 +1317,7 @@ export const addPromocion = async (
 }
 
 export const getPromocion = async (id_promocion: number) => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{
@@ -1355,7 +1355,7 @@ export const updatePromocion = async (
     libros: string,
     id_promocion: number
 ) => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -1386,7 +1386,7 @@ export const updatePromocion = async (
 }
 
 export const getFavoritos = async (id_usuario: string) => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{
@@ -1428,7 +1428,7 @@ export const addPedido = async (envio: number, id_usuario: string, total: number
     if (envio === 0) {
         id_envio = 1
     }
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
@@ -1449,7 +1449,7 @@ export const addPedido = async (envio: number, id_usuario: string, total: number
 }
 
 export const getWishlist = async (id_usuario: string) => {
-    const response = await fetch('http://127.0.0.1:5000/graphql', {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{

@@ -37,3 +37,5 @@ export function calculateDiscount(libro: any) {
         discountedPrice: libro.precio * (descuento / 100),
     }
 }
+
+export const SERVER_URL = process.env.SERVER_URL ?? 'http://127.0.0.1:5000'

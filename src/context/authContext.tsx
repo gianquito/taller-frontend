@@ -4,7 +4,7 @@ import React, { ReactNode, createContext, useContext, useReducer, useEffect } fr
 import { userType } from '@/types/user'
 import { useRouter } from 'next/navigation'
 import { getUserBySesion } from '@/services/graphql'
-import { getCookie } from '@/utils'
+import { SERVER_URL, getCookie } from '@/utils'
 const initialState = {
     isAuthenticated: null,
     user: null,
@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const logout = () => {
-        fetch('http://localhost:5000/logout', {
+        fetch(`${SERVER_URL}/logout`, {
             method: 'POST',
             body: getCookie('sesionId'),
         })

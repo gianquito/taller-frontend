@@ -31,7 +31,7 @@ export default function Checkout() {
         }
         if (!costoEnvios.hasOwnProperty(selectedAddress)) return
 
-        fetch('http://localhost:3000/pago', {
+        fetch('/pago', {
             method: 'POST',
             body: JSON.stringify({
                 products: cartProducts.map((product: any) => ({

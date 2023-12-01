@@ -2,6 +2,7 @@
 
 import { useAuth } from '@/context/authContext'
 import { getUserBySesion } from '@/services/graphql'
+import { SERVER_URL } from '@/utils'
 import { useGoogleLogin } from '@react-oauth/google'
 import { useEffect, useState } from 'react'
 
@@ -20,7 +21,7 @@ export default function Ingresar() {
     const googleLogin = useGoogleLogin({
         onSuccess: tokenResponse => {
             console.log(tokenResponse)
-            fetch('http://localhost:5000/validate', {
+            fetch(`${SERVER_URL}/validate`, {
                 method: 'POST',
                 body: tokenResponse.code,
             })
