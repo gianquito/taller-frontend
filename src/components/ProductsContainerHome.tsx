@@ -37,7 +37,7 @@ export default function ProductsHome({ nombre }: { nombre?: string }) {
                 <div className="flex items-center border border-black px-3 py-2">
                     <p className="text-sm text-gray-600">Genero</p>
                     <select
-                        className="outline-none"
+                        className="max-w-[100px] outline-none"
                         value={generoFilter}
                         onChange={e => setGeneroFilter(e.target.value)}
                     >
