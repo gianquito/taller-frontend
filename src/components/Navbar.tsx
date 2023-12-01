@@ -13,7 +13,7 @@ export default function Navbar() {
                 LibrosCdelU
             </Link>
             {isAuthenticated ? <UserNavbar /> : <Link href="/preguntas-frecuentes">Preguntas frecuentes</Link>}
-            <div className="order-1 ml-4 flex flex-shrink-0  items-center gap-4 xl:ml-0 xl:gap-8">
+            <div className="order-1 flex flex-shrink-0 items-center gap-4 xl:gap-8">
                 {isAuthenticated ? (
                     <>
                         <Link href={`/lista-deseos/${user.idUsuario}`}>Lista de deseos</Link>
