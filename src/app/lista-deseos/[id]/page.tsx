@@ -1,5 +1,6 @@
 'use client'
 import ProductCardWishlist from '@/components/ProductCardDeseos'
+import ShareWishlistButton from '@/components/ShareWishlistButton'
 import { useAuth } from '@/context/authContext'
 import { getUserById, getWishlist } from '@/services/graphql'
 import { useRouter } from 'next/navigation'
@@ -29,12 +30,13 @@ export default function ListaDeseos({ params }: { params: { id: string } }) {
     return (
         <div className="my-8 flex flex-col flex-wrap items-center md:my-16">
             <div className="flex flex-col px-8 md:w-3/4 md:px-0">
-                <div className="flex justify-between">
+                <div className="flex flex-col justify-between md:flex-row">
                     <h1 className="self-start text-4xl font-semibold tracking-tighter">
                         Lista de deseos de {listUser?.nombre}
                     </h1>
+                    <ShareWishlistButton />
                 </div>
-                <div className="mt-6 flex flex-wrap justify-center gap-4 md:mt-10 md:gap-8">
+                <div className="mt-6 flex flex-wrap justify-center gap-4 md:mt-10 md:justify-normal md:gap-8">
                     {!products.length && 'La lista de deseos está vacia'}
                     {products.map(({ libro }) => (
                         <ProductCardWishlist
