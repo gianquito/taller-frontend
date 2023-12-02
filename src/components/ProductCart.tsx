@@ -56,7 +56,7 @@ export default function ProductCart({
     }, [amountInput])
 
     return (
-        <div className="flex flex-shrink-0 translate-x-8 gap-6">
+        <div className="flex flex-shrink-0 translate-x-4 gap-6 sm:translate-x-8">
             <Image className="h-[132px] w-[80px]" src={image} alt={title} width={80} height={132} />
             <div className="flex w-60 flex-col sm:w-96">
                 <p className="text-xl font-semibold tracking-tighter">{title}</p>
