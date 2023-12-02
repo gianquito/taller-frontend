@@ -33,11 +33,11 @@ export default function ProductsHome({ nombre }: { nombre?: string }) {
 
     return (
         <div className="mb-12 mt-8 flex max-w-[1500px] flex-col gap-4">
-            <div className="flex w-max gap-4 self-end">
+            <div className="flex gap-4 self-end">
                 <div className="flex items-center border border-black px-3 py-2">
                     <p className="text-sm text-gray-600">Genero</p>
                     <select
-                        className="outline-none"
+                        className="max-w-[100px] outline-none"
                         value={generoFilter}
                         onChange={e => setGeneroFilter(e.target.value)}
                     >
@@ -49,7 +49,7 @@ export default function ProductsHome({ nombre }: { nombre?: string }) {
                         ))}
                     </select>
                 </div>
-                <div className="mr-8 flex items-center border border-black px-3 py-2 lg:mr-40">
+                <div className="mr-4 flex items-center border border-black px-3 py-2 lg:mr-40">
                     <p className="text-sm text-gray-600">Ordenar</p>
                     <select className="outline-none">
                         <option>Popular</option>

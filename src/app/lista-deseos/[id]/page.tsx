@@ -32,7 +32,7 @@ export default function ListaDeseos({ params }: { params: { id: string } }) {
                 <h1 className="self-start text-4xl font-semibold tracking-tighter">
                     Lista de deseos de {listUser?.nombre}
                 </h1>
-                <div className="mt-10 flex flex-wrap gap-4 md:gap-8">
+                <div className="mt-6 flex flex-wrap gap-4 md:mt-10 md:gap-8">
                     {!products.length && 'La lista de deseos está vacia'}
                     {products.map(({ libro }) => (
                         <ProductCardWishlist

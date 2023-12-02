@@ -35,7 +35,7 @@ export default function Favoritos() {
         <div className="my-8 flex flex-col flex-wrap items-center md:my-16">
             <div className="flex flex-col px-4 md:w-3/4 md:px-0">
                 <h1 className="self-start text-4xl font-semibold tracking-tighter">Favoritos</h1>
-                <div className="mt-10 flex flex-wrap gap-4 md:gap-8">
+                <div className="mt-6 flex flex-wrap gap-4 md:mt-10 md:gap-8">
                     {!products.length && 'Tu lista de favoritos está vacia'}
                     {products.map(({ libro }) => (
                         <ProductCardFavorites
