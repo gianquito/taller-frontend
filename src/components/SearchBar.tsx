@@ -5,6 +5,7 @@ export default function SearchBar() {
     const [inputText, setInputText] = useState('')
     const router = useRouter()
     function handleSubmit() {
+        if (!inputText) return
         router.push(`/buscar/${inputText}`)
     }
 

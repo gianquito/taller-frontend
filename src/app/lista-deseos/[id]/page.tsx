@@ -28,11 +28,13 @@ export default function ListaDeseos({ params }: { params: { id: string } }) {
 
     return (
         <div className="my-8 flex flex-col flex-wrap items-center md:my-16">
-            <div className="flex flex-col px-4 md:w-3/4 md:px-0">
-                <h1 className="self-start text-4xl font-semibold tracking-tighter">
-                    Lista de deseos de {listUser?.nombre}
-                </h1>
-                <div className="mt-6 flex flex-wrap gap-4 md:mt-10 md:gap-8">
+            <div className="flex flex-col px-8 md:w-3/4 md:px-0">
+                <div className="flex justify-between">
+                    <h1 className="self-start text-4xl font-semibold tracking-tighter">
+                        Lista de deseos de {listUser?.nombre}
+                    </h1>
+                </div>
+                <div className="mt-6 flex flex-wrap justify-center gap-4 md:mt-10 md:gap-8">
                     {!products.length && 'La lista de deseos está vacia'}
                     {products.map(({ libro }) => (
                         <ProductCardWishlist
