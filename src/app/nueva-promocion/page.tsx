@@ -47,7 +47,7 @@ export default function NuevaPromocion() {
         const value = (e.target as HTMLInputElement).value
         setLibros(value)
         getProductsByName(value.split(',').at(-1)!).then(libros =>
-            setAutocompletado(libros.map((libro: any) => ({ name: libro.titulo })))
+            setAutocompletado(libros.map(libro => ({ name: libro.titulo })))
         )
     }
 

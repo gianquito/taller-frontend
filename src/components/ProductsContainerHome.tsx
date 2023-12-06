@@ -4,9 +4,10 @@ import { getGeneros, getProductsByName } from '@/services/graphql'
 import ProductCardHome from './ProductCardHome'
 import CargarLibroHome from './CargarLibroHome'
 import { useEffect, useState } from 'react'
+import { libro } from '@/types/libro'
 
 export default function ProductsHome({ nombre }: { nombre?: string }) {
-    const [products, setProducts] = useState<any[]>([])
+    const [products, setProducts] = useState<libro[]>([])
     const [generos, setGeneros] = useState<any[]>([])
     const [generoFilter, setGeneroFilter] = useState('Todos')
     const [loading, setLoading] = useState(true)
@@ -22,9 +23,7 @@ export default function ProductsHome({ nombre }: { nombre?: string }) {
                 return
             }
             setProducts(
-                products.filter((product: any) =>
-                    product.generos.find(({ genero }: any) => genero.nombreGenero === generoFilter)
-                )
+                products.filter(product => product.generos.find(({ genero }) => genero.nombreGenero === generoFilter))
             )
         })
     }, [generoFilter])

@@ -1,6 +1,7 @@
 'use client'
 
 import { addProductToCart, deleteProductFromCart } from '@/services/graphql'
+import { libro } from '@/types/libro'
 import { calculateDiscount, formatPrice } from '@/utils'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
@@ -17,7 +18,7 @@ interface ProductCartProps {
     stock: number
     fetch_products: () => void
     setAmounts: React.Dispatch<any>
-    libro: any
+    libro: libro
 }
 
 export default function ProductCart({

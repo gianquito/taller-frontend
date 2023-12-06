@@ -1,3 +1,4 @@
+import { libro } from '@/types/libro'
 import { userType } from '@/types/user'
 import { SERVER_URL, getCookie } from '@/utils'
 
@@ -80,7 +81,7 @@ export const updateUser = async (
     return data.data
 }
 
-export const getProducts = async () => {
+export const getProducts = async (): Promise<libro[]> => {
     const request = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
@@ -140,7 +141,7 @@ export const getProducts = async () => {
     return products.data.libros
 }
 
-export const getProduct = async (isbn: number) => {
+export const getProduct = async (isbn: number): Promise<libro> => {
     const request = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
@@ -207,7 +208,7 @@ export const getProduct = async (isbn: number) => {
     return products.data.libros[0]
 }
 
-export const getProductsByName = async (nombre: string) => {
+export const getProductsByName = async (nombre: string): Promise<libro[]> => {
     if (!nombre) {
         nombre = ''
     }
