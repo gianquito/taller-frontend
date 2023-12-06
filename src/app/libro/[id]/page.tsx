@@ -46,17 +46,16 @@ export default async function Libro({ params }: { params: { id: number } }) {
                     </div>
 
                     <div className="mt-1 flex flex-col gap-0.5 text-sm text-neutral-500">
-                        <p>Autores: {libro.autores.map(({ autor }: any) => autor.nombreAutor).join(', ')}</p>
+                        <p>Autores: {libro.autores.map(({ autor }) => autor.nombreAutor).join(', ')}</p>
                         <p>Dimensiones: {libro.dimensiones}</p>
                         <p>
                             Editoriales:{' '}
-                            {libro.editoriales.map(({ editorial }: any) => editorial.nombreEditorial).join(', ')}
+                            {libro.editoriales.map(({ editorial }) => editorial.nombreEditorial).join(', ')}
                         </p>
                         <p>Páginas: {libro.paginas}</p>
-                        <p>Géneros: {libro.generos.map(({ genero }: any) => genero.nombreGenero).join(', ')}</p>
+                        <p>Géneros: {libro.generos.map(({ genero }) => genero.nombreGenero).join(', ')}</p>
                         <p>
-                            Encuadernados:{' '}
-                            {libro.encuadernados.map(({ encuadernado }: any) => encuadernado.tipo).join(', ')}
+                            Encuadernados: {libro.encuadernados.map(({ encuadernado }) => encuadernado.tipo).join(', ')}
                         </p>
                     </div>
                 </div>

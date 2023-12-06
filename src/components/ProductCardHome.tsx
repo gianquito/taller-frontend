@@ -1,3 +1,4 @@
+import { libro } from '@/types/libro'
 import { calculateDiscount, formatPrice } from '@/utils'
 import Link from 'next/link'
 
@@ -7,7 +8,7 @@ interface ProductCardHomeProps {
     author: string
     price: number
     id: number
-    libro: any
+    libro: libro
 }
 
 export default function ProductCardHome({ title, image, author, price, id, libro }: ProductCardHomeProps) {

@@ -8,7 +8,7 @@ export default function GestionCards() {
     const [clientes, setClientes] = useState<number | undefined>()
 
     useEffect(() => {
-        getProducts().then(products => setStock(products.reduce((acc: number, curr: any) => acc + curr.stock, 0)))
+        getProducts().then(products => setStock(products.reduce((acc: number, curr) => acc + curr.stock, 0)))
         getPedidos().then(pedidos => setPedidos(pedidos))
         getUsers().then(clientes => setClientes(clientes.length))
     }, [])

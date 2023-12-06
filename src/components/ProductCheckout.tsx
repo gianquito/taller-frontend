@@ -1,3 +1,4 @@
+import { libro } from '@/types/libro'
 import { calculateDiscount, formatPrice } from '@/utils'
 import Image from 'next/image'
 
@@ -7,7 +8,7 @@ interface ProductCheckoutProps {
     author: string
     price: number
     amount: number
-    libro: any
+    libro: libro
 }
 
 export default function ProductCheckout({ amount, author, image, price, title, libro }: ProductCheckoutProps) {

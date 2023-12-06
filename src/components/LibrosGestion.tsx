@@ -5,9 +5,10 @@ import Image from 'next/image'
 import { formatPrice } from '@/utils'
 import Kebab from './Kebab'
 import { useRouter } from 'next/navigation'
+import { libro } from '@/types/libro'
 
 export default function LibrosGestion() {
-    const [libros, setLibros] = useState<any[]>([])
+    const [libros, setLibros] = useState<libro[]>([])
     const [ventas, setVentas] = useState([])
 
     const router = useRouter()
@@ -55,14 +56,12 @@ export default function LibrosGestion() {
                                 <div className="flex flex-col gap-1">
                                     <p className="text-start text-xl font-semibold tracking-tighter">{libro.titulo}</p>
                                     <p className="text-start text-sm text-gray-600">
-                                        por: {libro.autores.map(({ autor }: any) => autor.nombreAutor).join(', ')}
+                                        por: {libro.autores.map(({ autor }) => autor.nombreAutor).join(', ')}
                                     </p>
                                 </div>
                             </div>
-                            <p className="ml-16">
-                                {libro.generos.map(({ genero }: any) => genero.nombreGenero).join(', ')}
-                            </p>
-                            <p>{libro.editoriales.map(({ editorial }: any) => editorial.nombreEditorial).join(', ')}</p>
+                            <p className="ml-16">{libro.generos.map(({ genero }) => genero.nombreGenero).join(', ')}</p>
+                            <p>{libro.editoriales.map(({ editorial }) => editorial.nombreEditorial).join(', ')}</p>
                             <p>{formatPrice(libro.precio)}</p>
                             <p>{libro.stock}</p>
                             <p>{getVentas(libro.isbn)}</p>

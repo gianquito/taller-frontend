@@ -5,8 +5,9 @@ import BlackButton from './BlackButton'
 import { useAuth } from '@/context/authContext'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-hot-toast'
+import { libro } from '@/types/libro'
 
-export default function AddToCartButton({ libro }: any) {
+export default function AddToCartButton({ libro }: { libro: libro }) {
     const { user, isAuthenticated } = useAuth()
     const router = useRouter()
     return (

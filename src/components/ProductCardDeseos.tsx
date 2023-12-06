@@ -1,4 +1,5 @@
 import { deleteWishlisted } from '@/services/graphql'
+import { libro } from '@/types/libro'
 import { calculateDiscount, formatPrice } from '@/utils'
 import Link from 'next/link'
 import { toast } from 'react-hot-toast'
@@ -11,7 +12,7 @@ interface ProductCardHomeProps {
     id: number
     id_usuario: string | undefined
     fetch_products: () => void
-    libro: any
+    libro: libro
     id_lista: string
 }
 
