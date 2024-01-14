@@ -10,15 +10,17 @@ import { toast } from 'react-hot-toast'
 import { getDirecciones, getProductsInCart } from '@/services/graphql'
 import { useAuth } from '@/context/authContext'
 import { calculateDiscount, formatPrice } from '@/utils'
+import { libro } from '@/types/libro'
+import { direccion } from '@/types/direccion'
 
 export default function Checkout() {
-    const [selectedAddress, setSelectedAddress] = useState<number | null>(null)
-    const [cartProducts, setCartProducts] = useState([])
+    const [selectedAddress, setSelectedAddress] = useState<string | null>(null)
+    const [cartProducts, setCartProducts] = useState<{ cantidad: number; libro: libro }[]>([])
     const router = useRouter()
     const { user, isAuthenticated } = useAuth()
     const [subtotal, setSubtotal] = useState(0)
-    const [addresses, setAddresses] = useState([])
-    const [costoEnvios, setCostoEnvios] = useState<any>({})
+    const [addresses, setAddresses] = useState<direccion[]>([])
+    const [costoEnvios, setCostoEnvios] = useState<{ [id: string]: number }>({})
 
     function handlePayment() {
         if (!user) {
@@ -34,7 +36,7 @@ export default function Checkout() {
         fetch('/pago', {
             method: 'POST',
             body: JSON.stringify({
-                products: cartProducts.map((product: any) => ({
+                products: cartProducts.map(product => ({
                     quantity: product.cantidad,
                     unit_price: product.libro.precio,
                     title: product.libro.titulo,
@@ -64,9 +66,9 @@ export default function Checkout() {
 
     useEffect(() => {
         let acc = 0
-        cartProducts.forEach((p: any) => {
+        cartProducts.forEach(p => {
             const discount = calculateDiscount(p.libro)
-            acc += p.cantidad * (discount.hasDiscount ? discount.discountedPrice : p.libro.precio)
+            acc += p.cantidad * (discount.hasDiscount ? discount.discountedPrice! : p.libro.precio)
         })
         setSubtotal(acc)
     }, [cartProducts])
@@ -90,13 +92,15 @@ export default function Checkout() {
                             numero={389}
                             ciudad="Concepcion del Uruguay"
                             cp={3260}
-                            id={-1}
-                            isSelected={selectedAddress === -1}
+                            id={'-1'}
+                            isSelected={selectedAddress === '-1'}
                             setCostoEnvios={setCostoEnvios}
                             key={-1}
-                            toggle={() => (selectedAddress === -1 ? setSelectedAddress(null) : setSelectedAddress(-1))}
+                            toggle={() =>
+                                selectedAddress === '-1' ? setSelectedAddress(null) : setSelectedAddress('-1')
+                            }
                         />
-                        {addresses.map((dir: any) => (
+                        {addresses.map(dir => (
                             <CheckoutAddress
                                 calle={dir.calle}
                                 numero={dir.numero}
@@ -121,7 +125,7 @@ export default function Checkout() {
                 </div>
                 <div className="mt-10 flex flex-col items-center gap-4">
                     <p className="mb-2 self-start text-xl">Tu carrito</p>
-                    {cartProducts.map((product: any) => (
+                    {cartProducts.map(product => (
                         <ProductCheckout
                             title={product.libro.titulo}
                             author={product.libro.autores[0].autor.nombreAutor}

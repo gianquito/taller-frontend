@@ -8,6 +8,7 @@ import { getProductsByName, getPromocion, updatePromocion } from '@/services/gra
 import { useDetectClickOutside } from 'react-detect-click-outside'
 import BlackButton from '@/components/BlackButton'
 import toast from 'react-hot-toast'
+import { libro } from '@/types/libro'
 
 export default function EditarPromocion({ params }: { params: { id: number } }) {
     const [nombre, setNombre] = useState('')
@@ -17,7 +18,7 @@ export default function EditarPromocion({ params }: { params: { id: number } }) 
     const [libros, setLibros] = useState('')
     const [imagen, setImagen] = useState('')
 
-    const [autocompletado, setAutocompletado] = useState<any[]>([])
+    const [autocompletado, setAutocompletado] = useState<{ name: string }[]>([])
     const [showAutocompletado, setShowAutocompletado] = useState(false)
 
     const { user, isAuthenticated } = useAuth()
@@ -49,7 +50,7 @@ export default function EditarPromocion({ params }: { params: { id: number } }) 
             setFechaInicio(promo.fechaInicio.slice(0, 10))
             setFechaFin(promo.fechaFin.slice(0, 10))
             setImagen(atob(promo.imagen))
-            setLibros(promo.libros.map(({ libro }: any) => libro.titulo).join(','))
+            setLibros(promo.libros.map(({ libro }: { libro: libro }) => libro.titulo).join(','))
         })
     }, [user, isAuthenticated])
 

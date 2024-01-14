@@ -22,7 +22,7 @@ export default function NuevoLibro({ params }: { params: { id: number } }) {
     const [stock, setStock] = useState<number | undefined>()
     const [descripcion, setDescripcion] = useState('')
 
-    const [autocompletado, setAutocompletado] = useState<any[]>([])
+    const [autocompletado, setAutocompletado] = useState<{ name: string }[]>([])
     const [showAutocompletado, setShowAutocompletado] = useState('')
 
     const { user, isAuthenticated } = useAuth()

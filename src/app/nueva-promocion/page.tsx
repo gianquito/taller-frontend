@@ -16,7 +16,7 @@ export default function NuevaPromocion() {
     const [porcentaje, setPorcentaje] = useState<number | undefined>()
     const [libros, setLibros] = useState('')
 
-    const [autocompletado, setAutocompletado] = useState<any[]>([])
+    const [autocompletado, setAutocompletado] = useState<{ name: string }[]>([])
     const [showAutocompletado, setShowAutocompletado] = useState(false)
 
     const { user, isAuthenticated } = useAuth()

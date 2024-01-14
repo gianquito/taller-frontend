@@ -11,8 +11,12 @@ interface CheckoutAdressProps {
     ciudad: string
     isSelected: boolean
     toggle: () => void
-    setCostoEnvios: React.Dispatch<React.SetStateAction<{}>>
-    id: number
+    setCostoEnvios: React.Dispatch<
+        React.SetStateAction<{
+            [id: string]: number
+        }>
+    >
+    id: string
     local?: boolean
 }
 

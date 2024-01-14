@@ -3,6 +3,7 @@
 import ProductCardFavorites from '@/components/ProductCardFavorites'
 import { useAuth } from '@/context/authContext'
 import { getFavoritos } from '@/services/graphql'
+import { libro } from '@/types/libro'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
@@ -11,7 +12,7 @@ export default function Favoritos() {
     const { user, isAuthenticated } = useAuth()
     const router = useRouter()
 
-    const [products, setProducts] = useState<any[]>([])
+    const [products, setProducts] = useState<{ libro: libro }[]>([])
 
     function fetchProducts() {
         getFavoritos(user.idUsuario)

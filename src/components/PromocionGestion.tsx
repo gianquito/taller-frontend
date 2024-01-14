@@ -1,12 +1,12 @@
-import Image from 'next/image'
 import ActionButton from './ActionButton'
 import Kebab from './Kebab'
 import { useState, useEffect } from 'react'
 import { getPromociones } from '@/services/graphql'
 import { useRouter } from 'next/navigation'
+import { promocion } from '@/types/promocion'
 
 export default function PromocionGestion() {
-    const [promociones, setPromociones] = useState<any[]>([])
+    const [promociones, setPromociones] = useState<promocion[]>([])
     const router = useRouter()
 
     useEffect(() => {

@@ -4,6 +4,7 @@ import BlackButton from '@/components/BlackButton'
 import ProductCart from '@/components/ProductCart'
 import { useAuth } from '@/context/authContext'
 import { getProductsInCart } from '@/services/graphql'
+import { libro } from '@/types/libro'
 import { formatPrice } from '@/utils'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -11,8 +12,8 @@ import { useEffect, useState } from 'react'
 
 export default function Carrito() {
     const { user, isAuthenticated } = useAuth()
-    const [products, setProducts] = useState<any[]>([])
-    const [amounts, setAmounts] = useState<any>({})
+    const [products, setProducts] = useState<{ cantidad: number; libro: libro }[]>([])
+    const [amounts, setAmounts] = useState<{ [id: string]: { amount: number; price: number } }>({})
     const [subtotal, setSubtotal] = useState(0)
 
     const router = useRouter()
