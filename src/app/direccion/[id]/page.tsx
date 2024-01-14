@@ -15,7 +15,7 @@ export default function DireccionId({ params }: { params: { id: number } }) {
     const [cp, setCp] = useState<number | undefined>()
 
     const [showAutocompletado, setShowAutocompletado] = useState(false)
-    const [autocompletado, setAutocompletado] = useState<any[]>([])
+    const [autocompletado, setAutocompletado] = useState<{ name: string }[]>([])
 
     const { user } = useAuth()
     const router = useRouter()
@@ -51,7 +51,9 @@ export default function DireccionId({ params }: { params: { id: number } }) {
     function handleCiudadSearch(e: ChangeEvent) {
         const value = (e.target as HTMLInputElement).value
         setCiudad(value)
-        getCiudad(value).then(ciudades => setAutocompletado(ciudades.map((ci: any) => ({ name: ci.nombreCiudad }))))
+        getCiudad(value).then(ciudades =>
+            setAutocompletado(ciudades.map((ci: { nombreCiudad: string }) => ({ name: ci.nombreCiudad })))
+        )
     }
 
     return (

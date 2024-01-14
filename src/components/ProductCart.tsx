@@ -17,7 +17,14 @@ interface ProductCartProps {
     cart_id: number
     stock: number
     fetch_products: () => void
-    setAmounts: React.Dispatch<any>
+    setAmounts: React.Dispatch<
+        React.SetStateAction<{
+            [id: string]: {
+                amount: number
+                price: number
+            }
+        }>
+    >
     libro: libro
 }
 

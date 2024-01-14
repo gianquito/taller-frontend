@@ -569,7 +569,7 @@ export const updateDireccion = async (
     return direccion.data
 }
 
-export const deleteDireccion = async (id_direccion: number) => {
+export const deleteDireccion = async (id_direccion: string) => {
     const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({

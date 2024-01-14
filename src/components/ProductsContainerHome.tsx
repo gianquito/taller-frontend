@@ -8,15 +8,16 @@ import { libro } from '@/types/libro'
 
 export default function ProductsHome({ nombre }: { nombre?: string }) {
     const [products, setProducts] = useState<libro[]>([])
-    const [generos, setGeneros] = useState<any[]>([])
+    const [generos, setGeneros] = useState<{ nombreGenero: string; idGenero: string }[]>([])
     const [generoFilter, setGeneroFilter] = useState('Todos')
     const [loading, setLoading] = useState(true)
+
     useEffect(() => {
         getGeneros().then(generos => setGeneros(generos))
     }, [])
 
     useEffect(() => {
-        getProductsByName(nombre!).then(products => {
+        getProductsByName(nombre ?? '').then(products => {
             setLoading(false)
             if (generoFilter === 'Todos') {
                 setProducts(products)

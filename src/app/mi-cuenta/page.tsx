@@ -1,10 +1,10 @@
 'use client'
 
-import ActionButton from '@/components/ActionButton'
 import BlackButton from '@/components/BlackButton'
 import ManagerAddress from '@/components/ManagerAddress'
 import { useAuth } from '@/context/authContext'
 import { getDirecciones, updateUser } from '@/services/graphql'
+import { direccion } from '@/types/direccion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -16,7 +16,7 @@ export default function MiCuenta() {
     const [nombre, setNombre] = useState('')
     const [apellido, setApellido] = useState('')
     const [email, setEmail] = useState('')
-    const [direcciones, setDirecciones] = useState([])
+    const [direcciones, setDirecciones] = useState<direccion[]>([])
     const { user } = useAuth()
     const router = useRouter()
 
@@ -68,7 +68,7 @@ export default function MiCuenta() {
                 <BlackButton text="Guardar cambios" onClick={editUser} />
                 <p className="mb-2 mt-4 font-bold">Direcciones</p>
                 <div className="flex flex-col gap-4">
-                    {direcciones.map((dir: any) => (
+                    {direcciones.map(dir => (
                         <ManagerAddress
                             key={dir.idDireccion}
                             calle={dir.calle}

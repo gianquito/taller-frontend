@@ -3,6 +3,7 @@ import ProductCardWishlist from '@/components/ProductCardDeseos'
 import ShareWishlistButton from '@/components/ShareWishlistButton'
 import { useAuth } from '@/context/authContext'
 import { getUserById, getWishlist } from '@/services/graphql'
+import { libro } from '@/types/libro'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
@@ -10,7 +11,7 @@ import { toast } from 'react-hot-toast'
 export default function ListaDeseos({ params }: { params: { id: string } }) {
     const { user } = useAuth()
     const router = useRouter()
-    const [products, setProducts] = useState<any[]>([])
+    const [products, setProducts] = useState<{ idUsuario: string; libro: libro }[]>([])
     const [listUser, setListuser] = useState<{ nombre: string } | 'loading'>('loading')
 
     function fetchProducts() {

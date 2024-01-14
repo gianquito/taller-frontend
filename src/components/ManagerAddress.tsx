@@ -10,7 +10,7 @@ interface ManagerAddressProps {
     numero: number
     cp: number
     ciudad: string
-    id: number
+    id: string
 }
 
 export default function ManagerAddress({ calle, numero, cp, ciudad, id }: ManagerAddressProps) {
