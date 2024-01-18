@@ -2,6 +2,7 @@
 
 import BlackButton from '@/components/BlackButton'
 import { useAuth } from '@/context/authContext'
+import useAutocompletado from '@/hooks/useAutocompletado'
 import { addDireccion, getCiudad } from '@/services/graphql'
 import { useRouter } from 'next/navigation'
 import { ChangeEvent, useState } from 'react'
@@ -14,15 +15,14 @@ export default function Direccion() {
     const [ciudad, setCiudad] = useState('')
     const [cp, setCp] = useState<number | undefined>()
 
-    const [showAutocompletado, setShowAutocompletado] = useState(false)
-    const [autocompletado, setAutocompletado] = useState<{ name: string }[]>([])
+    const autocompletado = useAutocompletado()
 
     const { user } = useAuth()
     const router = useRouter()
 
     const ref = useDetectClickOutside({
         onTriggered: () => {
-            setShowAutocompletado(false)
+            autocompletado.hide()
         },
     })
 
@@ -40,7 +40,7 @@ export default function Direccion() {
         const value = (e.target as HTMLInputElement).value
         setCiudad(value)
         getCiudad(value).then(ciudades =>
-            setAutocompletado(ciudades.map((ci: { nombreCiudad: string }) => ({ name: ci.nombreCiudad })))
+            autocompletado.setOptions(ciudades.map((ci: { nombreCiudad: string }) => ({ name: ci.nombreCiudad })))
         )
     }
 
@@ -68,17 +68,17 @@ export default function Direccion() {
                             placeholder="Ciudad"
                             value={ciudad}
                             onChange={handleCiudadSearch}
-                            onClick={() => setShowAutocompletado(true)}
+                            onClick={() => autocompletado.setCategory('ciudad')}
                         />
-                        {showAutocompletado && (
+                        {autocompletado.getCategory() === 'ciudad' && (
                             <div className="absolute w-full border border-black bg-white px-6">
-                                {autocompletado.map(elems => (
+                                {autocompletado.get().map(elems => (
                                     <p
                                         className="my-2 cursor-pointer text-lg hover:bg-neutral-200"
                                         key={elems.name}
                                         onClick={() => {
                                             setCiudad(elems.name)
-                                            setShowAutocompletado(false)
+                                            autocompletado.hide()
                                         }}
                                     >
                                         {elems.name}

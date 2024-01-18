@@ -8,6 +8,7 @@ import { addPromocion, getProducts, getProductsByName } from '@/services/graphql
 import { useDetectClickOutside } from 'react-detect-click-outside'
 import BlackButton from '@/components/BlackButton'
 import toast from 'react-hot-toast'
+import useAutocompletado from '@/hooks/useAutocompletado'
 
 export default function NuevaPromocion() {
     const [nombre, setNombre] = useState('')
@@ -16,8 +17,7 @@ export default function NuevaPromocion() {
     const [porcentaje, setPorcentaje] = useState<number | undefined>()
     const [libros, setLibros] = useState('')
 
-    const [autocompletado, setAutocompletado] = useState<{ name: string }[]>([])
-    const [showAutocompletado, setShowAutocompletado] = useState(false)
+    const autocompletado = useAutocompletado()
 
     const { user, isAuthenticated } = useAuth()
 
@@ -25,7 +25,7 @@ export default function NuevaPromocion() {
 
     const ref = useDetectClickOutside({
         onTriggered: () => {
-            setShowAutocompletado(false)
+            autocompletado.hide()
         },
     })
 
@@ -47,7 +47,7 @@ export default function NuevaPromocion() {
         const value = (e.target as HTMLInputElement).value
         setLibros(value)
         getProductsByName(value.split(',').at(-1)!).then(libros =>
-            setAutocompletado(libros.map(libro => ({ name: libro.titulo })))
+            autocompletado.setOptions(libros.map(libro => ({ name: libro.titulo })))
         )
     }
 
@@ -111,11 +111,11 @@ export default function NuevaPromocion() {
                         placeholder="Libros"
                         value={libros}
                         onChange={handleLibroSearch}
-                        onClick={() => setShowAutocompletado(true)}
+                        onClick={() => autocompletado.setCategory('libros')}
                     />
-                    {showAutocompletado && (
+                    {autocompletado.getCategory() === 'libros' && (
                         <div className="w-full border border-black bg-white px-6">
-                            {autocompletado.map(elems => (
+                            {autocompletado.get().map(elems => (
                                 <p
                                     className=" my-2 cursor-pointer text-lg hover:bg-neutral-200"
                                     key={elems.name}
@@ -129,7 +129,7 @@ export default function NuevaPromocion() {
                                                 (prev.indexOf(',') !== -1 ? ',' : '') +
                                                 elems.name
                                         )
-                                        setShowAutocompletado(false)
+                                        autocompletado.hide()
                                     }}
                                 >
                                     {elems.name}
