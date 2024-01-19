@@ -7,6 +7,7 @@ import { useFilePicker } from 'use-file-picker'
 import { toast } from 'react-hot-toast'
 import { useAuth } from '@/context/authContext'
 import { useRouter } from 'next/navigation'
+import useAutocompletado from '@/hooks/useAutocompletado'
 
 export default function NuevoLibro() {
     const [isbn, setIsbn] = useState<number | undefined>()
@@ -21,15 +22,14 @@ export default function NuevoLibro() {
     const [stock, setStock] = useState<number | undefined>()
     const [descripcion, setDescripcion] = useState('')
 
-    const [autocompletado, setAutocompletado] = useState<{ name: string }[]>([])
-    const [showAutocompletado, setShowAutocompletado] = useState('')
+    const autocompletado = useAutocompletado()
 
     const { user, isAuthenticated } = useAuth()
     const router = useRouter()
 
     const ref = useDetectClickOutside({
         onTriggered: () => {
-            setShowAutocompletado('')
+            autocompletado.hide()
         },
     })
 
@@ -43,7 +43,7 @@ export default function NuevoLibro() {
         const value = (e.target as HTMLInputElement).value
         setEditorial(value)
         getEditoriales(value.split(',').at(-1)!).then(editoriales =>
-            setAutocompletado(editoriales.map((ed: any) => ({ name: ed.nombreEditorial })))
+            autocompletado.setOptions(editoriales.map((ed: any) => ({ name: ed.nombreEditorial })))
         )
     }
 
@@ -51,7 +51,7 @@ export default function NuevoLibro() {
         const value = (e.target as HTMLInputElement).value
         setAutor(value)
         getAutores(value.split(',').at(-1)!).then(autores =>
-            setAutocompletado(autores.map((au: any) => ({ name: au.nombreAutor })))
+            autocompletado.setOptions(autores.map((au: any) => ({ name: au.nombreAutor })))
         )
     }
 
@@ -59,7 +59,7 @@ export default function NuevoLibro() {
         const value = (e.target as HTMLInputElement).value
         setGenero(value)
         getGeneros(value.split(',').at(-1)!).then(generos =>
-            setAutocompletado(generos.map((g: any) => ({ name: g.nombreGenero })))
+            autocompletado.setOptions(generos.map((g: any) => ({ name: g.nombreGenero })))
         )
     }
 
@@ -67,7 +67,7 @@ export default function NuevoLibro() {
         const value = (e.target as HTMLInputElement).value
         setEncuadernado(value)
         getEncuadernados(value.split(',').at(-1)!).then(encuadernados =>
-            setAutocompletado(encuadernados.map((en: any) => ({ name: en.tipo })))
+            autocompletado.setOptions(encuadernados.map((en: any) => ({ name: en.tipo })))
         )
     }
 
@@ -78,10 +78,6 @@ export default function NuevoLibro() {
             return
         }
     }, [user, isAuthenticated])
-
-    useEffect(() => {
-        setAutocompletado([])
-    }, [showAutocompletado])
 
     function addLibro() {
         if (
@@ -157,11 +153,11 @@ export default function NuevoLibro() {
                         placeholder="Autores"
                         value={autor}
                         onChange={handleAutorSearch}
-                        onClick={() => setShowAutocompletado('autor')}
+                        onClick={() => autocompletado.setCategory('autor')}
                     />
-                    {showAutocompletado === 'autor' && (
+                    {autocompletado.getCategory() === 'autor' && (
                         <div className="w-full border border-black bg-white px-6">
-                            {autocompletado.map(elems => (
+                            {autocompletado.get().map(elems => (
                                 <p
                                     className=" my-2 cursor-pointer text-lg hover:bg-neutral-200"
                                     key={elems.name}
@@ -177,7 +173,7 @@ export default function NuevoLibro() {
                                                 (prev.indexOf(',') !== -1 ? ',' : '') +
                                                 elems.name
                                         )
-                                        setShowAutocompletado('')
+                                        autocompletado.hide()
                                     }}
                                 >
                                     {elems.name}
@@ -193,11 +189,11 @@ export default function NuevoLibro() {
                         placeholder="Editoriales"
                         value={editorial}
                         onChange={handleEditorialSearch}
-                        onClick={() => setShowAutocompletado('editorial')}
+                        onClick={() => autocompletado.setCategory('editorial')}
                     />
-                    {showAutocompletado === 'editorial' && (
+                    {autocompletado.getCategory() === 'editorial' && (
                         <div className="w-full border border-black bg-white px-6">
-                            {autocompletado.map(elems => (
+                            {autocompletado.get().map(elems => (
                                 <p
                                     className=" my-2 cursor-pointer text-lg hover:bg-neutral-200"
                                     key={elems.name}
@@ -211,7 +207,7 @@ export default function NuevoLibro() {
                                                 (prev.indexOf(',') !== -1 ? ',' : '') +
                                                 elems.name
                                         )
-                                        setShowAutocompletado('')
+                                        autocompletado.hide()
                                     }}
                                 >
                                     {elems.name}
@@ -261,11 +257,11 @@ export default function NuevoLibro() {
                         placeholder="Géneros"
                         value={genero}
                         onChange={handleGeneroSearch}
-                        onClick={() => setShowAutocompletado('genero')}
+                        onClick={() => autocompletado.setCategory('genero')}
                     />
-                    {showAutocompletado === 'genero' && (
+                    {autocompletado.getCategory() === 'genero' && (
                         <div className="w-full border border-black bg-white px-6">
-                            {autocompletado.map(elems => (
+                            {autocompletado.get().map(elems => (
                                 <p
                                     className="my-2 cursor-pointer text-lg hover:bg-neutral-200"
                                     key={elems.name}
@@ -279,7 +275,7 @@ export default function NuevoLibro() {
                                                 (prev.indexOf(',') !== -1 ? ',' : '') +
                                                 elems.name
                                         )
-                                        setShowAutocompletado('')
+                                        autocompletado.hide()
                                     }}
                                 >
                                     {elems.name}
@@ -295,11 +291,11 @@ export default function NuevoLibro() {
                         placeholder="Encuadernado"
                         value={encuadernado}
                         onChange={handleEncuadernadoSearch}
-                        onClick={() => setShowAutocompletado('encuadernado')}
+                        onClick={() => autocompletado.setCategory('encuadernado')}
                     />
-                    {showAutocompletado === 'encuadernado' && (
+                    {autocompletado.getCategory() === 'encuadernado' && (
                         <div className="w-full border border-black bg-white px-6">
-                            {autocompletado.map(elems => (
+                            {autocompletado.get().map(elems => (
                                 <p
                                     className="my-2 cursor-pointer text-lg hover:bg-neutral-200"
                                     key={elems.name}
@@ -313,7 +309,7 @@ export default function NuevoLibro() {
                                                 (prev.indexOf(',') !== -1 ? ',' : '') +
                                                 elems.name
                                         )
-                                        setShowAutocompletado('')
+                                        autocompletado.hide()
                                     }}
                                 >
                                     {elems.name}
