@@ -26,7 +26,10 @@ export default function ListaDeseos({ params }: { params: { id: string } }) {
     }, [])
 
     if (listUser === 'loading') return null
-    if (!listUser) router.push('/')
+    if (!listUser) {
+        router.push('/')
+        return null
+    }
 
     return (
         <div className="my-8 flex flex-col flex-wrap items-center md:my-16">
