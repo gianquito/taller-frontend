@@ -36,13 +36,16 @@ export default function Checkout() {
         fetch('/pago', {
             method: 'POST',
             body: JSON.stringify({
-                products: cartProducts.map(product => ({
-                    quantity: product.cantidad,
-                    unit_price: product.libro.precio,
-                    title: product.libro.titulo,
-                    id: product.libro.isbn,
-                    currency_id: 'ARS',
-                })),
+                products: cartProducts.map(product => {
+                    const discount = calculateDiscount(product.libro)
+                    return {
+                        quantity: product.cantidad,
+                        unit_price: discount.hasDiscount ? discount.discountedPrice : discount.originalPrice,
+                        title: product.libro.titulo,
+                        id: product.libro.isbn,
+                        currency_id: 'ARS',
+                    }
+                }),
                 envio: costoEnvios[selectedAddress],
                 id_usuario: user.idUsuario,
             }),
