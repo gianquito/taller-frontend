@@ -1,37 +1,28 @@
 'use client'
 import BlackButton from '@/components/BlackButton'
 import { addProduct, getAutores, getEditoriales, getEncuadernados, getGeneros } from '@/services/graphql'
-import { ChangeEvent, useEffect, useState } from 'react'
-import { useDetectClickOutside } from 'react-detect-click-outside'
+import { useEffect, useState } from 'react'
 import { useFilePicker } from 'use-file-picker'
 import { toast } from 'react-hot-toast'
 import { useAuth } from '@/context/authContext'
 import { useRouter } from 'next/navigation'
-import useAutocompletado from '@/hooks/useAutocompletado'
+import { AutocompleteBox } from '@/components/ui/AutocompleteBox'
 
 export default function NuevoLibro() {
     const [isbn, setIsbn] = useState<number | undefined>()
     const [titulo, setTitulo] = useState('')
-    const [autor, setAutor] = useState('')
-    const [editorial, setEditorial] = useState('')
     const [paginas, setPaginas] = useState<number | undefined>()
     const [dimensiones, setDimensiones] = useState('')
-    const [genero, setGenero] = useState('')
-    const [encuadernado, setEncuadernado] = useState('')
     const [precio, setPrecio] = useState<number | undefined>()
     const [stock, setStock] = useState<number | undefined>()
     const [descripcion, setDescripcion] = useState('')
-
-    const autocompletado = useAutocompletado()
+    const [autores, setAutores] = useState<string[]>([])
+    const [generos, setGeneros] = useState<string[]>([])
+    const [editoriales, setEditoriales] = useState<string[]>([])
+    const [encuadernados, setEncuadernados] = useState<string[]>([])
 
     const { user, isAuthenticated } = useAuth()
     const router = useRouter()
-
-    const ref = useDetectClickOutside({
-        onTriggered: () => {
-            autocompletado.hide()
-        },
-    })
 
     const { openFilePicker, filesContent, loading, errors } = useFilePicker({
         readAs: 'DataURL',
@@ -39,36 +30,24 @@ export default function NuevoLibro() {
         multiple: true,
     })
 
-    function handleEditorialSearch(e: ChangeEvent) {
-        const value = (e.target as HTMLInputElement).value
-        setEditorial(value)
-        getEditoriales(value.split(',').at(-1)!).then(editoriales =>
-            autocompletado.setOptions(editoriales.map((ed: any) => ({ name: ed.nombreEditorial })))
-        )
+    async function fetchEditoriales() {
+        const editoriales = await getEditoriales('')
+        return editoriales.map((ed: any) => ed.nombreEditorial)
     }
 
-    function handleAutorSearch(e: ChangeEvent) {
-        const value = (e.target as HTMLInputElement).value
-        setAutor(value)
-        getAutores(value.split(',').at(-1)!).then(autores =>
-            autocompletado.setOptions(autores.map((au: any) => ({ name: au.nombreAutor })))
-        )
+    async function fetchAutores() {
+        const autores = await getAutores('')
+        return autores.map((autor: any) => autor.nombreAutor)
     }
 
-    function handleGeneroSearch(e: ChangeEvent) {
-        const value = (e.target as HTMLInputElement).value
-        setGenero(value)
-        getGeneros(value.split(',').at(-1)!).then(generos =>
-            autocompletado.setOptions(generos.map((g: any) => ({ name: g.nombreGenero })))
-        )
+    async function fetchGeneros() {
+        const generos = await getGeneros('')
+        return generos.map((g: any) => g.nombreGenero)
     }
 
-    function handleEncuadernadoSearch(e: ChangeEvent) {
-        const value = (e.target as HTMLInputElement).value
-        setEncuadernado(value)
-        getEncuadernados(value.split(',').at(-1)!).then(encuadernados =>
-            autocompletado.setOptions(encuadernados.map((en: any) => ({ name: en.tipo })))
-        )
+    async function fetchEncuadernados() {
+        const encuadernados = await getEncuadernados('')
+        return encuadernados.map((en: any) => en.tipo)
     }
 
     useEffect(() => {
@@ -84,12 +63,12 @@ export default function NuevoLibro() {
             !isbn ||
             !filesContent.length ||
             !titulo.trim() ||
-            !autor.trim() ||
-            !editorial.trim() ||
+            !autores.length ||
+            !editoriales.length ||
             !paginas ||
             !dimensiones.trim() ||
-            !genero.trim() ||
-            !encuadernado.trim() ||
+            !generos.length ||
+            !encuadernados.length ||
             !precio ||
             !stock ||
             !descripcion.trim()
@@ -98,10 +77,10 @@ export default function NuevoLibro() {
             return
         }
         addProduct(
-            autor,
-            editorial,
-            genero,
-            encuadernado,
+            autores,
+            editoriales,
+            generos,
+            encuadernados,
             descripcion,
             dimensiones,
             btoa(filesContent[0].content),
@@ -147,75 +126,13 @@ export default function NuevoLibro() {
                     onChange={e => setTitulo(e.target.value)}
                 />
                 <label className="text-sm">Autores</label>
-                <div ref={ref}>
-                    <input
-                        className="mb-3 w-full border border-black px-5 py-3"
-                        placeholder="Autores"
-                        value={autor}
-                        onChange={handleAutorSearch}
-                        onClick={() => autocompletado.setCategory('autor')}
-                    />
-                    {autocompletado.getCategory() === 'autor' && (
-                        <div className="w-full border border-black bg-white px-6">
-                            {autocompletado.get().map(elems => (
-                                <p
-                                    className=" my-2 cursor-pointer text-lg hover:bg-neutral-200"
-                                    key={elems.name}
-                                    onClick={() => {
-                                        // La peor linea de codigo del trabajo
-                                        // Reemplaza desde la ultima coma hasta el final con el nombre clickeado del autocompletado
-                                        setAutor(
-                                            prev =>
-                                                prev.slice(
-                                                    0,
-                                                    prev.lastIndexOf(',') !== -1 ? prev.lastIndexOf(',') : 0
-                                                ) +
-                                                (prev.indexOf(',') !== -1 ? ',' : '') +
-                                                elems.name
-                                        )
-                                        autocompletado.hide()
-                                    }}
-                                >
-                                    {elems.name}
-                                </p>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                <AutocompleteBox availableOptions={fetchAutores()} category="autor" onValuesChange={setAutores} />
                 <label className="text-sm">Editoriales</label>
-                <div ref={ref}>
-                    <input
-                        className="mb-3 w-full border border-black px-5 py-3"
-                        placeholder="Editoriales"
-                        value={editorial}
-                        onChange={handleEditorialSearch}
-                        onClick={() => autocompletado.setCategory('editorial')}
-                    />
-                    {autocompletado.getCategory() === 'editorial' && (
-                        <div className="w-full border border-black bg-white px-6">
-                            {autocompletado.get().map(elems => (
-                                <p
-                                    className=" my-2 cursor-pointer text-lg hover:bg-neutral-200"
-                                    key={elems.name}
-                                    onClick={() => {
-                                        setEditorial(
-                                            prev =>
-                                                prev.slice(
-                                                    0,
-                                                    prev.lastIndexOf(',') !== -1 ? prev.lastIndexOf(',') : 0
-                                                ) +
-                                                (prev.indexOf(',') !== -1 ? ',' : '') +
-                                                elems.name
-                                        )
-                                        autocompletado.hide()
-                                    }}
-                                >
-                                    {elems.name}
-                                </p>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                <AutocompleteBox
+                    availableOptions={fetchEditoriales()}
+                    category="editorial"
+                    onValuesChange={setEditoriales}
+                />
                 <label className="text-sm">Páginas</label>
                 <input
                     className="mb-3 border border-black px-5 py-3"
@@ -251,73 +168,13 @@ export default function NuevoLibro() {
                     onChange={e => setStock(Number(e.target.value))}
                 />
                 <label className="text-sm">Géneros</label>
-                <div ref={ref}>
-                    <input
-                        className="mb-3 w-full border border-black px-5 py-3"
-                        placeholder="Géneros"
-                        value={genero}
-                        onChange={handleGeneroSearch}
-                        onClick={() => autocompletado.setCategory('genero')}
-                    />
-                    {autocompletado.getCategory() === 'genero' && (
-                        <div className="w-full border border-black bg-white px-6">
-                            {autocompletado.get().map(elems => (
-                                <p
-                                    className="my-2 cursor-pointer text-lg hover:bg-neutral-200"
-                                    key={elems.name}
-                                    onClick={() => {
-                                        setGenero(
-                                            prev =>
-                                                prev.slice(
-                                                    0,
-                                                    prev.lastIndexOf(',') !== -1 ? prev.lastIndexOf(',') : 0
-                                                ) +
-                                                (prev.indexOf(',') !== -1 ? ',' : '') +
-                                                elems.name
-                                        )
-                                        autocompletado.hide()
-                                    }}
-                                >
-                                    {elems.name}
-                                </p>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                <AutocompleteBox availableOptions={fetchGeneros()} category="genero" onValuesChange={setGeneros} />
                 <label className="text-sm">Encuadernado</label>
-                <div ref={ref}>
-                    <input
-                        className="mb-3 w-full border border-black px-5 py-3"
-                        placeholder="Encuadernado"
-                        value={encuadernado}
-                        onChange={handleEncuadernadoSearch}
-                        onClick={() => autocompletado.setCategory('encuadernado')}
-                    />
-                    {autocompletado.getCategory() === 'encuadernado' && (
-                        <div className="w-full border border-black bg-white px-6">
-                            {autocompletado.get().map(elems => (
-                                <p
-                                    className="my-2 cursor-pointer text-lg hover:bg-neutral-200"
-                                    key={elems.name}
-                                    onClick={() => {
-                                        setEncuadernado(
-                                            prev =>
-                                                prev.slice(
-                                                    0,
-                                                    prev.lastIndexOf(',') !== -1 ? prev.lastIndexOf(',') : 0
-                                                ) +
-                                                (prev.indexOf(',') !== -1 ? ',' : '') +
-                                                elems.name
-                                        )
-                                        autocompletado.hide()
-                                    }}
-                                >
-                                    {elems.name}
-                                </p>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                <AutocompleteBox
+                    availableOptions={fetchEncuadernados()}
+                    category="encuadernado"
+                    onValuesChange={setEncuadernados}
+                />
                 <label className="text-sm">Descripción</label>
                 <textarea
                     className="mb-3 w-full border border-black px-5 py-3"
