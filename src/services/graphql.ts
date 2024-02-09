@@ -1065,10 +1065,10 @@ export const deleteLibroPromociones = async (id_promocion: number) => {
 }
 
 export const addProduct = async (
-    autor: string,
-    editorial: string,
-    genero: string,
-    encuadernado: string,
+    autores: string[],
+    editoriales: string[],
+    generos: string[],
+    encuadernados: string[],
     descripcion: string,
     dimensiones: string,
     imagen: string,
@@ -1083,12 +1083,10 @@ export const addProduct = async (
     const dbGeneros = await getGeneros('')
     const dbEncuadernados = await getEncuadernados('')
 
-    const newAutores = autor.split(',').filter(a => !dbAutores.find((dbA: any) => dbA.nombreAutor === a))
-    const newEditoriales = editorial
-        .split(',')
-        .filter(e => !dbEditoriales.find((dbE: any) => dbE.nombreEditorial === e))
-    const newGeneros = genero.split(',').filter(g => !dbGeneros.find((dbG: any) => dbG.nombreGenero === g))
-    const newEncuadernados = encuadernado.split(',').filter(e => !dbEncuadernados.find((dbE: any) => dbE.tipo === e))
+    const newAutores = autores.filter(a => !dbAutores.find((dbA: any) => dbA.nombreAutor === a))
+    const newEditoriales = editoriales.filter(e => !dbEditoriales.find((dbE: any) => dbE.nombreEditorial === e))
+    const newGeneros = generos.filter(g => !dbGeneros.find((dbG: any) => dbG.nombreGenero === g))
+    const newEncuadernados = encuadernados.filter(e => !dbEncuadernados.find((dbE: any) => dbE.tipo === e))
 
     //Crear nuevos autores, editoriales, generos, encuadernados
     newAutores.forEach(a =>
@@ -1138,16 +1136,16 @@ export const addProduct = async (
 
     //Crear lineas
     dbAutores
-        .filter((dbA: any) => autor.split(',').find(a => a.trim() === dbA.nombreAutor))
+        .filter((dbA: any) => autores.find(a => a.trim() === dbA.nombreAutor))
         .forEach((autor: any) => addLibroAutor(autor.idAutor, isbn))
     dbEditoriales
-        .filter((dbE: any) => editorial.split(',').find(e => e.trim() === dbE.nombreEditorial))
+        .filter((dbE: any) => editoriales.find(e => e.trim() === dbE.nombreEditorial))
         .forEach((editorial: any) => addLibroEditorial(editorial.idEditorial, isbn))
     dbGeneros
-        .filter((dbG: any) => genero.split(',').find(g => g.trim() === dbG.nombreGenero))
+        .filter((dbG: any) => generos.find(g => g.trim() === dbG.nombreGenero))
         .forEach((genero: any) => addLibroGenero(genero.idGenero, isbn))
     dbEncuadernados
-        .filter((dbE: any) => encuadernado.split(',').find(e => e.trim() === dbE.tipo))
+        .filter((dbE: any) => encuadernados.find(e => e.trim() === dbE.tipo))
         .forEach((encuadernado: any) => addLibroEncuadernado(encuadernado.idEncuadernado, isbn))
 
     const libro = await response.json()
@@ -1156,10 +1154,10 @@ export const addProduct = async (
 }
 
 export const updateProduct = async (
-    autor: string,
-    editorial: string,
-    genero: string,
-    encuadernado: string,
+    autores: string[],
+    editoriales: string[],
+    generos: string[],
+    encuadernados: string[],
     descripcion: string,
     dimensiones: string,
     imagen: string,
@@ -1174,14 +1172,10 @@ export const updateProduct = async (
     const dbGeneros = await getGeneros('')
     const dbEncuadernados = await getEncuadernados('')
 
-    const newAutores = autor.split(',').filter(a => !dbAutores.find((dbA: any) => dbA.nombreAutor === a.trim()))
-    const newEditoriales = editorial
-        .split(',')
-        .filter(e => !dbEditoriales.find((dbE: any) => dbE.nombreEditorial === e.trim()))
-    const newGeneros = genero.split(',').filter(g => !dbGeneros.find((dbG: any) => dbG.nombreGenero === g.trim()))
-    const newEncuadernados = encuadernado
-        .split(',')
-        .filter(e => !dbEncuadernados.find((dbE: any) => dbE.tipo === e.trim()))
+    const newAutores = autores.filter(a => !dbAutores.find((dbA: any) => dbA.nombreAutor === a.trim()))
+    const newEditoriales = editoriales.filter(e => !dbEditoriales.find((dbE: any) => dbE.nombreEditorial === e.trim()))
+    const newGeneros = generos.filter(g => !dbGeneros.find((dbG: any) => dbG.nombreGenero === g.trim()))
+    const newEncuadernados = encuadernados.filter(e => !dbEncuadernados.find((dbE: any) => dbE.tipo === e.trim()))
 
     //Crear nuevos autores, editoriales, generos, encuadernados
     newAutores.forEach(a =>
@@ -1229,13 +1223,7 @@ export const updateProduct = async (
         },
     })
 
-    //Crear lineas
-
     //borrar todas las lineas??
-
-    //loop through lines
-
-    //buscar que esté en las lineas pero no en autor.split y borrar la linea
 
     await deleteLibroAutores(isbn)
     await deleteLibroGeneros(isbn)
@@ -1243,16 +1231,16 @@ export const updateProduct = async (
     await deleteLibroEncuadernados(isbn)
 
     dbAutores
-        .filter((dbA: any) => autor.split(',').find(a => a.trim() === dbA.nombreAutor))
+        .filter((dbA: any) => autores.find(a => a.trim() === dbA.nombreAutor))
         .forEach((autor: any) => addLibroAutor(autor.idAutor, isbn))
     dbEditoriales
-        .filter((dbE: any) => editorial.split(',').find(e => e.trim() === dbE.nombreEditorial))
+        .filter((dbE: any) => editoriales.find(e => e.trim() === dbE.nombreEditorial))
         .forEach((editorial: any) => addLibroEditorial(editorial.idEditorial, isbn))
     dbGeneros
-        .filter((dbG: any) => genero.split(',').find(g => g.trim() === dbG.nombreGenero))
+        .filter((dbG: any) => generos.find(g => g.trim() === dbG.nombreGenero))
         .forEach((genero: any) => addLibroGenero(genero.idGenero, isbn))
     dbEncuadernados
-        .filter((dbE: any) => encuadernado.split(',').find(e => e.trim() === dbE.tipo))
+        .filter((dbE: any) => encuadernados.find(e => e.trim() === dbE.tipo))
         .forEach((encuadernado: any) => addLibroEncuadernado(encuadernado.idEncuadernado, isbn))
 
     const libro = await response.json()
@@ -1285,7 +1273,7 @@ export const addPromocion = async (
     imagen: string,
     fechaFin: string,
     fechaInicio: string,
-    libros: string
+    libros: string[]
 ) => {
     const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
@@ -1307,9 +1295,8 @@ export const addPromocion = async (
     if (promocion.errors) throw 'Error in request'
 
     const dbLibros = await getProducts()
-    const librosList = libros.split(',')
     dbLibros
-        .filter((dbL: any) => librosList.find(l => dbL.titulo === l.trim()))
+        .filter((dbL: any) => libros.find(l => dbL.titulo === l.trim()))
         .forEach((dbL: any) =>
             addLibroPromocion(dbL.isbn, promocion.data.createPromocionDescuento.promocionDescuento.idPromocionDescuento)
         )
@@ -1353,7 +1340,7 @@ export const updatePromocion = async (
     imagen: string,
     fechaFin: string,
     fechaInicio: string,
-    libros: string,
+    libros: string[],
     id_promocion: number
 ) => {
     const response = await fetch(`${SERVER_URL}/graphql`, {
@@ -1378,9 +1365,8 @@ export const updatePromocion = async (
     await deleteLibroPromociones(id_promocion)
 
     const dbLibros = await getProducts()
-    const librosList = libros.split(',')
     dbLibros
-        .filter((dbL: any) => librosList.find(l => dbL.titulo === l.trim()))
+        .filter((dbL: any) => libros.find(l => dbL.titulo === l))
         .forEach((dbL: any) => addLibroPromocion(dbL.isbn, id_promocion))
 
     return promocion.data

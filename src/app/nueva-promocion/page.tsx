@@ -1,33 +1,24 @@
 'use client'
 
 import { useFilePicker } from 'use-file-picker'
-import { useEffect, useState, ChangeEvent } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/authContext'
-import { addPromocion, getProducts, getProductsByName } from '@/services/graphql'
-import { useDetectClickOutside } from 'react-detect-click-outside'
+import { addPromocion, getProducts } from '@/services/graphql'
 import BlackButton from '@/components/BlackButton'
 import toast from 'react-hot-toast'
-import useAutocompletado from '@/hooks/useAutocompletado'
+import { AutocompleteBox } from '@/components/ui/AutocompleteBox'
 
 export default function NuevaPromocion() {
     const [nombre, setNombre] = useState('')
     const [fechaInicio, setFechaInicio] = useState('')
     const [fechaFin, setFechaFin] = useState('')
     const [porcentaje, setPorcentaje] = useState<number | undefined>()
-    const [libros, setLibros] = useState('')
-
-    const autocompletado = useAutocompletado()
+    const [libros, setLibros] = useState<string[]>([])
 
     const { user, isAuthenticated } = useAuth()
 
     const router = useRouter()
-
-    const ref = useDetectClickOutside({
-        onTriggered: () => {
-            autocompletado.hide()
-        },
-    })
 
     const { openFilePicker, filesContent, loading, errors } = useFilePicker({
         readAs: 'DataURL',
@@ -43,16 +34,13 @@ export default function NuevaPromocion() {
         }
     }, [user, isAuthenticated])
 
-    function handleLibroSearch(e: ChangeEvent) {
-        const value = (e.target as HTMLInputElement).value
-        setLibros(value)
-        getProductsByName(value.split(',').at(-1)!).then(libros =>
-            autocompletado.setOptions(libros.map(libro => ({ name: libro.titulo })))
-        )
+    async function fetchLibros() {
+        const libros = await getProducts()
+        return libros.map(libro => libro.titulo)
     }
 
     function addPromo() {
-        if (!nombre.trim() || !filesContent.length || !fechaInicio || !fechaFin || !porcentaje || !libros.trim()) {
+        if (!nombre.trim() || !filesContent.length || !fechaInicio || !fechaFin || !porcentaje || !libros.length) {
             toast.error('Los datos están incompletos')
             return
         }
@@ -76,68 +64,46 @@ export default function NuevaPromocion() {
                     Cargar imagen
                 </button>
             </div>
-            <div className="flex w-96 flex-col gap-4 md:w-[450px]">
-                <p className="text-center text-2xl font-semibold">Información de la promoción</p>
+            <div className="flex w-96 flex-col md:w-[450px]">
+                <p className="mb-3 text-center text-2xl font-semibold">Información de la promoción</p>
+                <label className="text-sm">Nombre</label>
                 <input
-                    className="border border-black px-5 py-3"
+                    className="mb-3 border border-black px-5 py-3"
                     placeholder="Nombre"
                     value={nombre}
                     onChange={e => setNombre(e.target.value)}
                 />
+                <label className="text-sm">Fecha inicio</label>
                 <input
-                    className="border border-black px-5 py-3"
+                    className="mb-3 border border-black px-5 py-3"
                     placeholder="Fecha inicio"
                     value={fechaInicio}
                     type="date"
                     onChange={e => setFechaInicio(e.target.value)}
                 />
+                <label className="text-sm">Fecha fin</label>
                 <input
-                    className="border border-black px-5 py-3"
+                    className="mb-3 border border-black px-5 py-3"
                     placeholder="Fecha fin"
                     value={fechaFin}
                     type="date"
                     onChange={e => setFechaFin(e.target.value)}
                 />
+                <label className="text-sm">Porcentaje descuento</label>
                 <input
-                    className="border border-black px-5 py-3"
+                    className="mb-3 border border-black px-5 py-3"
                     placeholder="Porcentaje descuento"
                     value={porcentaje}
                     type="number"
                     onChange={e => setPorcentaje(Number(e.target.value))}
                 />
-                <div ref={ref}>
-                    <input
-                        className="w-full border border-black px-5 py-3"
-                        placeholder="Libros"
-                        value={libros}
-                        onChange={handleLibroSearch}
-                        onClick={() => autocompletado.setCategory('libros')}
-                    />
-                    {autocompletado.getCategory() === 'libros' && (
-                        <div className="w-full border border-black bg-white px-6">
-                            {autocompletado.get().map(elems => (
-                                <p
-                                    className=" my-2 cursor-pointer text-lg hover:bg-neutral-200"
-                                    key={elems.name}
-                                    onClick={() => {
-                                        setLibros(
-                                            prev =>
-                                                prev.slice(
-                                                    0,
-                                                    prev.lastIndexOf(',') !== -1 ? prev.lastIndexOf(',') : 0
-                                                ) +
-                                                (prev.indexOf(',') !== -1 ? ',' : '') +
-                                                elems.name
-                                        )
-                                        autocompletado.hide()
-                                    }}
-                                >
-                                    {elems.name}
-                                </p>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                <label className="text-sm">Libros</label>
+                <AutocompleteBox
+                    availableOptions={fetchLibros()}
+                    category="libro"
+                    onValuesChange={setLibros}
+                    preventAdd
+                />
                 <BlackButton text="Confirmar" onClick={addPromo} />
             </div>
         </div>
