@@ -195,6 +195,9 @@ export const getProduct = async (isbn: number): Promise<libro> => {
                       fechaInicio
                     }
                   },
+                  resenias{
+                    valoracion
+                  },
                 }
               }`,
         }),
@@ -1470,4 +1473,35 @@ export const getWishlist = async (id_usuario: string) => {
     const lista_deseos = await response.json()
     if (lista_deseos.errors) throw lista_deseos.errors
     return lista_deseos.data.deseosLibro
+}
+
+export const getReviews = async (
+    isbn: number
+): Promise<
+    [[{ texto: string; valoracion: number; usuario: { nombre: string; apellido: string } }], { titulo: string }]
+> => {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `{
+              resenias(idLibro: ${isbn}){
+                 texto,
+                valoracion,
+                usuario{
+                  nombre,
+                  apellido
+                }
+              }
+              libros(isbn: ${isbn}){
+                titulo
+              }
+            }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    const reviews = await response.json()
+    if (reviews.errors) throw reviews.errors
+    return [reviews.data.resenias, reviews.data.libros[0]]
 }
