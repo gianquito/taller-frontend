@@ -1,10 +1,10 @@
-import ActionButton from '@/components/ActionButton'
 import AddToCartButton from '@/components/AddToCartButton'
 import EditarLibroProducto from '@/components/EditarLibroProducto'
 import FavoritoButton from '@/components/FavoritoButton'
 import WishListButton from '@/components/WishListButton'
 import { getProduct } from '@/services/graphql'
 import { calculateDiscount, formatPrice } from '@/utils'
+import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,11 +15,31 @@ export default async function Libro({ params }: { params: { id: number } }) {
         <div className="mb-32 mt-6 flex flex-1 flex-col items-center justify-evenly px-12 lg:mt-20 lg:flex-row">
             <div>
                 <img className="w-[240px] lg:w-[350px]" src={atob(libro.imagen)} />
-                <div className="mt-0.5 flex items-center gap-2">
-                    <img src="/Star.svg" />
-                    <p className="text-sm font-semibold">4,5</p>
-                    <ActionButton href="/" icon="/Reseña.png" text="Reseñas" />
-                </div>
+                <Link
+                    href={`${params.id}/reviews`}
+                    className="group mt-0.5 flex w-max flex-row items-center gap-2 lg:flex-col lg:gap-0"
+                >
+                    <div className="flex items-center justify-center gap-2 ">
+                        <img src="/Star.svg" />
+                        <p className="font-semibold">
+                            {/* Calcula el promedio de reseñas, lo redondea a 2 decimales y reemplaza el punto por una coma */}
+                            {libro.resenias.length
+                                ? (
+                                      Math.round(
+                                          (libro.resenias
+                                              .map(review => review.valoracion)
+                                              .reduce((curr, acc) => acc + curr, 0) /
+                                              libro.resenias.length) *
+                                              100
+                                      ) / 100
+                                  )
+                                      .toFixed(2)
+                                      .replace('.', ',')
+                                : 'Sin reseñas'}
+                        </p>
+                    </div>
+                    <p className="text-center text-sm group-hover:underline">Ver reseñas</p>
+                </Link>
             </div>
             <div className="mt-4 flex min-w-[400px] max-w-xl flex-col items-center lg:mt-0 lg:items-baseline">
                 <div className="flex items-center gap-2">

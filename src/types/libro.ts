@@ -40,4 +40,7 @@ export type libro = {
             nombreAutor: string
         }
     }[]
+    resenias: {
+        valoracion: number
+    }[]
 }
