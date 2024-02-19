@@ -1,54 +1,19 @@
-'use client'
-
-import { getGeneros, getProductsByName } from '@/services/graphql'
+import { getProductsByName } from '@/services/graphql'
 import ProductCardHome from './ProductCardHome'
 import CargarLibroHome from './CargarLibroHome'
-import { useEffect, useState } from 'react'
-import { libro } from '@/types/libro'
+import GeneroFilter from './GeneroFilter'
 
-export default function ProductsHome({ nombre }: { nombre?: string }) {
-    const [products, setProducts] = useState<libro[]>([])
-    const [generos, setGeneros] = useState<{ nombreGenero: string; idGenero: string }[]>([])
-    const [generoFilter, setGeneroFilter] = useState('Todos')
-    const [loading, setLoading] = useState(true)
-
-    useEffect(() => {
-        getGeneros().then(generos => setGeneros(generos))
-    }, [])
-
-    useEffect(() => {
-        getProductsByName(nombre ?? '').then(products => {
-            setLoading(false)
-            if (generoFilter === 'Todos') {
-                setProducts(products)
-                return
-            }
-            setProducts(
-                products.filter(product => product.generos.find(({ genero }) => genero.nombreGenero === generoFilter))
-            )
-        })
-    }, [generoFilter])
-
-    if (loading) return null
+export default async function ProductsHome({ nombre, genero }: { nombre?: string; genero: string | undefined }) {
+    const data = await getProductsByName(nombre ?? '')
+    const products =
+        genero === undefined || genero === 'Todos'
+            ? data
+            : data.filter(product => product.generos.find(g => g.genero.nombreGenero === genero))
 
     return (
         <div className="mb-12 mt-8 flex max-w-[1500px] flex-col gap-4">
             <div className="flex w-full justify-center gap-4 self-end md:w-max">
-                <div className="flex items-center border border-black px-3 py-2">
-                    <p className="text-sm text-gray-600">Genero</p>
-                    <select
-                        className="max-w-[100px] outline-none"
-                        value={generoFilter}
-                        onChange={e => setGeneroFilter(e.target.value)}
-                    >
-                        <option value="Todos">Todos</option>
-                        {generos.map(genero => (
-                            <option value={genero.nombreGenero} key={genero.nombreGenero}>
-                                {genero.nombreGenero}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                <GeneroFilter genero={genero} />
                 <div className="flex items-center border border-black px-3 py-2 md:mr-40">
                     <p className="text-sm text-gray-600">Ordenar</p>
                     <select className="outline-none">

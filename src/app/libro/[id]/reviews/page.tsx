@@ -3,6 +3,8 @@ import Review from '@/components/Review'
 import ReviewForm from '@/components/ReviewForm'
 import { getReviews } from '@/services/graphql'
 
+export const dynamic = 'force-dynamic'
+
 export default async function Reviews({ params }: { params: { id: number } }) {
     const [reviews, libro] = await getReviews(params.id)
     if (!libro) {
