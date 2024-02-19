@@ -16,12 +16,20 @@ export default function ReviewForm({ isbn }: ReviewFormProps) {
     const [showForm, setShowForm] = useState(false)
 
     const { user, isAuthenticated } = useAuth()
+
+    function hasPedido(pedidos: any[]) {
+        for (let i = 0; i < pedidos.length; i++) {
+            if (pedidos[i].lineasPedido.find((lp: { idLibro: number }) => lp.idLibro === isbn)) {
+                return true
+            }
+        }
+        return false
+    }
+
     useEffect(() => {
         if (isAuthenticated === null) return
         getPedidosByUser(user.idUsuario).then(pedidos => {
-            pedidos.length &&
-                pedidos.lineaPedido.find((lp: { idLibro: number }) => lp.idLibro === isbn) &&
-                setShowForm(true)
+            pedidos.length && hasPedido(pedidos) && setShowForm(true)
         })
     }, [user, isAuthenticated])
     if (!isAuthenticated || !showForm) return null
