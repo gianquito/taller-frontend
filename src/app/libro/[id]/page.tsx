@@ -1,4 +1,5 @@
 import AddToCartButton from '@/components/AddToCartButton'
+import ClientNavigator from '@/components/ClientNavigator'
 import EditarLibroProducto from '@/components/EditarLibroProducto'
 import FavoritoButton from '@/components/FavoritoButton'
 import WishListButton from '@/components/WishListButton'
@@ -10,6 +11,9 @@ export const dynamic = 'force-dynamic'
 
 export default async function Libro({ params }: { params: { id: number } }) {
     const libro = await getProduct(params.id)
+    if (!libro) {
+        return <ClientNavigator route="/" />
+    }
     const discount = calculateDiscount(libro)
     return (
         <div className="mb-32 mt-6 flex flex-1 flex-col items-center justify-evenly px-12 lg:mt-20 lg:flex-row">
