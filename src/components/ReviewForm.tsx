@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import BlackButton from './BlackButton'
 import StarsInput from './StarsInput'
-import { addReview, getPedidos, getPedidosByUser } from '@/services/graphql'
+import { addReview, getPedidosByUser } from '@/services/graphql'
 import { useAuth } from '@/context/authContext'
 import toast from 'react-hot-toast'
 
