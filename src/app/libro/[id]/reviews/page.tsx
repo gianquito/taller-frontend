@@ -1,9 +1,13 @@
+import ClientNavigator from '@/components/ClientNavigator'
 import Review from '@/components/Review'
 import ReviewForm from '@/components/ReviewForm'
 import { getReviews } from '@/services/graphql'
 
 export default async function Reviews({ params }: { params: { id: number } }) {
     const [reviews, libro] = await getReviews(params.id)
+    if (!libro) {
+        return <ClientNavigator route="/" />
+    }
     return (
         <div className="my-8 flex flex-col flex-wrap items-center md:my-16">
             <div className="flex flex-col items-center justify-center px-8 md:w-3/4 md:px-0 xl:items-start">

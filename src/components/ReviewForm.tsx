@@ -5,6 +5,7 @@ import BlackButton from './BlackButton'
 import StarsInput from './StarsInput'
 import { addReview, getPedidos, getPedidosByUser } from '@/services/graphql'
 import { useAuth } from '@/context/authContext'
+import toast from 'react-hot-toast'
 
 interface ReviewFormProps {
     isbn: number
@@ -28,6 +29,7 @@ export default function ReviewForm({ isbn }: ReviewFormProps) {
 
     useEffect(() => {
         if (isAuthenticated === null) return
+        if (!user) return
         getPedidosByUser(user.idUsuario).then(pedidos => {
             pedidos.length && hasPedido(pedidos) && setShowForm(true)
         })
@@ -50,7 +52,11 @@ export default function ReviewForm({ isbn }: ReviewFormProps) {
                 className="importan float-right w-32 !py-3"
                 disabled={!selectedRating || ratingText.length == 0}
                 disabledText="Enviar"
-                onClick={() => addReview(isbn, user.idUsuario, ratingText, selectedRating)}
+                onClick={() =>
+                    addReview(isbn, user.idUsuario, ratingText, selectedRating)
+                        .then(() => toast.success('Se agregó tu reseña'))
+                        .catch(() => toast.error('Error al agregar reseña'))
+                }
             />
         </div>
     )
