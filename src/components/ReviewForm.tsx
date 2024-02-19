@@ -19,7 +19,9 @@ export default function ReviewForm({ isbn }: ReviewFormProps) {
     useEffect(() => {
         if (isAuthenticated === null) return
         getPedidosByUser(user.idUsuario).then(pedidos => {
-            pedidos.length && pedidos.lineaPedido.find(lp => lp.idLibro === isbn) && setShowForm(true)
+            pedidos.length &&
+                pedidos.lineaPedido.find((lp: { idLibro: number }) => lp.idLibro === isbn) &&
+                setShowForm(true)
         })
     }, [user, isAuthenticated])
     if (!isAuthenticated || !showForm) return null
