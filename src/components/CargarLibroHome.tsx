@@ -1,12 +1,9 @@
-'use client'
-
-import { useAuth } from '@/context/authContext'
+import { getSsrUser } from '@/ssrUtils'
 import Link from 'next/link'
 
-export default function CargarHome() {
-    const { user, isAuthenticated } = useAuth()
-
-    if (!isAuthenticated || user.rol !== 1) return null
+export default async function CargarHome() {
+    const user = await getSsrUser()
+    if (!user) return
     return (
         <Link
             className="flex h-60 w-40 flex-col items-center justify-evenly gap-0.5 border-2 border-black leading-7"

@@ -11,6 +11,7 @@ export const getUserBySesion = async (id_session: string): Promise<userType | un
         headers: {
             'Content-Type': 'application/json',
         },
+        cache: 'no-store',
     })
     const data = await request.json()
     if (!data.data.sesiones[0]) return undefined
@@ -133,7 +134,6 @@ export const getProducts = async (): Promise<libro[]> => {
         }),
         headers: {
             'Content-Type': 'application/json',
-            sesionId: getCookie('sesionId') ?? '',
         },
     })
     const products = await request.json()
@@ -460,7 +460,7 @@ export const deleteProductFromCart = async (id_carrito: number, id_producto: num
     return products.data
 }
 
-export const getDirecciones = async (id_usuario: string) => {
+export const getDirecciones = async (id_usuario: string, id_session: string) => {
     const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
@@ -478,11 +478,11 @@ export const getDirecciones = async (id_usuario: string) => {
         }),
         headers: {
             'Content-Type': 'application/json',
-            sesionId: getCookie('sesionId') ?? '',
+            sesionId: id_session ?? '',
         },
     })
     const direcciones = await response.json()
-    if (direcciones.errors) throw 'Error in request'
+    if (direcciones.errors) throw direcciones.errors[0]
     return direcciones.data.direcciones
 }
 
@@ -636,7 +636,7 @@ export const addCiudad = async (nombre: string, cp: number) => {
     return ciudad.data
 }
 
-export const getPedidos = async () => {
+export const getPedidos = async (id_session: string) => {
     const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
@@ -648,7 +648,7 @@ export const getPedidos = async () => {
         }),
         headers: {
             'Content-Type': 'application/json',
-            sesionId: getCookie('sesionId') ?? '',
+            sesionId: id_session ?? '',
         },
     })
     const pedidos = await response.json()
@@ -678,7 +678,7 @@ export const getPedidosByUser = async (id_usuario: string) => {
     return pedidos.data.pedidos
 }
 
-export const getProductsSales = async () => {
+export const getProductsSales = async (id_session: string) => {
     const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
@@ -690,7 +690,7 @@ export const getProductsSales = async () => {
         }),
         headers: {
             'Content-Type': 'application/json',
-            sesionId: getCookie('sesionId') ?? '',
+            sesionId: id_session ?? '',
         },
     })
     const pedidos = await response.json()
@@ -1397,7 +1397,7 @@ export const updatePromocion = async (
     return promocion.data
 }
 
-export const getFavoritos = async (id_usuario: string) => {
+export const getFavoritos = async (id_usuario: string, id_session?: string) => {
     const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
@@ -1426,11 +1426,11 @@ export const getFavoritos = async (id_usuario: string) => {
         }),
         headers: {
             'Content-Type': 'application/json',
-            sesionId: getCookie('sesionId') ?? '',
+            sesionId: id_session ?? '',
         },
     })
     const favoritos = await response.json()
-    if (favoritos.errors) throw 'Error in request'
+    if (favoritos.errors) throw favoritos.errors[0]
     return favoritos.data.favoritosLibro
 }
 

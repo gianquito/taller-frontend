@@ -1,17 +1,11 @@
 import { getPedidos, getProducts, getUsers } from '@/services/graphql'
 import { formatPrice } from '@/utils'
-import { useEffect, useState } from 'react'
 
-export default function GestionCards() {
-    const [stock, setStock] = useState<number | undefined>()
-    const [pedidos, setPedidos] = useState<{ total: number }[] | undefined>()
-    const [clientes, setClientes] = useState<number | undefined>()
+export default async function GestionCards({ sessionId }: { sessionId: string }) {
+    const stock = (await getProducts()).reduce((acc: number, curr) => acc + curr.stock, 0)
+    const pedidos: { total: number }[] = await getPedidos(sessionId)
+    const clientes = (await getUsers()).length
 
-    useEffect(() => {
-        getProducts().then(products => setStock(products.reduce((acc: number, curr) => acc + curr.stock, 0)))
-        getPedidos().then(pedidos => setPedidos(pedidos))
-        getUsers().then(clientes => setClientes(clientes.length))
-    }, [])
     return (
         <div className="my-28 flex flex-wrap items-center justify-evenly gap-4 md:flex-row">
             <div className="flex w-44 flex-shrink-0 flex-col justify-between border border-black p-4 text-center text-2xl xl:w-80 xl:flex-row">

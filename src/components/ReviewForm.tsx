@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react'
 import BlackButton from './BlackButton'
 import StarsInput from './StarsInput'
 import { addReview, getPedidosByUser } from '@/services/graphql'
-import { useAuth } from '@/context/authContext'
 import toast from 'react-hot-toast'
+import useClientAuth from '@/hooks/useAuth'
 
 interface ReviewFormProps {
     isbn: number
@@ -16,7 +16,7 @@ export default function ReviewForm({ isbn }: ReviewFormProps) {
     const [ratingText, setRatingText] = useState('')
     const [showForm, setShowForm] = useState(false)
 
-    const { user, isAuthenticated } = useAuth()
+    const user = useClientAuth(true)
 
     function hasPedido(pedidos: any[]) {
         for (let i = 0; i < pedidos.length; i++) {
@@ -28,13 +28,12 @@ export default function ReviewForm({ isbn }: ReviewFormProps) {
     }
 
     useEffect(() => {
-        if (isAuthenticated === null) return
         if (!user) return
         getPedidosByUser(user.idUsuario).then(pedidos => {
             pedidos.length && hasPedido(pedidos) && setShowForm(true)
         })
-    }, [user, isAuthenticated])
-    if (!isAuthenticated || !showForm) return null
+    }, [user])
+    if (!user || !showForm) return null
 
     return (
         <div>

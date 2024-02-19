@@ -1,3 +1,5 @@
+'use client'
+
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useDetectClickOutside } from 'react-detect-click-outside'

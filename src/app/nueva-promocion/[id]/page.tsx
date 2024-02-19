@@ -3,12 +3,12 @@
 import { useFilePicker } from 'use-file-picker'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/context/authContext'
 import { getProducts, getPromocion, updatePromocion } from '@/services/graphql'
 import BlackButton from '@/components/BlackButton'
 import toast from 'react-hot-toast'
 import { libro } from '@/types/libro'
 import { AutocompleteBox } from '@/components/ui/AutocompleteBox'
+import useClientAuth from '@/hooks/useAuth'
 
 export default function EditarPromocion({ params }: { params: { id: number } }) {
     const [nombre, setNombre] = useState('')
@@ -18,7 +18,7 @@ export default function EditarPromocion({ params }: { params: { id: number } }) 
     const [libros, setLibros] = useState<string[]>([])
     const [imagen, setImagen] = useState('')
 
-    const { user, isAuthenticated } = useAuth()
+    const user = useClientAuth()
 
     const router = useRouter()
 
@@ -29,8 +29,8 @@ export default function EditarPromocion({ params }: { params: { id: number } }) 
     })
 
     useEffect(() => {
-        if (isAuthenticated === null) return
-        if (isAuthenticated === false || user.rol !== 1) {
+        if (!user) return
+        if (user.rol !== 1) {
             router.push('/')
             return
         }
@@ -43,7 +43,7 @@ export default function EditarPromocion({ params }: { params: { id: number } }) 
             setImagen(atob(promo.imagen))
             setLibros(promo.libros.map(({ libro }: { libro: libro }) => libro.titulo))
         })
-    }, [user, isAuthenticated])
+    }, [user])
 
     useEffect(() => {
         if (!filesContent.length) return
@@ -65,7 +65,7 @@ export default function EditarPromocion({ params }: { params: { id: number } }) 
             .catch(() => toast.error('Error al actualizar promoción'))
     }
 
-    if (!isAuthenticated || user.rol !== 1) return null
+    if (!user || user.rol !== 1) return null
 
     return (
         <div className="my-20 flex flex-col items-center justify-evenly lg:flex-row">

@@ -1,23 +1,31 @@
-'use client'
-
 import Link from 'next/link'
-import SearchBar from './SearchBar'
-import UserNavbar from './UserNavbar'
-import { useAuth } from '@/context/authContext'
+import SearchBar from '@/components/SearchBar'
+import UserNavbar from '../components/UserNavbar'
+import { getUserBySesion } from '@/services/graphql'
+import { cookies } from 'next/headers'
 
-export default function Navbar() {
-    const { isAuthenticated, user } = useAuth()
+export default async function Navbar() {
+    const user = await getCurrentUser()
+    async function getCurrentUser() {
+        const cookie = cookies()
+        const sessionId = cookie.get('sesionId')?.value
+        if (!sessionId) return false
+        const user = await getUserBySesion(sessionId)
+        if (!user) return false
+        return { ...user, sessionId }
+    }
+
     return (
         <nav className="mt-2 flex flex-shrink-0 flex-col items-center justify-evenly whitespace-nowrap px-8 text-center tracking-tight md:flex-row md:gap-4 xl:px-40 xl:text-lg">
             <Link href="/" className="text-xl font-bold">
                 LibrosCdelU
             </Link>
-            {isAuthenticated ? <UserNavbar /> : <Link href="/preguntas-frecuentes">Preguntas frecuentes</Link>}
+            {user ? <UserNavbar user={user} /> : <Link href="/preguntas-frecuentes">Preguntas frecuentes</Link>}
             <div className="order-1 flex flex-shrink-0 items-center gap-4 xl:gap-8">
-                {isAuthenticated ? (
+                {user ? (
                     <>
-                        <Link href={`/lista-deseos/${user.idUsuario}`}>Lista de deseos</Link>
-                        <Link href="/favoritos">Favoritos</Link>
+                        <a href={`/lista-deseos/${user.idUsuario}`}>Lista de deseos</a>
+                        <a href="/favoritos">Favoritos</a>
                         <Link href="/carrito">
                             <img alt="cart" src="/CartIcon.svg" className="min-w-[32px]" />
                         </Link>

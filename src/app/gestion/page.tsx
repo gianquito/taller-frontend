@@ -1,33 +1,23 @@
-'use client'
-
+import ClientNavigator from '@/components/ClientNavigator'
 import GestionCards from '@/components/GestionCards'
-import LibrosGestion from '@/components/LibrosGestion'
-import PromocionGestion from '@/components/PromocionGestion'
-import { useAuth } from '@/context/authContext'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import TablaLibroGestion from '@/components/TablaLibrosGestion'
+import TablaPromocionesGestion from '@/components/TablaPromocionesGestion'
+import { getSsrUser } from '@/ssrUtils'
 
-export default function Gestion() {
-    const { user, isAuthenticated } = useAuth()
-    const router = useRouter()
+export const dynamic = 'force-dynamic'
 
-    useEffect(() => {
-        if (isAuthenticated === null) return
-        if (isAuthenticated === false || user.rol !== 1) {
-            router.push('/')
-            return
-        }
-    }, [user, isAuthenticated])
+export default async function Gestion() {
+    const user = await getSsrUser()
 
-    if (!isAuthenticated || user.rol !== 1) return null
+    if (!user || user.rol !== 1) return <ClientNavigator route="/" />
 
     return (
         <div>
             <div>
-                <GestionCards />
+                <GestionCards sessionId={user.sessionId} />
             </div>
-            <LibrosGestion />
-            <PromocionGestion />
+            <TablaLibroGestion sessionId={user.sessionId} />
+            <TablaPromocionesGestion />
         </div>
     )
 }

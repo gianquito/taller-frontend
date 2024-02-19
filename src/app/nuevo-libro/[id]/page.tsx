@@ -4,9 +4,9 @@ import { getAutores, getEditoriales, getEncuadernados, getGeneros, getProduct, u
 import { useEffect, useState } from 'react'
 import { useFilePicker } from 'use-file-picker'
 import { toast } from 'react-hot-toast'
-import { useAuth } from '@/context/authContext'
 import { useRouter } from 'next/navigation'
 import { AutocompleteBox } from '@/components/ui/AutocompleteBox'
+import useClientAuth from '@/hooks/useAuth'
 
 export default function NuevoLibro({ params }: { params: { id: number } }) {
     const [imagen, setImagen] = useState('')
@@ -22,7 +22,7 @@ export default function NuevoLibro({ params }: { params: { id: number } }) {
     const [editoriales, setEditoriales] = useState<string[]>([])
     const [encuadernados, setEncuadernados] = useState<string[]>([])
 
-    const { user, isAuthenticated } = useAuth()
+    const user = useClientAuth()
     const router = useRouter()
 
     const { openFilePicker, filesContent, loading, errors } = useFilePicker({
@@ -52,8 +52,8 @@ export default function NuevoLibro({ params }: { params: { id: number } }) {
     }
 
     useEffect(() => {
-        if (isAuthenticated === null) return
-        if (isAuthenticated === false || user.rol !== 1) {
+        if (!user) return
+        if (user.rol !== 1) {
             router.push('/')
             return
         }
@@ -77,7 +77,7 @@ export default function NuevoLibro({ params }: { params: { id: number } }) {
                 toast.error('No se puede obtener el libro solicitado')
                 router.push('/')
             })
-    }, [user, isAuthenticated])
+    }, [user])
 
     useEffect(() => {
         if (!filesContent.length) return
@@ -120,7 +120,7 @@ export default function NuevoLibro({ params }: { params: { id: number } }) {
             .catch(() => toast.error('Error al actualizar libro'))
     }
 
-    if (!isAuthenticated || user.rol !== 1) return null
+    if (!user || user.rol !== 1) return null
     return (
         <div className="my-20 flex flex-col items-center justify-evenly lg:flex-row">
             <div className="w-max">
