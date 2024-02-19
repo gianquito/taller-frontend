@@ -8,7 +8,7 @@ import { libro } from '@/types/libro'
 import useClientAuth from '@/hooks/useAuth'
 
 export default function AddToCartButton({ libro }: { libro: libro }) {
-    const user = useClientAuth()
+    const user = useClientAuth(true)
     const router = useRouter()
     return (
         <BlackButton
