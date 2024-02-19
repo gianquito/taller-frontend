@@ -1,4 +1,5 @@
 import Review from '@/components/Review'
+import ReviewForm from '@/components/ReviewForm'
 import { getReviews } from '@/services/graphql'
 
 export default async function Reviews({ params }: { params: { id: number } }) {
@@ -18,7 +19,7 @@ export default async function Reviews({ params }: { params: { id: number } }) {
                             ),
                         ].map((_, idx) => <img src="/Star_lleno.svg" key={idx} />)}
                 </div>
-                <div className="mt-4 flex w-full flex-col items-center justify-center xl:flex-row xl:justify-between">
+                <div className="mt-4 flex w-full flex-col items-center justify-center xl:flex-row xl:items-start xl:justify-between">
                     <div className="flex flex-col gap-6">
                         <p className="text-[28px] font-semibold leading-none">
                             {reviews.length} {reviews.length === 1 ? 'reseña' : 'reseñas'}
@@ -61,6 +62,7 @@ export default async function Reviews({ params }: { params: { id: number } }) {
                                 text={review.texto}
                             />
                         ))}
+                        <ReviewForm isbn={params.id} />
                     </div>
                 </div>
             </div>
