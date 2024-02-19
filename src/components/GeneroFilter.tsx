@@ -14,10 +14,10 @@ export default function GeneroFilter({ genero }: { genero: string | undefined })
 
     useEffect(() => {
         if (generoFilter === 'Todos') {
-            router.push('/')
+            router.push(document.location.origin + document.location.pathname)
             return
         }
-        router.push(`/?genero=${generoFilter}`)
+        router.push(`${document.location.origin + document.location.pathname}?genero=${generoFilter}`)
     }, [generoFilter])
 
     return (
