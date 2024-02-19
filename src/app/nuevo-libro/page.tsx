@@ -4,9 +4,9 @@ import { addProduct, getAutores, getEditoriales, getEncuadernados, getGeneros } 
 import { useEffect, useState } from 'react'
 import { useFilePicker } from 'use-file-picker'
 import { toast } from 'react-hot-toast'
-import { useAuth } from '@/context/authContext'
 import { useRouter } from 'next/navigation'
 import { AutocompleteBox } from '@/components/ui/AutocompleteBox'
+import useClientAuth from '@/hooks/useAuth'
 
 export default function NuevoLibro() {
     const [isbn, setIsbn] = useState<number | undefined>()
@@ -21,7 +21,7 @@ export default function NuevoLibro() {
     const [editoriales, setEditoriales] = useState<string[]>([])
     const [encuadernados, setEncuadernados] = useState<string[]>([])
 
-    const { user, isAuthenticated } = useAuth()
+    const user = useClientAuth()
     const router = useRouter()
 
     const { openFilePicker, filesContent, loading, errors } = useFilePicker({
@@ -51,12 +51,12 @@ export default function NuevoLibro() {
     }
 
     useEffect(() => {
-        if (isAuthenticated === null) return
-        if (isAuthenticated === false || user.rol !== 1) {
+        if (!user) return
+        if (user.rol !== 1) {
             router.push('/')
             return
         }
-    }, [user, isAuthenticated])
+    }, [user])
 
     function addLibro() {
         if (
@@ -94,7 +94,7 @@ export default function NuevoLibro() {
             .catch(() => toast.error('Error al crear libro'))
     }
 
-    if (!isAuthenticated || user.rol !== 1) return null
+    if (!user || user.rol !== 1) return null
     return (
         <div className="my-20 flex flex-col items-center justify-evenly lg:flex-row">
             <div className="w-max">

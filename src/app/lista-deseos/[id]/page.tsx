@@ -1,35 +1,18 @@
-'use client'
+import ClientNavigator from '@/components/ClientNavigator'
 import ProductCardWishlist from '@/components/ProductCardDeseos'
 import ShareWishlistButton from '@/components/ShareWishlistButton'
-import { useAuth } from '@/context/authContext'
 import { getUserById, getWishlist } from '@/services/graphql'
+import { getSsrUser } from '@/ssrUtils'
 import { libro } from '@/types/libro'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { toast } from 'react-hot-toast'
 
-export default function ListaDeseos({ params }: { params: { id: string } }) {
-    const { user } = useAuth()
-    const router = useRouter()
-    const [products, setProducts] = useState<{ idUsuario: string; libro: libro }[]>([])
-    const [listUser, setListuser] = useState<{ nombre: string } | 'loading'>('loading')
+export const dynamic = 'force-dynamic'
 
-    function fetchProducts() {
-        getUserById(params.id).then(u => setListuser(u))
-        getWishlist(params.id)
-            .then(products => setProducts(products))
-            .catch(() => toast.error('Error al obtener la lista de deseos'))
-    }
+export default async function ListaDeseos({ params }: { params: { id: string } }) {
+    const user = await getSsrUser()
+    const listUser = await getUserById(params.id)
+    const products: { idUsuario: string; libro: libro }[] = await getWishlist(params.id)
 
-    useEffect(() => {
-        fetchProducts()
-    }, [])
-
-    if (listUser === 'loading') return null
-    if (!listUser) {
-        router.push('/')
-        return null
-    }
+    if (!listUser) return <ClientNavigator route="/" />
 
     return (
         <div className="my-8 flex flex-col flex-wrap items-center md:my-16">
@@ -51,7 +34,6 @@ export default function ListaDeseos({ params }: { params: { id: string } }) {
                             author={libro.autores[0].autor.nombreAutor}
                             key={libro.isbn}
                             id_usuario={user ? user.idUsuario : undefined}
-                            fetch_products={fetchProducts}
                             libro={libro}
                             id_lista={params.id}
                         />

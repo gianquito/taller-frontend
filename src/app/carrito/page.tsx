@@ -2,7 +2,7 @@
 
 import BlackButton from '@/components/BlackButton'
 import ProductCart from '@/components/ProductCart'
-import { useAuth } from '@/context/authContext'
+import useClientAuth from '@/hooks/useAuth'
 import { getProductsInCart } from '@/services/graphql'
 import { libro } from '@/types/libro'
 import { formatPrice } from '@/utils'
@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 export default function Carrito() {
-    const { user, isAuthenticated } = useAuth()
+    const user = useClientAuth()
     const [products, setProducts] = useState<{ cantidad: number; libro: libro }[]>([])
     const [amounts, setAmounts] = useState<{ [id: string]: { amount: number; price: number } }>({})
     const [subtotal, setSubtotal] = useState(0)
@@ -19,6 +19,7 @@ export default function Carrito() {
     const router = useRouter()
 
     function fetchProducts() {
+        if (!user) return
         getProductsInCart(user.idCarrito)
             .then(p => setProducts(p))
             .catch(() => router.push('/ingresar'))
@@ -31,16 +32,10 @@ export default function Carrito() {
     }, [products, amounts])
 
     useEffect(() => {
-        if (isAuthenticated === false) {
-            router.push('/ingresar')
-            return
-        }
-        if (!user || !isAuthenticated) return
+        if (!user) return
         fetchProducts()
-    }, [isAuthenticated])
-
-    if (!isAuthenticated) return null
-
+    }, [user])
+    if (!user) return null
     return (
         <div>
             <div className="mt-8 flex flex-col items-center justify-evenly lg:flex-row">

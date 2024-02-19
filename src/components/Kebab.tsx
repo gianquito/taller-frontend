@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { useDetectClickOutside } from 'react-detect-click-outside'
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from '@/context/authContext'
+import useClientAuth from '@/hooks/useAuth'
 import { addFavorite, deleteFavorite } from '@/services/graphql'
 import { libro } from '@/types/libro'
 import { useRouter } from 'next/navigation'
@@ -8,18 +8,18 @@ import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
 export default function FavoritoButton({ libro }: { libro: libro }) {
-    const { user, isAuthenticated } = useAuth()
+    const user = useClientAuth(true)
     const [isFavorite, setIsFavorite] = useState(false)
     const router = useRouter()
 
     useEffect(() => {
         setIsFavorite(
-            isAuthenticated && libro.usuariosFavoritos.find(u => user.idUsuario === u.idUsuario) !== undefined
+            user !== undefined && libro.usuariosFavoritos.find(u => user.idUsuario === u.idUsuario) !== undefined
         )
     }, [user])
 
     function toggleFavorite() {
-        if (!isAuthenticated) {
+        if (!user) {
             router.push('/ingresar')
             return
         }

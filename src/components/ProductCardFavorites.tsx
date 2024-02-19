@@ -1,7 +1,10 @@
+'use client'
+
 import { deleteFavorite } from '@/services/graphql'
 import { libro } from '@/types/libro'
 import { calculateDiscount, formatPrice } from '@/utils'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { toast } from 'react-hot-toast'
 
 interface ProductCardHomeProps {
@@ -11,7 +14,6 @@ interface ProductCardHomeProps {
     price: number
     id: number
     id_usuario: string
-    fetch_products: () => void
     libro: libro
 }
 
@@ -22,10 +24,10 @@ export default function ProductCardFavorites({
     price,
     id,
     id_usuario,
-    fetch_products,
     libro,
 }: ProductCardHomeProps) {
     const discount = calculateDiscount(libro)
+    const router = useRouter()
     return (
         <Link className="flex w-40 flex-col gap-0.5 leading-7" href={`/libro/${id}`}>
             <img className="w-40" alt={title + ' portada'} src={image} />
@@ -51,7 +53,7 @@ export default function ProductCardFavorites({
                     deleteFavorite(id, id_usuario)
                         .then(() => {
                             toast.success(`Se eliminó ${title} de tus favoritos`)
-                            fetch_products()
+                            router.refresh()
                         })
                         .catch(() => toast.error(`No se pudo eliminar ${title} de tus favoritos`))
                 }}

@@ -8,16 +8,16 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-hot-toast'
 import { getDirecciones, getProductsInCart } from '@/services/graphql'
-import { useAuth } from '@/context/authContext'
-import { calculateDiscount, formatPrice } from '@/utils'
+import { calculateDiscount, formatPrice, getCookie } from '@/utils'
 import { libro } from '@/types/libro'
 import { direccion } from '@/types/direccion'
+import useClientAuth from '@/hooks/useAuth'
 
 export default function Checkout() {
     const [selectedAddress, setSelectedAddress] = useState<string | null>(null)
     const [cartProducts, setCartProducts] = useState<{ cantidad: number; libro: libro }[]>([])
     const router = useRouter()
-    const { user, isAuthenticated } = useAuth()
+    const user = useClientAuth()
     const [subtotal, setSubtotal] = useState(0)
     const [addresses, setAddresses] = useState<direccion[]>([])
     const [costoEnvios, setCostoEnvios] = useState<{ [id: string]: number }>({})
@@ -56,16 +56,12 @@ export default function Checkout() {
     }
 
     useEffect(() => {
-        if (isAuthenticated === null) return
-        if (isAuthenticated === false) {
-            router.push('/ingresar')
-            return
-        }
+        if (!user) return
         getProductsInCart(user.idCarrito).then(p => (p.length ? setCartProducts(p) : router.push('/')))
-        getDirecciones(user.idUsuario)
+        getDirecciones(user.idUsuario, getCookie('sesionId')!)
             .then(add => setAddresses(add))
             .catch(() => router.push('/ingresar'))
-    }, [user, isAuthenticated])
+    }, [user])
 
     useEffect(() => {
         let acc = 0
@@ -76,7 +72,7 @@ export default function Checkout() {
         setSubtotal(acc)
     }, [cartProducts])
 
-    if (!isAuthenticated) return null
+    if (!user) return null
 
     return (
         <div className="flex w-full justify-center lg:block">

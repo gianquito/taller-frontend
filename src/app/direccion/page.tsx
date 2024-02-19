@@ -1,7 +1,7 @@
 'use client'
 
 import BlackButton from '@/components/BlackButton'
-import { useAuth } from '@/context/authContext'
+import useClientAuth from '@/hooks/useAuth'
 import useAutocompletado from '@/hooks/useAutocompletado'
 import { addDireccion, getCiudad } from '@/services/graphql'
 import { useRouter } from 'next/navigation'
@@ -17,7 +17,7 @@ export default function Direccion() {
 
     const autocompletado = useAutocompletado()
 
-    const { user } = useAuth()
+    const user = useClientAuth()
     const router = useRouter()
 
     const ref = useDetectClickOutside({
@@ -27,10 +27,7 @@ export default function Direccion() {
     })
 
     function addAddress() {
-        if (!user) {
-            router.push('/ingresar')
-            return
-        }
+        if (!user) return
         addDireccion(user.idUsuario, calle, numero!, cp!, ciudad)
             .then(() => router.push('/mi-cuenta'))
             .catch(() => toast.error('Error al crear dirección'))
@@ -43,6 +40,8 @@ export default function Direccion() {
             autocompletado.setOptions(ciudades.map((ci: { nombreCiudad: string }) => ({ name: ci.nombreCiudad })))
         )
     }
+
+    if (!user) return null
 
     return (
         <div className="flex h-screen items-center justify-center">

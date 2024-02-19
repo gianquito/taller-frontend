@@ -7,6 +7,6 @@ export default function ClientNavigator({ route }: { route: string }) {
     const router = useRouter()
     useEffect(() => {
         router.push(route)
-    }, [])
+    })
     return <></>
 }

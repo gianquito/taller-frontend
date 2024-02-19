@@ -1,13 +1,21 @@
 'use client'
-import { useAuth } from '@/context/authContext'
+import { userType } from '@/types/user'
+import { SERVER_URL, getCookie } from '@/utils'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useDetectClickOutside } from 'react-detect-click-outside'
 
-export default function UserNavbar() {
+export default function UserNavbar({ user }: { user: userType }) {
     const [toggledMenu, setToggledMenu] = useState(false)
     const ref = useDetectClickOutside({ onTriggered: () => setToggledMenu(false) })
-    const { logout, user } = useAuth()
+    function logout() {
+        fetch(`${SERVER_URL}/logout`, {
+            method: 'POST',
+            body: getCookie('sesionId'),
+        }).then(() => {
+            document.location.href = '/'
+        })
+    }
 
     return (
         <div className="flex-shrink-0">

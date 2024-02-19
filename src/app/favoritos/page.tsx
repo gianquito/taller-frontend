@@ -1,36 +1,14 @@
-'use client'
-
+import ClientNavigator from '@/components/ClientNavigator'
 import ProductCardFavorites from '@/components/ProductCardFavorites'
-import { useAuth } from '@/context/authContext'
 import { getFavoritos } from '@/services/graphql'
+import { getSsrUser } from '@/ssrUtils'
 import { libro } from '@/types/libro'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { toast } from 'react-hot-toast'
 
-export default function Favoritos() {
-    const { user, isAuthenticated } = useAuth()
-    const router = useRouter()
+export default async function Favoritos() {
+    const user = await getSsrUser()
+    if (!user) return <ClientNavigator route="/" />
 
-    const [products, setProducts] = useState<{ libro: libro }[]>([])
-
-    function fetchProducts() {
-        getFavoritos(user.idUsuario)
-            .then(products => setProducts(products))
-            .catch(() => toast.error('Error al obtener tus favoritos'))
-    }
-
-    useEffect(() => {
-        if (isAuthenticated === null) return
-        if (isAuthenticated === false) {
-            router.push('/')
-            return
-        }
-
-        fetchProducts()
-    }, [user, isAuthenticated])
-
-    if (!isAuthenticated) return null
+    const products: { libro: libro }[] = await getFavoritos(user.idUsuario, user.sessionId)
 
     return (
         <div className="my-8 flex flex-col flex-wrap items-center md:my-16">
@@ -47,7 +25,6 @@ export default function Favoritos() {
                             author={libro.autores[0].autor.nombreAutor}
                             key={libro.isbn}
                             id_usuario={user.idUsuario}
-                            fetch_products={fetchProducts}
                             libro={libro}
                         />
                     ))}
