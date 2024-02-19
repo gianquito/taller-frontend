@@ -656,6 +656,28 @@ export const getPedidos = async () => {
     return pedidos.data.pedidos
 }
 
+export const getPedidosByUser = async (id_usuario: string) => {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `{
+            pedidos(idUsuario: "${id_usuario}"){
+              lineasPedido{
+                idLibro
+              }
+            }
+            }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const pedidos = await response.json()
+    if (pedidos.errors) throw 'Error in request'
+    return pedidos.data.pedidos
+}
+
 export const getProductsSales = async () => {
     const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
@@ -1504,4 +1526,25 @@ export const getReviews = async (
     const reviews = await response.json()
     if (reviews.errors) throw reviews.errors
     return [reviews.data.resenias, reviews.data.libros[0]]
+}
+
+export const addReview = async (isbn: number, id_usuario: string, texto: string, valoracion: number) => {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation {
+            createResenia(idLibro: ${isbn}, idUsuario: "${id_usuario}", texto:"${texto}",valoracion:${valoracion}){
+              resenia{
+                valoracion
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    const review = await response.json()
+    if (review.errors) throw review.errors
+    return review.data
 }

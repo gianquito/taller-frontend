@@ -15,6 +15,7 @@ export default function AddToCartButton({ libro }: { libro: libro }) {
             className="mt-6"
             text="Agregar al Carrito"
             disabled={libro.stock <= 0}
+            disabledText="Sin stock"
             onClick={() => {
                 !isAuthenticated
                     ? router.push('/ingresar')
