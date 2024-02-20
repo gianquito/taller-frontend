@@ -4,6 +4,7 @@ import EditarLibroProducto from '@/components/EditarLibroProducto'
 import FavoritoButton from '@/components/FavoritoButton'
 import WishListButton from '@/components/WishListButton'
 import { getProduct } from '@/services/graphql'
+import { getSsrUser } from '@/ssrUtils'
 import { calculateDiscount, formatPrice } from '@/utils'
 import Link from 'next/link'
 
@@ -14,6 +15,7 @@ export default async function Libro({ params }: { params: { id: number } }) {
     if (!libro) {
         return <ClientNavigator route="/" />
     }
+    const user = await getSsrUser()
     const discount = calculateDiscount(libro)
     return (
         <div className="mb-32 mt-6 flex flex-1 flex-col items-center justify-evenly px-12 lg:mt-20 lg:flex-row">
@@ -85,8 +87,8 @@ export default async function Libro({ params }: { params: { id: number } }) {
                 </div>
                 <AddToCartButton libro={libro} />
                 <div className="my-1 mt-2 flex gap-2 self-start">
-                    <WishListButton libro={libro} />
-                    <FavoritoButton libro={libro} />
+                    <WishListButton libro={libro} user={user} />
+                    <FavoritoButton libro={libro} user={user} />
                 </div>
                 <p className="text-2xl font-medium">Sinopsis</p>
                 <p>{libro.descripcion}</p>

@@ -19,7 +19,7 @@ export default function SearchBar() {
                 handleSubmit()
             }}
         >
-            <Image width={40} height={32} className="px-3 py-3" alt="search" src="/SearchIcon.svg" />
+            <Image width={40} height={42} className="px-3 py-3" alt="search" src="/SearchIcon.svg" />
             <input
                 className="h-max w-full rounded-r-3xl bg-white text-base placeholder-neutral-400 outline-none "
                 type="text"

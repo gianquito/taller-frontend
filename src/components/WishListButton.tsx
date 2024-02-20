@@ -1,22 +1,17 @@
 'use client'
 
-import useClientAuth from '@/hooks/useAuth'
 import { addWishlisted, deleteWishlisted } from '@/services/graphql'
 import { libro } from '@/types/libro'
+import { userType } from '@/types/user'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 
-export default function WishListButton({ libro }: { libro: libro }) {
-    const user = useClientAuth(true)
-    const [isWishListed, setIsWishListed] = useState(false)
+export default function WishListButton({ libro, user }: { libro: libro; user: userType | undefined }) {
+    const [isWishListed, setIsWishListed] = useState(
+        user !== undefined && libro.usuariosDeseados.find(u => user.idUsuario === u.idUsuario) !== undefined
+    )
     const router = useRouter()
-
-    useEffect(() => {
-        setIsWishListed(
-            user !== undefined && libro.usuariosDeseados.find(u => user.idUsuario === u.idUsuario) !== undefined
-        )
-    }, [user])
 
     function toggleWishlist() {
         if (!user) {
