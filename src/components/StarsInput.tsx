@@ -42,7 +42,7 @@ export default function StarsInput({ selectedRating, setSelectedRating }: StarsI
     }, [selectedRating])
 
     return (
-        <div className="flex items-center gap-3" id="starContainer">
+        <div className="flex items-center gap-3 self-end" id="starContainer">
             <p className="font-medium">{rating > 0 && `${rating} ${rating === 1 ? 'estrella' : 'estrellas'}`}</p>
             <img
                 src="/Star_lleno.svg"
