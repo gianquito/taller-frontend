@@ -13,11 +13,13 @@ export default function GeneroFilter({ genero }: { genero: string | undefined })
     }, [])
 
     useEffect(() => {
+        const location = document.location
         if (generoFilter === 'Todos') {
-            router.push(document.location.origin + document.location.pathname)
+            if (location.search === '') return
+            router.push(location.origin + location.pathname)
             return
         }
-        router.push(`${document.location.origin + document.location.pathname}?genero=${generoFilter}`)
+        router.push(`${location.origin + location.pathname}?genero=${generoFilter}`)
     }, [generoFilter])
 
     return (
