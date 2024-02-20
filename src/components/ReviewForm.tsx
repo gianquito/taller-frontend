@@ -36,8 +36,8 @@ export default function ReviewForm({ isbn }: ReviewFormProps) {
     if (!user || !showForm) return null
 
     return (
-        <div>
-            <div className="flex items-center justify-between">
+        <div className="xl:w-[700px]">
+            <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between">
                 <p className="font-medium">Deja tu reseña</p>
                 <StarsInput selectedRating={selectedRating} setSelectedRating={setSelectedRating} />
             </div>
@@ -48,7 +48,7 @@ export default function ReviewForm({ isbn }: ReviewFormProps) {
             />
             <BlackButton
                 text="Enviar"
-                className="importan float-right w-32 !py-3"
+                className="float-right !w-32 !py-3"
                 disabled={!selectedRating || ratingText.length == 0}
                 disabledText="Enviar"
                 onClick={() =>

@@ -58,8 +58,8 @@ export default async function Reviews({ params }: { params: { id: number } }) {
                             </div>
                         </div>
                     </div>
-                    {!reviews.length && <p className="text-lg">Este libro aún no tiene reseñas.</p>}
                     <div className="my-8 flex flex-col gap-8 xl:mt-0">
+                        {!reviews.length && <p className="text-lg">Este libro aún no tiene reseñas.</p>}
                         {reviews.map((review, idx) => (
                             <Review
                                 key={idx}
