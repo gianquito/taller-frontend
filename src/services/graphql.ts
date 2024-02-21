@@ -52,7 +52,7 @@ export const getUsers = async () => {
         },
     })
     const data = await request.json()
-    if (data.errors) throw 'Error in request'
+    if (data.errors) throw data.errors[0]
     return data.data.usuarios
 }
 
@@ -137,7 +137,7 @@ export const getProducts = async (): Promise<libro[]> => {
         },
     })
     const products = await request.json()
-    if (products.errors) throw 'Error in request'
+    if (products.errors) throw products.errors[0]
     return products.data.libros
 }
 
@@ -270,7 +270,7 @@ export const getProductsByName = async (nombre: string): Promise<libro[]> => {
         },
     })
     const products = await request.json()
-    if (products.errors) throw 'Error in request'
+    if (products.errors) throw products.errors[0]
     return products.data.libros
 }
 
@@ -397,7 +397,7 @@ export const getProductsInCart = async (id_carrito: number) => {
         },
     })
     const products = await response.json()
-    if (products.errors) throw 'Error in request'
+    if (products.errors) throw products.errors[0]
     return products.data.librosEnCarrito
 }
 
@@ -741,7 +741,7 @@ export const getPromocionImagen = async () => {
         },
     })
     const promocion = await response.json()
-    if (promocion.errors) throw 'Error in request'
+    if (promocion.errors) throw promocion.errors[0]
     if (!promocion.data.promocionesDescuento.length) return null
     return promocion.data.promocionesDescuento[0].imagen
 }
@@ -805,7 +805,7 @@ export const getGeneros = async (nombre = '') => {
         },
     })
     const generos = await response.json()
-    if (generos.errors) throw 'Error in request'
+    if (generos.errors) throw generos.errors[0]
     return generos.data.generos
 }
 
