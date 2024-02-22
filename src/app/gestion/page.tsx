@@ -1,6 +1,7 @@
 import ClientNavigator from '@/components/ClientNavigator'
 import GestionCards from '@/components/GestionCards'
 import TablaLibroGestion from '@/components/TablaLibrosGestion'
+import TablaPedidosGestion from '@/components/TablaPedidosGestion'
 import TablaPromocionesGestion from '@/components/TablaPromocionesGestion'
 import { getSsrUser } from '@/ssrUtils'
 
@@ -16,6 +17,7 @@ export default async function Gestion() {
             <div>
                 <GestionCards sessionId={user.sessionId} />
             </div>
+            <TablaPedidosGestion sessionId={user.sessionId} />
             <TablaLibroGestion sessionId={user.sessionId} />
             <TablaPromocionesGestion />
         </div>
