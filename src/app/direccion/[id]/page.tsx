@@ -60,7 +60,7 @@ export default function DireccionId({ params }: { params: { id: number } }) {
         <div className="flex h-screen items-center justify-center">
             <div>
                 <h1 className="text-center text-2xl font-semibold">Editar dirección</h1>
-                <div className="my-10 flex w-96 flex-col gap-4 md:w-[450px]">
+                <div className="my-10 flex w-[350px] flex-col gap-4 md:w-[450px]">
                     <input
                         className="border border-black px-5 py-3"
                         placeholder="Calle"

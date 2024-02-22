@@ -1,9 +1,8 @@
 import ActionButton from './ActionButton'
 import Kebab from './Kebab'
-import { useState, useEffect } from 'react'
 import { getPromociones } from '@/services/graphql'
 import { promocion } from '@/types/promocion'
-import PromocionGestion from './PromocionGestion'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table'
 
 export default async function TablaPromocionesGestion() {
     const promociones: promocion[] = await getPromociones()
@@ -16,19 +15,46 @@ export default async function TablaPromocionesGestion() {
                     <ActionButton href="/nueva-promocion" text="Cargar Promoción" icon="/plus.png" />
                 </div>
             </div>
-            <div className="mt-6 overflow-auto">
-                <div className="grid max-h-[500px] min-w-[980px] grid-cols-6 gap-4 text-center">
-                    <div className="text-xl">Nombre</div>
-                    <div className="text-xl">Libros</div>
-                    <div className="text-xl">Descuento</div>
-                    <div className="text-xl">Fecha inicio</div>
-                    <div className="text-xl">Fecha fin</div>
-                    <div className="text-xl">Acciones</div>
-
-                    {promociones.map(promo => (
-                        <PromocionGestion key={promo.idPromocionDescuento} promocion={promo} />
-                    ))}
-                </div>
+            <div className="mt-4 max-h-[800px] overflow-x-auto">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Nombre</TableHead>
+                            <TableHead className="text-center">Libros</TableHead>
+                            <TableHead className="text-center">Descuento</TableHead>
+                            <TableHead className="text-center">Fecha inicio</TableHead>
+                            <TableHead className="text-center">Fecha fin</TableHead>
+                            <TableHead className="text-center">Acciones</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {promociones.map(promocion => (
+                            <TableRow key={promocion.idPromocionDescuento}>
+                                <TableCell>{promocion.nombrePromocion}</TableCell>
+                                <TableCell className="text-center">{promocion.libros.length}</TableCell>
+                                <TableCell className="text-center">{promocion.porcentaje + '%'}</TableCell>
+                                <TableCell className="text-center">
+                                    {new Date(promocion.fechaInicio).toLocaleDateString('es-ar')}
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    {new Date(promocion.fechaFin).toLocaleDateString('es-ar')}
+                                </TableCell>
+                                <TableCell>
+                                    <div className="flex justify-center">
+                                        <Kebab
+                                            actionList={[
+                                                {
+                                                    name: 'Editar',
+                                                    routeTo: `/nueva-promocion/${promocion.idPromocionDescuento}`,
+                                                },
+                                            ]}
+                                        />
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
             </div>
         </div>
     )

@@ -47,7 +47,7 @@ export default async function Libro({ params }: { params: { id: number } }) {
                     <p className="text-center text-sm group-hover:underline">Ver reseñas</p>
                 </Link>
             </div>
-            <div className="mt-4 flex min-w-[400px] max-w-xl flex-col items-center lg:mt-0 lg:items-baseline">
+            <div className="mt-4 flex min-w-[350px] max-w-xl flex-col items-center md:min-w-[400px] lg:mt-0 lg:items-baseline">
                 <div className="flex items-center gap-2">
                     <h1 className="text-center text-4xl font-semibold lg:text-left">{libro.titulo}</h1>
                     <EditarLibroProducto isbn={libro.isbn} />

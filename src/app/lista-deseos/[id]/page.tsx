@@ -16,9 +16,9 @@ export default async function ListaDeseos({ params }: { params: { id: string } }
 
     return (
         <div className="my-8 flex flex-col flex-wrap items-center md:my-16">
-            <div className="flex flex-col px-8 md:w-3/4 md:px-0">
+            <div className="flex flex-col px-4 md:w-3/4 md:px-0">
                 <div className="flex flex-col justify-between md:flex-row">
-                    <h1 className="self-start text-4xl font-semibold tracking-tighter">
+                    <h1 className="ml-4 self-start text-4xl font-semibold tracking-tighter md:ml-0">
                         Lista de deseos de {listUser?.nombre}
                     </h1>
                     <ShareWishlistButton />
