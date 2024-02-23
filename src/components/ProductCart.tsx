@@ -1,7 +1,7 @@
 'use client'
 
 import { addProductToCart, deleteProductFromCart } from '@/services/graphql'
-import { libro } from '@/types/libro'
+import { ejemplar } from '@/types/ejemplar'
 import { calculateDiscount, formatPrice } from '@/utils'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
@@ -25,7 +25,7 @@ interface ProductCartProps {
             }
         }>
     >
-    libro: libro
+    ejemplar: ejemplar
 }
 
 export default function ProductCart({
@@ -39,11 +39,11 @@ export default function ProductCart({
     stock,
     fetch_products,
     setAmounts,
-    libro,
+    ejemplar,
 }: ProductCartProps) {
     const [amountInput, setAmountInput] = useState(amount)
 
-    const discount = calculateDiscount(libro)
+    const discount = calculateDiscount(ejemplar)
 
     function updateAmount(newAmount: number, exact: boolean) {
         if (!Number.isInteger(newAmount)) return
@@ -69,6 +69,7 @@ export default function ProductCart({
             <div className="flex w-60 flex-col sm:w-96">
                 <p className="text-xl font-semibold tracking-tighter">{title}</p>
                 <p className="text-sm text-gray-600">por: {author}</p>
+                <p className="mt-0.5 text-sm text-gray-600">ISBN: {id}</p>
                 <div className="flex items-center gap-2">
                     <p className="text-sm">Cantidad: </p>
                     <button className="select-none text-lg" onClick={() => updateAmount(-1, false)}>

@@ -1,10 +1,10 @@
-import { getPedidos, getProducts, getUsers } from '@/services/graphql'
+import { getPedidos, getProducts } from '@/services/graphql'
 import { formatPrice } from '@/utils'
 
-export default async function GestionCards({ sessionId }: { sessionId: string }) {
+export default async function GestionCards({ sessionId, users }: { sessionId: string; users: any }) {
     const stock = (await getProducts()).reduce((acc: number, curr) => acc + curr.stock, 0)
     const pedidos: { total: number }[] = await getPedidos(sessionId)
-    const clientes = (await getUsers()).length
+    const clientes = users.length
 
     return (
         <div className="my-28 flex flex-wrap items-center justify-evenly gap-4 md:flex-row">

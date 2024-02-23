@@ -1,6 +1,5 @@
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
+import { ejemplar } from './types/ejemplar'
 import { libro } from './types/libro'
-import { getUserBySesion } from './services/graphql'
 
 export const formatPrice = (price: number) =>
     new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(price).replace(/\s/g, '')
@@ -13,16 +12,16 @@ export function getCookie(name: string) {
     return undefined
 }
 
-export function calculateDiscount(libro: libro) {
+export function calculateDiscount(ejemplar: ejemplar) {
     const currentDate = new Date().getTime()
     //Obtiene las promociones activas actualmente
-    const currentPromotions = libro.promociones.filter(promocion => {
+    const currentPromotions = ejemplar.promociones.filter(promocion => {
         return (
             new Date(promocion.promocionDescuento.fechaFin).getTime() >= currentDate &&
             new Date(promocion.promocionDescuento.fechaInicio).getTime() <= currentDate
         )
     })
-    if (currentPromotions.length === 0) return { hasDiscount: false, originalPrice: libro.precio }
+    if (currentPromotions.length === 0) return { hasDiscount: false, originalPrice: ejemplar.precio }
 
     //Obtiene el descuento mas alto de las promociones activas
     const descuento: number = currentPromotions.sort((a, b) => {
@@ -36,10 +35,24 @@ export function calculateDiscount(libro: libro) {
 
     return {
         hasDiscount: true,
-        originalPrice: libro.precio,
+        originalPrice: ejemplar.precio,
         porcentaje: `${descuento}%`,
-        discountedPrice: libro.precio * (descuento / 100),
+        discountedPrice: ejemplar.precio * (descuento / 100),
     }
+}
+
+export function getDefaultEjemplar(product: libro) {
+    // busca los ejemplares en stock
+    const ejemplaresEnStock = product.ejemplares.filter(ejemplar => ejemplar.stock > 0)
+    // si el libro no tiene ejemplares en stock devuelve undefined
+    if (!ejemplaresEnStock.length) return undefined
+
+    // busca si algun ejemplar en stock está en promocion y lo devuelve
+    const ejemplarConDescuento = ejemplaresEnStock.find(ejemplar => ejemplar.promociones.length > 0)
+    if (ejemplarConDescuento) return ejemplarConDescuento
+
+    // devuelve el primer ejemplar de la lista
+    return ejemplaresEnStock[0]
 }
 
 export const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://127.0.0.1:5000'

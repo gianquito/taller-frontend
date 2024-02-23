@@ -30,7 +30,11 @@ export default function Kebab({ actionList }: { actionList: Action[] }) {
                 <div className="absolute flex -translate-x-20 flex-col gap-1 border border-black bg-white px-3 py-2">
                     {actionList.map(action => (
                         <p
-                            onClick={() => (action.routeTo ? router.push(action.routeTo) : action.function())}
+                            onClick={() =>
+                                action.routeTo
+                                    ? router.push(action.routeTo)
+                                    : action.function !== undefined && action.function()
+                            }
                             className="cursor-pointer text-sm hover:underline"
                             key={action.name}
                         >

@@ -3,6 +3,7 @@ import ProductCardFavorites from '@/components/ProductCardFavorites'
 import { getFavoritos } from '@/services/graphql'
 import { getSsrUser } from '@/ssrUtils'
 import { libro } from '@/types/libro'
+import { ChevronDown } from 'lucide-react'
 
 export default async function Favoritos() {
     const user = await getSsrUser()
