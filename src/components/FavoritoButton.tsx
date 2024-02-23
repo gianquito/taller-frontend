@@ -20,11 +20,11 @@ export default function FavoritoButton({ libro, user }: { libro: libro; user: us
         }
         setIsFavorite(prev => !prev)
         if (isFavorite) {
-            deleteFavorite(libro.isbn, user.idUsuario)
+            deleteFavorite(libro.idLibro, user.idUsuario)
                 .then(() => toast.success(`Se eliminó "${libro.titulo}" de tus favoritos`))
                 .catch(() => toast.error(`No se pudo eliminar "${libro.titulo}" de tus favoritos`))
         } else {
-            addFavorite(libro.isbn, user.idUsuario)
+            addFavorite(libro.idLibro, user.idUsuario)
                 .then(() => toast.success(`Se agregó "${libro.titulo}" a tus favoritos`))
                 .catch(() => toast.error(`No se pudo agregar "${libro.titulo}" a tus favoritos`))
         }

@@ -37,18 +37,21 @@ export const getUserById = async (id_usuario: string) => {
     return data.data.usuarios[0]
 }
 
-export const getUsers = async () => {
+export const getUsers = async (id_session: string) => {
     const request = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{
-            usuarios{
-              idUsuario
-            }
-          }`,
+              usuarios{
+                idUsuario,
+                email,
+                rol
+              }
+            }`,
         }),
         headers: {
             'Content-Type': 'application/json',
+            sesionId: id_session ?? '',
         },
     })
     const data = await request.json()
@@ -75,6 +78,7 @@ export const updateUser = async (
         }),
         headers: {
             'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
         },
     })
     const data = await request.json()
@@ -141,65 +145,58 @@ export const getProducts = async (): Promise<libro[]> => {
     return products.data.libros
 }
 
-export const getProduct = async (isbn: number): Promise<libro> => {
+export const getProduct = async (idLibro: number): Promise<libro> => {
+    console.log(idLibro)
     const request = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{
-                libros(isbn: ${isbn}) {
+              libros(idLibro: ${idLibro}){
+                titulo,
+                idLibro,
+                imagen,
+                descripcion,
+                ejemplares{
                   isbn,
-                  titulo,
                   precio,
-                  imagen,
                   stock,
-                  descripcion,
-                  dimensiones,
                   paginas,
-                  usuariosFavoritos{
-                    idUsuario
-                  },
-                  editoriales{
-                    editorial{
-                      nombreEditorial
-                    }
-                  },
-                  encuadernados{
-                    encuadernado{
-                      tipo
-                    }
-                  },
-                  generos{
-                    genero{
-                      nombreGenero
-                    }
-                  },
+                  dimensiones,
                   promociones{
                     promocionDescuento{
                       porcentaje,
                       fechaFin,
-                      fechaInicio
+                      fechaInicio,
                     }
-                  },
-                  usuariosDeseados{
-                    idUsuario
-                  },
-                  autores{
-                    autor{
-                      nombreAutor
-                    }
-                  },
-                  promociones{
-                    promocionDescuento{
-                      porcentaje,
-                      fechaFin,
-                      fechaInicio
-                    }
-                  },
-                  resenias{
-                    valoracion
-                  },
+                  }
+                  editorial{
+                    nombreEditorial
+                  }
+                  encuadernado{
+                    tipo
+                  }
                 }
-              }`,
+                generos{
+                  genero{
+                    nombreGenero
+                  }
+                }
+                autores{
+                  autor{
+                    nombreAutor
+                  }
+                }
+                usuariosFavoritos{
+                  idUsuario
+                }
+                usuariosDeseados{
+                  idUsuario
+                }
+                resenias{
+                  valoracion
+                }
+              }
+            }`,
         }),
         headers: {
             'Content-Type': 'application/json',
@@ -219,50 +216,34 @@ export const getProductsByName = async (nombre: string): Promise<libro[]> => {
         method: 'POST',
         body: JSON.stringify({
             query: `{
-              libros(titulo: "${nombre}") {
-                isbn,
-                  titulo,
+              libros(titulo: "${nombre}"){
+                titulo,
+                idLibro,
+                imagen,
+                ejemplares{
+                  isbn,
                   precio,
-                  imagen,
                   stock,
-                  descripcion,
-                  dimensiones,
-                  paginas,
-                  usuariosFavoritos{
-                    idUsuario
-                  },
-                  editoriales{
-                    editorial{
-                      nombreEditorial
-                    }
-                  },
-                  encuadernados{
-                    encuadernado{
-                      tipo
-                    }
-                  },
-                  generos{
-                    genero{
-                      nombreGenero
-                    }
-                  },
                   promociones{
                     promocionDescuento{
                       porcentaje,
                       fechaFin,
-                      fechaInicio
-                    }
-                  },
-                  usuariosDeseados{
-                    idUsuario
-                  },
-                  autores{
-                    autor{
-                      nombreAutor
+                      fechaInicio,
                     }
                   }
                 }
-              }`,
+                generos{
+                  genero{
+                    nombreGenero
+                  }
+                }
+                autores{
+                  autor{
+                    nombreAutor
+                  }
+                }
+              }
+            }`,
         }),
         headers: {
             'Content-Type': 'application/json',
@@ -367,19 +348,12 @@ export const getProductsInCart = async (id_carrito: number) => {
         method: 'POST',
         body: JSON.stringify({
             query: `{
-              librosEnCarrito(idCarrito: ${id_carrito}){
+              ejemplaresEnCarrito(idCarrito: ${id_carrito}){
                 cantidad,
-                libro{
-                  isbn,
-                  titulo,
-                  precio,
-                  stock,
-                  imagen,
-                  autores{
-                    autor{
-                      nombreAutor
-                    }
-                  },
+                ejemplar{
+                  isbn
+                  precio
+                  stock
                   promociones{
                     promocionDescuento{
                       porcentaje,
@@ -387,6 +361,15 @@ export const getProductsInCart = async (id_carrito: number) => {
                       fechaInicio
                     }
                   },
+                  libro{
+                    titulo
+                    imagen
+                    autores{
+                      autor{
+                        nombreAutor
+                      }
+                    }
+                  }
                 }
               }
             }`,
@@ -398,17 +381,17 @@ export const getProductsInCart = async (id_carrito: number) => {
     })
     const products = await response.json()
     if (products.errors) throw products.errors[0]
-    return products.data.librosEnCarrito
+    return products.data.ejemplaresEnCarrito
 }
 
-export const addProductToCart = async (id_producto: number, id_carrito: number, amount = 1, exact = false) => {
-    const libros = await getProductsInCart(id_carrito)
-    const productInCart = libros.find((prod: any) => prod.libro.isbn == id_producto)
+export const addProductToCart = async (id_ejemplar: number, id_carrito: number, amount = 1, exact = false) => {
+    const ejemplares = await getProductsInCart(id_carrito)
+    const productInCart = ejemplares.find((prod: any) => prod.ejemplar.isbn == id_ejemplar)
     if (productInCart) {
         const res = await fetch(`${SERVER_URL}/graphql`, {
             method: 'POST',
             body: JSON.stringify({
-                query: `mutation{updateLineaCarrito(idCarrito: ${id_carrito}, idLibro: ${id_producto}, cantidad: ${
+                query: `mutation{updateLineaCarrito(idCarrito: ${id_carrito}, idEjemplar: ${id_ejemplar}, cantidad: ${
                     exact ? amount : productInCart.cantidad + amount
                 }){ lineaCarrito{ cantidad } }}`,
             }),
@@ -425,7 +408,7 @@ export const addProductToCart = async (id_producto: number, id_carrito: number, 
         const res = await fetch(`${SERVER_URL}/graphql`, {
             method: 'POST',
             body: JSON.stringify({
-                query: `mutation{createLineaCarrito(idLibro: ${id_producto}, idCarrito: ${id_carrito}, cantidad: ${amount}){ lineaCarrito{ cantidad } }}`,
+                query: `mutation{createLineaCarrito(idEjemplar: ${id_ejemplar}, idCarrito: ${id_carrito}, cantidad: ${amount}){ lineaCarrito{ cantidad } }}`,
             }),
             headers: {
                 'Content-Type': 'application/json',

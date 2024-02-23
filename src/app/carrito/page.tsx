@@ -4,7 +4,7 @@ import BlackButton from '@/components/BlackButton'
 import ProductCart from '@/components/ProductCart'
 import useClientAuth from '@/hooks/useAuth'
 import { getProductsInCart } from '@/services/graphql'
-import { libro } from '@/types/libro'
+import { ejemplar } from '@/types/ejemplar'
 import { formatPrice } from '@/utils'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react'
 
 export default function Carrito() {
     const user = useClientAuth()
-    const [products, setProducts] = useState<{ cantidad: number; libro: libro }[]>([])
+    const [products, setProducts] = useState<{ cantidad: number; ejemplar: ejemplar }[]>([])
     const [amounts, setAmounts] = useState<{ [id: string]: { amount: number; price: number } }>({})
     const [subtotal, setSubtotal] = useState(0)
 
@@ -42,18 +42,18 @@ export default function Carrito() {
                 <div className="flex flex-col gap-4">
                     <h1 className="self-start text-4xl font-semibold tracking-tighter">Carrito</h1>
                     {products.length ? (
-                        products.map(product => (
+                        products.map(({ cantidad, ejemplar }) => (
                             <ProductCart
-                                libro={product.libro}
-                                title={product.libro.titulo}
-                                author={product.libro.autores[0].autor.nombreAutor}
-                                price={product.libro.precio}
-                                image={atob(product.libro.imagen)}
-                                amount={product.cantidad}
-                                key={product.libro.isbn}
-                                id={product.libro.isbn}
+                                ejemplar={ejemplar}
+                                title={ejemplar.libro.titulo}
+                                author={ejemplar.libro.autores[0].autor.nombreAutor}
+                                price={ejemplar.precio}
+                                image={atob(ejemplar.libro.imagen)}
+                                amount={cantidad}
+                                key={ejemplar.isbn}
+                                id={ejemplar.isbn}
                                 cart_id={user.idCarrito}
-                                stock={product.libro.stock}
+                                stock={ejemplar.stock}
                                 fetch_products={fetchProducts}
                                 setAmounts={setAmounts}
                             />

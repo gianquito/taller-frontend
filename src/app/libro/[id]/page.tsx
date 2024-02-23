@@ -2,21 +2,29 @@ import AddToCartButton from '@/components/AddToCartButton'
 import ClientNavigator from '@/components/ClientNavigator'
 import EditarLibroProducto from '@/components/EditarLibroProducto'
 import FavoritoButton from '@/components/FavoritoButton'
+import ProductOptionsSelector from '@/components/ProductOptionsSelector'
 import WishListButton from '@/components/WishListButton'
 import { getProduct } from '@/services/graphql'
 import { getSsrUser } from '@/ssrUtils'
-import { calculateDiscount, formatPrice } from '@/utils'
+import { calculateDiscount, formatPrice, getDefaultEjemplar } from '@/utils'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
-export default async function Libro({ params }: { params: { id: number } }) {
+export default async function Libro({
+    params,
+    searchParams,
+}: {
+    params: { id: number }
+    searchParams?: { [key: string]: number }
+}) {
     const libro = await getProduct(params.id)
     if (!libro) {
         return <ClientNavigator route="/" />
     }
+    const ejemplar = libro.ejemplares.find(ejemplar => ejemplar.isbn == searchParams?.ejemplar) // QUE PASA SI EL EJEMPLAR NO ES VALIDO?????
+    const discount = calculateDiscount(ejemplar!)
     const user = await getSsrUser()
-    const discount = calculateDiscount(libro)
     return (
         <div className="mb-32 mt-6 flex flex-1 flex-col items-center justify-evenly px-12 lg:mt-20 lg:flex-row">
             <div>
@@ -50,7 +58,7 @@ export default async function Libro({ params }: { params: { id: number } }) {
             <div className="mt-4 flex min-w-[350px] max-w-xl flex-col items-center md:min-w-[400px] lg:mt-0 lg:items-baseline">
                 <div className="flex items-center gap-2">
                     <h1 className="text-center text-4xl font-semibold lg:text-left">{libro.titulo}</h1>
-                    <EditarLibroProducto isbn={libro.isbn} />
+                    <EditarLibroProducto idLibro={libro.idLibro} />
                 </div>
                 <div className="mt-2 flex w-full items-center justify-evenly lg:mt-0 lg:flex-col lg:items-baseline">
                     <div className="mt-1 flex flex-col items-center gap-2 lg:flex-row">
@@ -67,25 +75,18 @@ export default async function Libro({ params }: { params: { id: number } }) {
                                 </p>
                             </>
                         ) : (
-                            <p className="text-2xl">{formatPrice(libro.precio)}</p>
+                            <p className="text-2xl">{formatPrice(ejemplar!.precio)}</p>
                         )}
                     </div>
-
                     <div className="mt-1 flex flex-col gap-0.5 text-sm text-neutral-500">
                         <p>Autores: {libro.autores.map(({ autor }) => autor.nombreAutor).join(', ')}</p>
-                        <p>Dimensiones: {libro.dimensiones}</p>
-                        <p>
-                            Editoriales:{' '}
-                            {libro.editoriales.map(({ editorial }) => editorial.nombreEditorial).join(', ')}
-                        </p>
-                        <p>Páginas: {libro.paginas}</p>
+                        <p>Dimensiones: {ejemplar?.dimensiones}</p>
+                        <p>Páginas: {ejemplar?.paginas}</p>
                         <p>Géneros: {libro.generos.map(({ genero }) => genero.nombreGenero).join(', ')}</p>
-                        <p>
-                            Encuadernados: {libro.encuadernados.map(({ encuadernado }) => encuadernado.tipo).join(', ')}
-                        </p>
+                        <ProductOptionsSelector libro={libro} currentEjemplar={ejemplar!} />
                     </div>
                 </div>
-                <AddToCartButton libro={libro} />
+                <AddToCartButton ejemplar={ejemplar!} titulo={libro.titulo} />
                 <div className="my-1 mt-2 flex gap-2 self-start">
                     <WishListButton libro={libro} user={user} />
                     <FavoritoButton libro={libro} user={user} />

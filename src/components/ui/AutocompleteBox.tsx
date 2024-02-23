@@ -14,6 +14,7 @@ interface AutocompleteBoxProps {
     onValuesChange: (values: string[]) => void
     initialValues?: string[]
     preventAdd?: boolean
+    className?: string
 }
 
 export function AutocompleteBox({
@@ -22,6 +23,7 @@ export function AutocompleteBox({
     onValuesChange,
     initialValues,
     preventAdd,
+    className,
 }: AutocompleteBoxProps) {
     const [options, setOptions] = React.useState<string[]>([])
     const [open, setOpen] = React.useState(false)
@@ -43,7 +45,7 @@ export function AutocompleteBox({
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="mb-3 h-max min-h-[50px] w-full flex-wrap gap-2 rounded-none border border-black outline-none"
+                    className={`mb-3 h-max min-h-[50px] w-full flex-wrap gap-2 rounded-none border border-black outline-none ${className}`}
                 >
                     {!values.length ? (
                         <span className="text-gray-400">Seleccionar</span>
@@ -56,7 +58,7 @@ export function AutocompleteBox({
                     )}
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0 ">
+            <PopoverContent className="w-[220px] p-0 ">
                 <Command>
                     <CommandInput
                         placeholder={`Buscar ${category}...`}
@@ -79,7 +81,7 @@ export function AutocompleteBox({
                             >
                                 <Check
                                     className={cn(
-                                        'mr-2 h-4 w-4',
+                                        'mr-2 h-4 w-4 flex-shrink-0',
                                         values.includes(option) ? 'opacity-100' : 'opacity-0'
                                     )}
                                 />

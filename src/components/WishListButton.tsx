@@ -20,11 +20,11 @@ export default function WishListButton({ libro, user }: { libro: libro; user: us
         }
         setIsWishListed(prev => !prev)
         if (isWishListed) {
-            deleteWishlisted(libro.isbn, user.idUsuario)
+            deleteWishlisted(libro.idLibro, user.idUsuario)
                 .then(() => toast.success(`Se eliminó "${libro.titulo}" de tu lista de deseos`))
                 .catch(() => toast.error(`No se pudo eliminar "${libro.titulo}" de tu lista de deseos`))
         } else {
-            addWishlisted(libro.isbn, user.idUsuario)
+            addWishlisted(libro.idLibro, user.idUsuario)
                 .then(() => toast.success(`Se agregó "${libro.titulo}" a tu lista de deseos`))
                 .catch(() => toast.error(`No se pudo agregar "${libro.titulo}" a tu lista de deseos`))
         }

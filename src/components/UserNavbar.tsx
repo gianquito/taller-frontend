@@ -1,6 +1,7 @@
 'use client'
 import { userType } from '@/types/user'
 import { SERVER_URL, getCookie } from '@/utils'
+import { ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useDetectClickOutside } from 'react-detect-click-outside'
@@ -24,8 +25,10 @@ export default function UserNavbar({ user }: { user: userType }) {
                 onClick={() => setToggledMenu(prevToggled => !prevToggled)}
             >
                 <img className="w-8 rounded-full" src={user.imagen} />
-                <p>{user.nombre}</p>
-                <img className={`w-4 transition-all ${toggledMenu && 'rotate-180'}`} src="/ArrowDown.svg" />
+                <div className="flex items-center gap-1">
+                    <p>{user.nombre}</p>
+                    <ChevronDown className={` transition-all ${toggledMenu && 'rotate-180'}`} />
+                </div>
             </div>
             {toggledMenu && (
                 <div className="absolute z-10 border border-black bg-white px-6 py-3" ref={ref}>
