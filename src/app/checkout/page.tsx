@@ -9,13 +9,13 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'react-hot-toast'
 import { getDirecciones, getProductsInCart } from '@/services/graphql'
 import { calculateDiscount, formatPrice, getCookie } from '@/utils'
-import { libro } from '@/types/libro'
 import { direccion } from '@/types/direccion'
 import useClientAuth from '@/hooks/useAuth'
+import { ejemplar } from '@/types/ejemplar'
 
 export default function Checkout() {
     const [selectedAddress, setSelectedAddress] = useState<string | null>(null)
-    const [cartProducts, setCartProducts] = useState<{ cantidad: number; libro: libro }[]>([])
+    const [cartProducts, setCartProducts] = useState<{ cantidad: number; ejemplar: ejemplar }[]>([])
     const router = useRouter()
     const user = useClientAuth()
     const [subtotal, setSubtotal] = useState(0)
@@ -37,17 +37,19 @@ export default function Checkout() {
             method: 'POST',
             body: JSON.stringify({
                 products: cartProducts.map(product => {
-                    const discount = calculateDiscount(product.libro)
+                    const discount = calculateDiscount(product.ejemplar)
                     return {
                         quantity: product.cantidad,
                         unit_price: discount.hasDiscount ? discount.discountedPrice : discount.originalPrice,
-                        title: product.libro.titulo,
-                        id: product.libro.isbn,
+                        title: product.ejemplar.libro.titulo,
+                        id: product.ejemplar.isbn,
                         currency_id: 'ARS',
                     }
                 }),
                 envio: costoEnvios[selectedAddress],
                 id_usuario: user.idUsuario,
+                total: cartProducts.reduce((acc, currVal) => currVal.cantidad * currVal.ejemplar.precio + acc, 0),
+                id_direccion: selectedAddress,
             }),
         })
             .then(res => res.text())
@@ -66,8 +68,8 @@ export default function Checkout() {
     useEffect(() => {
         let acc = 0
         cartProducts.forEach(p => {
-            const discount = calculateDiscount(p.libro)
-            acc += p.cantidad * (discount.hasDiscount ? discount.discountedPrice! : p.libro.precio)
+            const discount = calculateDiscount(p.ejemplar)
+            acc += p.cantidad * (discount.hasDiscount ? discount.discountedPrice! : p.ejemplar.precio)
         })
         setSubtotal(acc)
     }, [cartProducts])
@@ -124,15 +126,16 @@ export default function Checkout() {
                 </div>
                 <div className="mt-10 flex flex-col items-center gap-4">
                     <p className="mb-2 self-start text-xl">Tu carrito</p>
-                    {cartProducts.map(product => (
+                    {cartProducts.map(({ cantidad, ejemplar }) => (
                         <ProductCheckout
-                            title={product.libro.titulo}
-                            author={product.libro.autores[0].autor.nombreAutor}
-                            price={product.libro.precio}
-                            image={atob(product.libro.imagen)}
-                            amount={product.cantidad}
-                            key={product.libro.isbn}
-                            libro={product.libro}
+                            title={ejemplar.libro.titulo}
+                            author={ejemplar.libro.autores[0].autor.nombreAutor}
+                            price={ejemplar.precio}
+                            image={atob(ejemplar.libro.imagen)}
+                            amount={cantidad}
+                            key={ejemplar.isbn}
+                            ejemplar={ejemplar}
+                            id={ejemplar.isbn}
                         />
                     ))}
                     <div className="my-12 flex w-80 flex-col gap-2 sm:w-96">

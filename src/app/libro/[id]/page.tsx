@@ -6,7 +6,7 @@ import ProductOptionsSelector from '@/components/ProductOptionsSelector'
 import WishListButton from '@/components/WishListButton'
 import { getProduct } from '@/services/graphql'
 import { getSsrUser } from '@/ssrUtils'
-import { calculateDiscount, formatPrice, getDefaultEjemplar } from '@/utils'
+import { calculateDiscount, formatPrice } from '@/utils'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'

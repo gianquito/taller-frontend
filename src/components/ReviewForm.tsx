@@ -3,24 +3,28 @@
 import { useEffect, useState } from 'react'
 import BlackButton from './BlackButton'
 import StarsInput from './StarsInput'
-import { addReview, getPedidosByUser } from '@/services/graphql'
+import { addReview, getPedidosByUser, getReview } from '@/services/graphql'
 import toast from 'react-hot-toast'
 import useClientAuth from '@/hooks/useAuth'
+import { ejemplar } from '@/types/ejemplar'
+import { useRouter } from 'next/navigation'
 
 interface ReviewFormProps {
-    isbn: number
+    idLibro: number
 }
 
-export default function ReviewForm({ isbn }: ReviewFormProps) {
+export default function ReviewForm({ idLibro }: ReviewFormProps) {
     const [selectedRating, setSelectedRating] = useState<0 | 1 | 2 | 3 | 4 | 5>(0)
     const [ratingText, setRatingText] = useState('')
     const [showForm, setShowForm] = useState(false)
 
     const user = useClientAuth(true)
 
+    const router = useRouter()
+
     function hasPedido(pedidos: any[]) {
         for (let i = 0; i < pedidos.length; i++) {
-            if (pedidos[i].lineasPedido.find((lp: { idLibro: number }) => lp.idLibro === isbn)) {
+            if (pedidos[i].lineasPedido.find((lp: { ejemplar: ejemplar }) => lp.ejemplar.libro.idLibro === idLibro)) {
                 return true
             }
         }
@@ -29,8 +33,11 @@ export default function ReviewForm({ isbn }: ReviewFormProps) {
 
     useEffect(() => {
         if (!user) return
-        getPedidosByUser(user.idUsuario).then(pedidos => {
-            pedidos.length && hasPedido(pedidos) && setShowForm(true)
+        getReview(idLibro, user.idUsuario).then(reviews => {
+            if (reviews.length > 0) return
+            getPedidosByUser(user.idUsuario).then(pedidos => {
+                pedidos.length && hasPedido(pedidos) && setShowForm(true)
+            })
         })
     }, [user])
     if (!user || !showForm) return null
@@ -52,8 +59,12 @@ export default function ReviewForm({ isbn }: ReviewFormProps) {
                 disabled={!selectedRating || ratingText.length == 0}
                 disabledText="Enviar"
                 onClick={() =>
-                    addReview(isbn, user.idUsuario, ratingText, selectedRating)
-                        .then(() => toast.success('Se agregó tu reseña'))
+                    addReview(idLibro, user.idUsuario, ratingText, selectedRating)
+                        .then(() => {
+                            toast.success('Se agregó tu reseña')
+                            setShowForm(false)
+                            router.refresh()
+                        })
                         .catch(() => toast.error('Error al agregar reseña'))
                 }
             />

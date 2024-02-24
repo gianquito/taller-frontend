@@ -27,7 +27,7 @@ export default async function ProductsHome({ nombre, genero }: { nombre?: string
             <div className="flex flex-wrap justify-center gap-8 px-2 md:px-24">
                 <CargarLibroHome />
                 {products
-                    .filter(product => getDefaultEjemplar(product) !== undefined && product.autores.length > 0)
+                    .filter(product => getDefaultEjemplar(product) !== undefined)
                     .map(product => (
                         <>
                             <ProductCardHome

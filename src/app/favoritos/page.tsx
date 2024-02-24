@@ -3,7 +3,7 @@ import ProductCardFavorites from '@/components/ProductCardFavorites'
 import { getFavoritos } from '@/services/graphql'
 import { getSsrUser } from '@/ssrUtils'
 import { libro } from '@/types/libro'
-import { ChevronDown } from 'lucide-react'
+import { getDefaultEjemplar } from '@/utils'
 
 export default async function Favoritos() {
     const user = await getSsrUser()
@@ -17,18 +17,20 @@ export default async function Favoritos() {
                 <h1 className="ml-4 self-start text-4xl font-semibold tracking-tighter md:ml-0">Favoritos</h1>
                 <div className="mt-6 flex flex-wrap justify-center gap-4 md:mt-10 md:justify-normal md:gap-8">
                     {!products.length && 'Tu lista de favoritos está vacia'}
-                    {products.map(({ libro }) => (
-                        <ProductCardFavorites
-                            title={libro.titulo}
-                            image={atob(libro.imagen)}
-                            id={libro.isbn}
-                            price={libro.precio}
-                            author={libro.autores[0].autor.nombreAutor}
-                            key={libro.isbn}
-                            id_usuario={user.idUsuario}
-                            libro={libro}
-                        />
-                    ))}
+                    {products.map(({ libro }) =>
+                        getDefaultEjemplar(libro) != undefined ? (
+                            <ProductCardFavorites
+                                title={libro.titulo}
+                                image={atob(libro.imagen)}
+                                id={libro.idLibro}
+                                price={getDefaultEjemplar(libro)!.precio}
+                                author={libro.autores[0].autor.nombreAutor}
+                                key={libro.idLibro}
+                                id_usuario={user.idUsuario}
+                                ejemplar={getDefaultEjemplar(libro)!}
+                            />
+                        ) : null
+                    )}
                 </div>
             </div>
         </div>

@@ -1,7 +1,7 @@
 'use client'
 
 import { deleteFavorite } from '@/services/graphql'
-import { libro } from '@/types/libro'
+import { ejemplar } from '@/types/ejemplar'
 import { calculateDiscount, formatPrice } from '@/utils'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -14,7 +14,7 @@ interface ProductCardHomeProps {
     price: number
     id: number
     id_usuario: string
-    libro: libro
+    ejemplar: ejemplar
 }
 
 export default function ProductCardFavorites({
@@ -24,12 +24,12 @@ export default function ProductCardFavorites({
     price,
     id,
     id_usuario,
-    libro,
+    ejemplar,
 }: ProductCardHomeProps) {
-    const discount = calculateDiscount(libro)
+    const discount = calculateDiscount(ejemplar)
     const router = useRouter()
     return (
-        <Link className="flex w-40 flex-col gap-0.5 leading-7" href={`/libro/${id}`}>
+        <Link className="flex w-40 flex-col gap-0.5 leading-7" href={`/libro/${id}?ejemplar=${ejemplar.isbn}`}>
             <img className="w-40" alt={title + ' portada'} src={image} />
             <p className="leading-5">{title}</p>
             <p className="text-sm text-gray-600">por: {author}</p>

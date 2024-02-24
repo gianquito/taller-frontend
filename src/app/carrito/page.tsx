@@ -39,7 +39,7 @@ export default function Carrito() {
     return (
         <div>
             <div className="mt-8 flex flex-col items-center justify-evenly lg:flex-row">
-                <div className="flex flex-col gap-4">
+                <div className="mb-12 flex flex-col gap-4">
                     <h1 className="self-start text-4xl font-semibold tracking-tighter">Carrito</h1>
                     {products.length ? (
                         products.map(({ cantidad, ejemplar }) => (
