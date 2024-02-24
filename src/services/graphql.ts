@@ -146,7 +146,6 @@ export const getProducts = async (): Promise<libro[]> => {
 }
 
 export const getProduct = async (idLibro: number): Promise<libro> => {
-    console.log(idLibro)
     const request = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
@@ -362,6 +361,7 @@ export const getProductsInCart = async (id_carrito: number) => {
                     }
                   },
                   libro{
+                    idLibro
                     titulo
                     imagen
                     autores{
@@ -421,12 +421,12 @@ export const addProductToCart = async (id_ejemplar: number, id_carrito: number, 
     }
 }
 
-export const deleteProductFromCart = async (id_carrito: number, id_producto: number) => {
+export const deleteProductFromCart = async (id_carrito: number, id_ejemplar: number) => {
     const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
-            deleteLineaCarrito(idLibro: ${id_producto}, idCarrito: ${id_carrito}){
+            deleteLineaCarrito(idEjemplar: ${id_ejemplar}, idCarrito: ${id_carrito}){
               lineaCarrito{
                 cantidad
               }
@@ -644,11 +644,15 @@ export const getPedidosByUser = async (id_usuario: string) => {
         method: 'POST',
         body: JSON.stringify({
             query: `{
-            pedidos(idUsuario: "${id_usuario}"){
-              lineasPedido{
-                idLibro
+              pedidos(idUsuario: "${id_usuario}"){
+                lineasPedido{
+                  ejemplar{
+                    libro{
+                      idLibro
+                    }
+                  }
+                }
               }
-            }
             }`,
         }),
         headers: {
@@ -1387,22 +1391,27 @@ export const getFavoritos = async (id_usuario: string, id_session?: string) => {
             query: `{
               favoritosLibro(idUsuario: "${id_usuario}"){
                 libro{
-                  isbn,
+                  ejemplares{
+                    isbn,
+                    stock,
+                    precio,
+                    promociones{
+                      promocionDescuento{
+                        porcentaje,
+                        fechaInicio,
+                        fechaFin
+                      }
+                    }
+                    
+                  }
+                  idLibro
                   titulo,
-                  precio,
                   imagen,
                   autores{
                     autor{
                       nombreAutor
                     }
-                  },
-                  promociones{
-                    promocionDescuento{
-                      porcentaje,
-                      fechaFin,
-                      fechaInicio
-                    }
-                  },
+                  }
                 }
               }
             }`,
@@ -1417,22 +1426,30 @@ export const getFavoritos = async (id_usuario: string, id_session?: string) => {
     return favoritos.data.favoritosLibro
 }
 
-export const addPedido = async (envio: number, id_usuario: string, total: number) => {
+export const addPedido = async (
+    envio: number,
+    id_usuario: string,
+    total_con_descuento: number,
+    total: number,
+    id_direccion: string
+) => {
     const fecha = new Date().toISOString()
     let id_envio = 2
     if (envio === 0) {
         id_envio = 1
     }
+    const idDireccion = id_direccion == '-1' ? '' : ', idDireccion: ' + parseInt(id_direccion)
+    console.log(total_con_descuento)
     const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
-            createPedido(costoEnvio: ${envio},fecha: "${fecha}",idEnvio: ${id_envio},idUsuario:"${id_usuario}",total: ${total}){
-              pedido{
-                idPedido
+              createPedido(costoEnvio: ${envio}, fecha: "${fecha}", idEnvio: ${id_envio}, idUsuario:"${id_usuario}", total: ${total}, totalConDescuento: ${total_con_descuento} ${idDireccion}){
+                pedido{
+                  idPedido
+                }
               }
-            }
-          }`,
+            }`,
         }),
         headers: {
             'Content-Type': 'application/json',
@@ -1448,28 +1465,33 @@ export const getWishlist = async (id_usuario: string) => {
         method: 'POST',
         body: JSON.stringify({
             query: `{
-            deseosLibro(idUsuario:"${id_usuario}"){
-              idUsuario
-              libro{
-                isbn,
-                titulo,
-                precio,
-                imagen,
-                autores{
-                  autor{
-                    nombreAutor
+                deseosLibro(idUsuario: "${id_usuario}"){
+                  idUsuario
+                  libro{
+                    ejemplares{
+                      isbn,
+                      stock,
+                      precio,
+                      promociones{
+                        promocionDescuento{
+                          porcentaje,
+                          fechaInicio,
+                          fechaFin
+                        }
+                      }
+                      
+                    }
+                    idLibro
+                    titulo,
+                    imagen,
+                    autores{
+                      autor{
+                        nombreAutor
+                      }
+                    }
                   }
-                },
-                promociones{
-                  promocionDescuento{
-                    porcentaje,
-                    fechaFin,
-                    fechaInicio
-                  }
-                },
-              }
-            }
-          }`,
+                }
+              }`,
         }),
         headers: {
             'Content-Type': 'application/json',
@@ -1497,7 +1519,7 @@ export const getReviews = async (
                   apellido
                 }
               }
-              libros(isbn: ${isbn}){
+              libros(idLibro: ${isbn}){
                 titulo
               }
             }`,
@@ -1530,4 +1552,24 @@ export const addReview = async (isbn: number, id_usuario: string, texto: string,
     const review = await response.json()
     if (review.errors) throw review.errors
     return review.data
+}
+
+export const getReview = async (id_libro: number, id_usuario: string) => {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `{
+            resenias(idUsuario: "${id_usuario}", idLibro: ${id_libro}){
+              idUsuario,
+              idLibro
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    const review = await response.json()
+    if (review.errors) throw review.errors
+    return review.data.resenias
 }

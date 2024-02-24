@@ -4,6 +4,7 @@ import ShareWishlistButton from '@/components/ShareWishlistButton'
 import { getUserById, getWishlist } from '@/services/graphql'
 import { getSsrUser } from '@/ssrUtils'
 import { libro } from '@/types/libro'
+import { getDefaultEjemplar } from '@/utils'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,19 +26,21 @@ export default async function ListaDeseos({ params }: { params: { id: string } }
                 </div>
                 <div className="mt-6 flex flex-wrap justify-center gap-4 md:mt-10 md:justify-normal md:gap-8">
                     {!products.length && 'La lista de deseos está vacia'}
-                    {products.map(({ libro }) => (
-                        <ProductCardWishlist
-                            title={libro.titulo}
-                            image={atob(libro.imagen)}
-                            id={libro.isbn}
-                            price={libro.precio}
-                            author={libro.autores[0].autor.nombreAutor}
-                            key={libro.isbn}
-                            id_usuario={user ? user.idUsuario : undefined}
-                            libro={libro}
-                            id_lista={params.id}
-                        />
-                    ))}
+                    {products.map(({ libro }) =>
+                        getDefaultEjemplar(libro) != undefined ? (
+                            <ProductCardWishlist
+                                title={libro.titulo}
+                                image={atob(libro.imagen)}
+                                id={libro.idLibro}
+                                price={getDefaultEjemplar(libro)!.precio}
+                                author={libro.autores[0].autor.nombreAutor}
+                                key={libro.idLibro}
+                                id_usuario={user?.idUsuario}
+                                ejemplar={getDefaultEjemplar(libro)!}
+                                id_lista={params.id}
+                            />
+                        ) : null
+                    )}
                 </div>
             </div>
         </div>

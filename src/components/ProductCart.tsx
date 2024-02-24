@@ -4,6 +4,7 @@ import { addProductToCart, deleteProductFromCart } from '@/services/graphql'
 import { ejemplar } from '@/types/ejemplar'
 import { calculateDiscount, formatPrice } from '@/utils'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
@@ -67,7 +68,9 @@ export default function ProductCart({
         <div className="flex flex-shrink-0 translate-x-4 gap-6 sm:translate-x-8">
             <Image className="h-[132px] w-[80px]" src={image} alt={title} width={80} height={132} />
             <div className="flex w-60 flex-col sm:w-96">
-                <p className="text-xl font-semibold tracking-tighter">{title}</p>
+                <Link href={`/libro/${ejemplar.libro.idLibro}?ejemplar=${id}`}>
+                    <p className="text-xl font-semibold tracking-tighter">{title}</p>
+                </Link>
                 <p className="text-sm text-gray-600">por: {author}</p>
                 <p className="mt-0.5 text-sm text-gray-600">ISBN: {id}</p>
                 <div className="flex items-center gap-2">

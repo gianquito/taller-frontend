@@ -10,10 +10,14 @@ export async function POST(request: Request) {
         products,
         envio,
         id_usuario,
+        total,
+        id_direccion,
     }: {
         products: { quantity: number; unit_price: number; title: string; id: string; currency_id: string }[]
         envio: number
         id_usuario: string
+        total: number
+        id_direccion: string
     } = await request.json()
     const preference = new Preference(client)
     // add payer info with id_usuario; validate cookie?; create webhook endpoint to confirm payment
@@ -23,12 +27,14 @@ export async function POST(request: Request) {
                 items: products,
                 metadata: {
                     user_id: id_usuario,
+                    total: total,
+                    id_direccion: id_direccion,
                 },
                 shipments: {
                     cost: envio,
                 },
                 additional_info: id_usuario,
-                notification_url: 'https://3f0e-45-70-223-92.ngrok-free.app/webhook',
+                notification_url: 'https://da13-45-70-223-92.ngrok-free.app/webhook',
                 auto_return: 'approved',
                 back_urls: {
                     success: 'http://localhost:3000',

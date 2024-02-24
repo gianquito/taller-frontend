@@ -11,7 +11,13 @@ export async function POST(request: Request) {
     if (body.type === 'payment') {
         const payment = new Payment(client)
         const p = await payment.get({ id: body.data.id })
-        await addPedido(p.shipping_amount ?? 0, p.metadata.user_id, p.transaction_amount ?? 0)
+        await addPedido(
+            p.shipping_amount ?? 0,
+            p.metadata.user_id,
+            p.transaction_amount ?? 0,
+            p.metadata.total,
+            p.metadata.id_direccion
+        )
     }
 
     return new Response('OK', {

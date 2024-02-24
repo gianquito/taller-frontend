@@ -68,7 +68,7 @@ export default async function Reviews({ params }: { params: { id: number } }) {
                                 text={review.texto}
                             />
                         ))}
-                        <ReviewForm isbn={params.id} />
+                        <ReviewForm idLibro={params.id} />
                     </div>
                 </div>
             </div>
