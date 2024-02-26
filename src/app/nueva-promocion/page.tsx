@@ -14,7 +14,9 @@ export default function NuevaPromocion() {
     const [fechaInicio, setFechaInicio] = useState('')
     const [fechaFin, setFechaFin] = useState('')
     const [porcentaje, setPorcentaje] = useState<number | undefined>()
-    const [libros, setLibros] = useState<string[]>([])
+    const [librosIsbn, setLibrosIsbn] = useState<string[]>([])
+    const [loadingConfirm, setLoadingConfirm] = useState(false);
+
 
     const user = useClientAuth()
 
@@ -34,19 +36,21 @@ export default function NuevaPromocion() {
         }
     }, [user])
 
-    async function fetchLibros() {
+    async function fetchIsbn() {
         const libros = await getProducts()
-        return libros.map(libro => libro.titulo)
+        return libros.map(libro => libro.ejemplares.map(ejemplar => String(ejemplar.isbn))).flat()
     }
-
+    
     function addPromo() {
-        if (!nombre.trim() || !filesContent.length || !fechaInicio || !fechaFin || !porcentaje || !libros.length) {
+        if (!nombre.trim() || !filesContent.length || !fechaInicio || !fechaFin || !porcentaje || !librosIsbn.length) {
             toast.error('Los datos están incompletos')
             return
         }
-        addPromocion(nombre, porcentaje, btoa(filesContent[0].content), fechaFin, fechaInicio, libros)
+        setLoadingConfirm(true);
+        addPromocion(nombre, porcentaje, btoa(filesContent[0].content), fechaFin, fechaInicio, librosIsbn)
             .then(() => toast.success(`Se creó la promoción ${nombre}`))
             .catch(() => toast.error('Error al crear promoción'))
+            .finally(() => setLoadingConfirm(false))
     }
 
     if (!user || user.rol !== 1) return null
@@ -66,14 +70,14 @@ export default function NuevaPromocion() {
             </div>
             <div className="flex w-96 flex-col md:w-[450px]">
                 <p className="mb-3 text-center text-2xl font-semibold">Información de la promoción</p>
-                <label className="text-sm">Nombre</label>
+                <label className="text-sm">Nombre de la promoción</label>
                 <input
                     className="mb-3 border border-black px-5 py-3"
                     placeholder="Nombre"
                     value={nombre}
                     onChange={e => setNombre(e.target.value)}
                 />
-                <label className="text-sm">Fecha inicio</label>
+                <label className="text-sm">Fecha de inicio</label>
                 <input
                     className="mb-3 border border-black px-5 py-3"
                     placeholder="Fecha inicio"
@@ -81,7 +85,7 @@ export default function NuevaPromocion() {
                     type="date"
                     onChange={e => setFechaInicio(e.target.value)}
                 />
-                <label className="text-sm">Fecha fin</label>
+                <label className="text-sm">Fecha de fin</label>
                 <input
                     className="mb-3 border border-black px-5 py-3"
                     placeholder="Fecha fin"
@@ -89,7 +93,7 @@ export default function NuevaPromocion() {
                     type="date"
                     onChange={e => setFechaFin(e.target.value)}
                 />
-                <label className="text-sm">Porcentaje descuento</label>
+                <label className="text-sm">Porcentaje de descuento</label>
                 <input
                     className="mb-3 border border-black px-5 py-3"
                     placeholder="Porcentaje descuento"
@@ -97,14 +101,14 @@ export default function NuevaPromocion() {
                     type="number"
                     onChange={e => setPorcentaje(Number(e.target.value))}
                 />
-                <label className="text-sm">Libros</label>
+                <label className="text-sm">ISBN de los ejemplares</label>
                 <AutocompleteBox
-                    availableOptions={fetchLibros()}
+                    availableOptions={fetchIsbn()}
                     category="libro"
-                    onValuesChange={setLibros}
+                    onValuesChange={setLibrosIsbn}
                     preventAdd
                 />
-                <BlackButton text="Confirmar" onClick={addPromo} />
+                <BlackButton text={loadingConfirm ? "Cargando..." : "Confirmar"} onClick={addPromo} />
             </div>
         </div>
     )
