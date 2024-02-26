@@ -2,11 +2,13 @@ import ClientNavigator from '@/components/ClientNavigator'
 import Review from '@/components/Review'
 import ReviewForm from '@/components/ReviewForm'
 import { getReviews } from '@/services/graphql'
+import { getSsrUser } from '@/ssrUtils'
 
 export const dynamic = 'force-dynamic'
 
 export default async function Reviews({ params }: { params: { id: number } }) {
     const [reviews, libro] = await getReviews(params.id)
+    const user = await getSsrUser()
     if (!libro) {
         return <ClientNavigator route="/" />
     }
@@ -63,12 +65,14 @@ export default async function Reviews({ params }: { params: { id: number } }) {
                         {reviews.map((review, idx) => (
                             <Review
                                 key={idx}
-                                user={`${review.usuario.nombre} ${review.usuario.apellido}`}
+                                reviewUser={review.usuario}
                                 score={review.valoracion}
                                 text={review.texto}
+                                user={user}
+                                idLibro={params.id}
                             />
                         ))}
-                        <ReviewForm idLibro={params.id} />
+                        <ReviewForm idLibro={params.id} user={user} />
                     </div>
                 </div>
             </div>

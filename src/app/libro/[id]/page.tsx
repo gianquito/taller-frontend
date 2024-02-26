@@ -6,7 +6,7 @@ import ProductOptionsSelector from '@/components/ProductOptionsSelector'
 import WishListButton from '@/components/WishListButton'
 import { getProduct } from '@/services/graphql'
 import { getSsrUser } from '@/ssrUtils'
-import { calculateDiscount, formatPrice } from '@/utils'
+import { calculateDiscount, formatPrice, getDefaultEjemplar } from '@/utils'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
@@ -22,8 +22,20 @@ export default async function Libro({
     if (!libro) {
         return <ClientNavigator route="/" />
     }
-    const ejemplar = libro.ejemplares.find(ejemplar => ejemplar.isbn == searchParams?.ejemplar) // QUE PASA SI EL EJEMPLAR NO ES VALIDO?????
-    const discount = calculateDiscount(ejemplar!)
+
+    const ejemplar = libro.ejemplares.find(ejemplar => ejemplar.isbn == searchParams?.ejemplar)
+    if (!ejemplar) {
+        //si el ejemplar del url no es valido busca el ejemplar por defecto del libro
+        const defaultEjemplar = getDefaultEjemplar(libro)
+        if (!defaultEjemplar) {
+            //si el libro no tiene un ejemplar valido redirige a la pagina principal
+            return <ClientNavigator route="/" />
+        }
+        //redirige a un ejemplar valido
+        return <ClientNavigator route={`?ejemplar=${defaultEjemplar.isbn}`} />
+    }
+
+    const discount = calculateDiscount(ejemplar)
     const user = await getSsrUser()
     return (
         <div className="mb-32 mt-6 flex flex-1 flex-col items-center justify-evenly px-12 lg:mt-20 lg:flex-row">
@@ -75,18 +87,18 @@ export default async function Libro({
                                 </p>
                             </>
                         ) : (
-                            <p className="text-2xl">{formatPrice(ejemplar!.precio)}</p>
+                            <p className="text-2xl">{formatPrice(ejemplar.precio)}</p>
                         )}
                     </div>
                     <div className="mt-1 flex flex-col gap-0.5 text-sm text-neutral-500">
                         <p>Autores: {libro.autores.map(({ autor }) => autor.nombreAutor).join(', ')}</p>
-                        <p>Dimensiones: {ejemplar?.dimensiones}</p>
-                        <p>Páginas: {ejemplar?.paginas}</p>
+                        <p>Dimensiones: {ejemplar.dimensiones}</p>
+                        <p>Páginas: {ejemplar.paginas}</p>
                         <p>Géneros: {libro.generos.map(({ genero }) => genero.nombreGenero).join(', ')}</p>
-                        <ProductOptionsSelector libro={libro} currentEjemplar={ejemplar!} />
+                        <ProductOptionsSelector libro={libro} currentEjemplar={ejemplar} />
                     </div>
                 </div>
-                <AddToCartButton ejemplar={ejemplar!} titulo={libro.titulo} />
+                <AddToCartButton ejemplar={ejemplar} titulo={libro.titulo} />
                 <div className="my-1 mt-2 flex gap-2 self-start">
                     <WishListButton libro={libro} user={user} />
                     <FavoritoButton libro={libro} user={user} />

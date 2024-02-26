@@ -1505,7 +1505,10 @@ export const getWishlist = async (id_usuario: string) => {
 export const getReviews = async (
     isbn: number
 ): Promise<
-    [[{ texto: string; valoracion: number; usuario: { nombre: string; apellido: string } }], { titulo: string }]
+    [
+        [{ texto: string; valoracion: number; usuario: { idUsuario: string; nombre: string; apellido: string } }],
+        { titulo: string },
+    ]
 > => {
     const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
@@ -1515,6 +1518,7 @@ export const getReviews = async (
                  texto,
                 valoracion,
                 usuario{
+                  idUsuario,
                   nombre,
                   apellido
                 }
@@ -1572,4 +1576,25 @@ export const getReview = async (id_libro: number, id_usuario: string) => {
     const review = await response.json()
     if (review.errors) throw review.errors
     return review.data.resenias
+}
+
+export const deleteReview = async (id_libro: number, id_usuario: string) => {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+            deleteResenia(idLibro: ${id_libro}, idUsuario: "${id_usuario}"){
+              resenia{
+                idUsuario
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    const review = await response.json()
+    if (review.errors) throw review.errors
+    return review.data
 }

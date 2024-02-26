@@ -5,20 +5,19 @@ import BlackButton from './BlackButton'
 import StarsInput from './StarsInput'
 import { addReview, getPedidosByUser, getReview } from '@/services/graphql'
 import toast from 'react-hot-toast'
-import useClientAuth from '@/hooks/useAuth'
 import { ejemplar } from '@/types/ejemplar'
 import { useRouter } from 'next/navigation'
+import { userType } from '@/types/user'
 
 interface ReviewFormProps {
     idLibro: number
+    user: userType | undefined
 }
 
-export default function ReviewForm({ idLibro }: ReviewFormProps) {
+export default function ReviewForm({ idLibro, user }: ReviewFormProps) {
     const [selectedRating, setSelectedRating] = useState<0 | 1 | 2 | 3 | 4 | 5>(0)
     const [ratingText, setRatingText] = useState('')
     const [showForm, setShowForm] = useState(false)
-
-    const user = useClientAuth(true)
 
     const router = useRouter()
 
