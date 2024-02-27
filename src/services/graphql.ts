@@ -1,3 +1,4 @@
+import { ejemplarForm } from '@/types/ejemplarForm'
 import { libro } from '@/types/libro'
 import { userType } from '@/types/user'
 import { SERVER_URL, getCookie } from '@/utils'
@@ -857,7 +858,7 @@ export const addEditorial = async (nombre: string) => {
     })
     const editorial = await response.json()
     if (editorial.errors) throw 'Error in request'
-    return editorial.data
+    return editorial.data.createEditorial.editorial
 }
 
 export const addGenero = async (nombre: string) => {
@@ -901,7 +902,7 @@ export const addEncuadernado = async (nombre: string) => {
     })
     const encuadernado = await response.json()
     if (encuadernado.errors) throw 'Error in request'
-    return encuadernado.data
+    return encuadernado.data.createEncuadernado.encuadernado
 }
 
 export const addLibroAutor = async (id_autor: number, id_libro: number) => {
@@ -1077,27 +1078,17 @@ export const deleteEjemplarPromociones = async (id_promocion: number) => {
 
 export const addProduct = async (
     autores: string[],
-    editoriales: string[],
     generos: string[],
-    encuadernados: string[],
     descripcion: string,
-    dimensiones: string,
     imagen: string,
-    isbn: number,
-    paginas: number,
-    precio: number,
-    stock: number,
-    titulo: string
+    titulo: string,
+    ejemplares: ejemplarForm[]
 ) => {
     const dbAutores = await getAutores('')
-    const dbEditoriales = await getEditoriales('')
     const dbGeneros = await getGeneros('')
-    const dbEncuadernados = await getEncuadernados('')
 
     const newAutores = autores.filter(a => !dbAutores.find((dbA: any) => dbA.nombreAutor === a))
-    const newEditoriales = editoriales.filter(e => !dbEditoriales.find((dbE: any) => dbE.nombreEditorial === e))
     const newGeneros = generos.filter(g => !dbGeneros.find((dbG: any) => dbG.nombreGenero === g))
-    const newEncuadernados = encuadernados.filter(e => !dbEncuadernados.find((dbE: any) => dbE.tipo === e))
 
     //Crear nuevos autores, editoriales, generos, encuadernados
     newAutores.forEach(a =>
@@ -1105,36 +1096,20 @@ export const addProduct = async (
             dbAutores.push({ nombreAutor: a.trim(), idAutor: created.createAutor.autor.idAutor })
         )
     )
-    newEditoriales.forEach(e =>
-        addEditorial(e.trim()).then(created =>
-            dbEditoriales.push({
-                nombreEditorial: e.trim(),
-                idEditorial: created.createEditorial.editorial.idEditorial,
-            })
-        )
-    )
     newGeneros.forEach(g =>
         addGenero(g.trim()).then(created =>
             dbGeneros.push({ nombreGenero: g.trim(), idGenero: created.createGenero.genero.idGenero })
         )
     )
-    newEncuadernados.forEach(e =>
-        addEncuadernado(e.trim()).then(created =>
-            dbEncuadernados.push({
-                tipo: e.trim(),
-                idEncuadernado: created.createEncuadernado.encuadernado.idEncuadernado,
-            })
-        )
-    )
 
     //Crear libro
-    const response = await fetch(`${SERVER_URL}/graphql`, {
+    const newLibro = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
-              createLibro(descripcion: "${descripcion}", dimensiones: "${dimensiones}", imagen: "${imagen}", isbn: ${isbn}, paginas: ${paginas}, precio: ${precio}, stock: ${stock}, titulo: "${titulo}"){
+              createLibro(descripcion: "${descripcion}", imagen: "${imagen}", titulo: "${titulo}"){
                 libro{
-                  isbn
+                  idLibro
                 }
               }
             }`,
@@ -1144,22 +1119,51 @@ export const addProduct = async (
             sesionId: getCookie('sesionId') ?? '',
         },
     })
+    const libro = await newLibro.json()
+
+    //Crear ejemplares
+    ejemplares.forEach(async ejemplar => {
+        const dbEditoriales = await getEditoriales('')
+        const dbEncuadernados = await getEncuadernados('')
+
+        //crear editorial
+        let newEditorial = dbEditoriales.find((dbE: any) => dbE.nombreEditorial === ejemplar.editorial)
+        //si la editorial no existe se crea
+        if (!newEditorial) {
+            newEditorial = await addEditorial(ejemplar.editorial)
+        }
+        //crear encuadernado
+        let newEncuadernado = dbEncuadernados.find((dbE: any) => dbE.tipo === ejemplar.encuadernado)
+        if (!newEncuadernado) {
+            newEncuadernado = await addEncuadernado(ejemplar.encuadernado)
+        }
+
+        const newEjemplar = await fetch(`${SERVER_URL}/graphql`, {
+            method: 'POST',
+            body: JSON.stringify({
+                query: `mutation{
+                createEjemplar(dimensiones: "${ejemplar.dimensiones}", isbn: ${ejemplar.isbn}, paginas: ${ejemplar.paginas}, precio: ${ejemplar.precio}, stock: ${ejemplar.stock}, idEditorial: ${newEditorial.idEditorial}, idEncuadernado: ${newEncuadernado.idEncuadernado},idLibro: ${libro.data.createLibro.libro.idLibro}){
+                  ejemplar{
+                    isbn
+                  }
+                }
+              }`,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                sesionId: getCookie('sesionId') ?? '',
+            },
+        })
+    })
 
     //Crear lineas
     dbAutores
         .filter((dbA: any) => autores.find(a => a.trim() === dbA.nombreAutor))
-        .forEach((autor: any) => addLibroAutor(autor.idAutor, isbn))
-    dbEditoriales
-        .filter((dbE: any) => editoriales.find(e => e.trim() === dbE.nombreEditorial))
-        .forEach((editorial: any) => addLibroEditorial(editorial.idEditorial, isbn))
+        .forEach((autor: any) => addLibroAutor(autor.idAutor, libro.data.createLibro.libro.idLibro))
     dbGeneros
         .filter((dbG: any) => generos.find(g => g.trim() === dbG.nombreGenero))
-        .forEach((genero: any) => addLibroGenero(genero.idGenero, isbn))
-    dbEncuadernados
-        .filter((dbE: any) => encuadernados.find(e => e.trim() === dbE.tipo))
-        .forEach((encuadernado: any) => addLibroEncuadernado(encuadernado.idEncuadernado, isbn))
+        .forEach((genero: any) => addLibroGenero(genero.idGenero, libro.data.createLibro.libro.idLibro))
 
-    const libro = await response.json()
     if (libro.errors) throw 'Error en request'
     return libro.data
 }
@@ -1305,13 +1309,16 @@ export const addPromocion = async (
     const promocion = await response.json()
     if (promocion.errors) throw 'Error in request'
 
-    const dbLibros = await getProducts();
+    const dbLibros = await getProducts()
     dbLibros
         .flatMap((dbL: any) => dbL.ejemplares.map((ejemplar: any) => ({ ejemplar })))
         .filter(({ ejemplar }: any) => ejemplaresIsbn.find(l => ejemplar.isbn === l.trim()))
         .forEach(({ ejemplar }: any) =>
-            addEjemplarPromocion(ejemplar.isbn, promocion.data.createPromocionDescuento.promocionDescuento.idPromocionDescuento)
-    );
+            addEjemplarPromocion(
+                ejemplar.isbn,
+                promocion.data.createPromocionDescuento.promocionDescuento.idPromocionDescuento
+            )
+        )
 
     return promocion.data
 }
@@ -1377,9 +1384,12 @@ export const updatePromocion = async (
     const dbLibros = await getProducts()
     dbLibros
         .flatMap((dbL: any) => dbL.ejemplares.map((ejemplar: any) => ({ libro: dbL, ejemplar })))
-        .filter(({ejemplar}: any) => ejemplaresIsbn.find(l => String(ejemplar.isbn) === l.trim()))
-        .forEach(({ejemplar}: any) =>
-            addEjemplarPromocion(ejemplar.isbn, promocion.data.createPromocionDescuento.promocionDescuento.idPromocionDescuento)
+        .filter(({ ejemplar }: any) => ejemplaresIsbn.find(l => String(ejemplar.isbn) === l.trim()))
+        .forEach(({ ejemplar }: any) =>
+            addEjemplarPromocion(
+                ejemplar.isbn,
+                promocion.data.createPromocionDescuento.promocionDescuento.idPromocionDescuento
+            )
         )
     return promocion.data
 }

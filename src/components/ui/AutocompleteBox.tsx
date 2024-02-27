@@ -9,12 +9,13 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
 interface AutocompleteBoxProps {
-    availableOptions: Promise<string[]>
+    availableOptions: () => Promise<string[]>
     category: string
     onValuesChange: (values: string[]) => void
     initialValues?: string[]
     preventAdd?: boolean
     className?: string
+    preventMultiple?: boolean
 }
 
 export function AutocompleteBox({
@@ -24,6 +25,7 @@ export function AutocompleteBox({
     initialValues,
     preventAdd,
     className,
+    preventMultiple,
 }: AutocompleteBoxProps) {
     const [options, setOptions] = React.useState<string[]>([])
     const [open, setOpen] = React.useState(false)
@@ -31,12 +33,12 @@ export function AutocompleteBox({
     const [searchValue, setSearchValue] = React.useState('')
 
     React.useEffect(() => {
-        availableOptions.then(data => setOptions(data))
+        availableOptions().then(data => setOptions(data))
     }, [])
 
     React.useEffect(() => {
         onValuesChange(values)
-    }, [values, onValuesChange])
+    }, [values])
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -73,10 +75,11 @@ export function AutocompleteBox({
                                 onSelect={currentValue => {
                                     setValues(prevValues =>
                                         !prevValues.includes(option)
-                                            ? [...prevValues, option]
+                                            ? preventMultiple
+                                                ? [option]
+                                                : [...prevValues, option]
                                             : prevValues.filter(value => value !== option)
                                     )
-                                    setOpen(false)
                                 }}
                             >
                                 <Check

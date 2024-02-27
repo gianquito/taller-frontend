@@ -48,7 +48,7 @@ export default function ReviewForm({ idLibro, user }: ReviewFormProps) {
                 <StarsInput selectedRating={selectedRating} setSelectedRating={setSelectedRating} />
             </div>
             <textarea
-                className="mt-1 h-64 w-full border border-black px-2 py-1 font-medium outline-none"
+                className="mt-1 h-64 w-full border border-black px-5 py-3 font-medium outline-none"
                 value={ratingText}
                 onChange={e => setRatingText(e.target.value)}
             />
