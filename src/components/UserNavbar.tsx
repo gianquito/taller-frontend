@@ -3,19 +3,28 @@ import { userType } from '@/types/user'
 import { SERVER_URL, getCookie } from '@/utils'
 import { ChevronDown } from 'lucide-react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect} from 'react'
 import { useDetectClickOutside } from 'react-detect-click-outside'
 
 export default function UserNavbar({ user }: { user: userType }) {
     const [toggledMenu, setToggledMenu] = useState(false)
+    const [loading, setLoading] = useState(false);
     const ref = useDetectClickOutside({ onTriggered: () => setToggledMenu(false) })
+    
+    useEffect(() => {
+        return () => setLoading(false);
+    }, [toggledMenu]);
+
     function logout() {
+        setLoading(true);
         fetch(`${SERVER_URL}/logout`, {
             method: 'POST',
             body: getCookie('sesionId'),
         }).then(() => {
             document.location.href = '/'
-        })
+        }).finally(() => {
+            setLoading(false);
+        });
     }
 
     return (
@@ -56,9 +65,13 @@ export default function UserNavbar({ user }: { user: userType }) {
                                 Gestión
                             </Link>
                         )}
-                        <p className="mt-1 cursor-pointer hover:underline" onClick={logout}>
-                            Cerrar sesión
-                        </p>
+                        {loading ? (
+                            <div className="loader">Cerrando sesión...</div> 
+                        ) : (
+                            <p className="cursor-pointer hover:underline" onClick={logout}>
+                                Cerrar sesión
+                            </p>
+                        )}
                     </div>
                 </div>
             )}
