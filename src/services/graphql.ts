@@ -93,37 +93,36 @@ export const getProducts = async (): Promise<libro[]> => {
         body: JSON.stringify({
             query: `{
                 libros {
-                  isbn,
+                  idLibro,
                   titulo,
-                  precio,
                   imagen,
-                  stock,
                   descripcion,
-                  dimensiones,
-                  paginas,
+                  ejemplares{
+                    isbn,
+                    precio,
+                    stock,
+                    paginas,
+                    dimensiones,
+                    promociones{
+                      promocionDescuento{
+                        porcentaje,
+                        fechaFin,
+                        fechaInicio
+                      }
+                    }
+                      editorial{
+                        nombreEditorial
+                      }
+                      encuadernado{
+                        tipo
+                      }
+                  }
                   usuariosFavoritos{
                     idUsuario
-                  },
-                  editoriales{
-                    editorial{
-                      nombreEditorial
-                    }
-                  },
-                  encuadernados{
-                    encuadernado{
-                      tipo
-                    }
                   },
                   generos{
                     genero{
                       nombreGenero
-                    }
-                  },
-                  promociones{
-                    promocionDescuento{
-                      porcentaje,
-                      fechaFin,
-                      fechaInicio
                     }
                   },
                   usuariosDeseados{
@@ -697,8 +696,8 @@ export const getPromociones = async () => {
               porcentaje,
               fechaInicio,
               fechaFin,
-              libros{
-                idLibro
+              ejemplares{
+                idEjemplar
               }
             }
           }`,
@@ -1058,14 +1057,14 @@ export const deleteLibroEncuadernados = async (id_libro: number) => {
     })
 }
 
-export const deleteLibroPromociones = async (id_promocion: number) => {
+export const deleteEjemplarPromociones = async (id_promocion: number) => {
     await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
-            deleteLibroPromocion(idPromocionDescuento: ${id_promocion}){
-              libroPromocion{
-                idLibro
+            deleteEjemplarPromocion(idPromocionDescuento: ${id_promocion}){
+              ejemplarPromocion{
+                idEjemplar
               }
             }
           }`,
@@ -1268,14 +1267,14 @@ export const updateProduct = async (
     return libro.data
 }
 
-export const addLibroPromocion = async (id_libro: number, id_promocion: number) => {
+export const addEjemplarPromocion = async (id_ejemplar: number, id_promocion: number) => {
     await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
-            createLibroPromocion(idLibro: ${id_libro}, idPromocionDescuento: ${id_promocion}){
-              libroPromocion{
-                idLibro
+            createEjemplarPromocion(idEjemplar: ${id_ejemplar}, idPromocionDescuento: ${id_promocion}){
+              ejemplarPromocion{
+                idEjemplar
               }
             }
           }`,
@@ -1293,7 +1292,7 @@ export const addPromocion = async (
     imagen: string,
     fechaFin: string,
     fechaInicio: string,
-    libros: string[]
+    ejemplaresIsbn: string[]
 ) => {
     const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
@@ -1314,12 +1313,13 @@ export const addPromocion = async (
     const promocion = await response.json()
     if (promocion.errors) throw 'Error in request'
 
-    const dbLibros = await getProducts()
+    const dbLibros = await getProducts();
     dbLibros
-        .filter((dbL: any) => libros.find(l => dbL.titulo === l.trim()))
-        .forEach((dbL: any) =>
-            addLibroPromocion(dbL.isbn, promocion.data.createPromocionDescuento.promocionDescuento.idPromocionDescuento)
-        )
+        .flatMap((dbL: any) => dbL.ejemplares.map((ejemplar: any) => ({ ejemplar })))
+        .filter(({ ejemplar }: any) => ejemplaresIsbn.find(l => ejemplar.isbn === l.trim()))
+        .forEach(({ ejemplar }: any) =>
+            addEjemplarPromocion(ejemplar.isbn, promocion.data.createPromocionDescuento.promocionDescuento.idPromocionDescuento)
+    );
 
     return promocion.data
 }
@@ -1336,10 +1336,8 @@ export const getPromocion = async (id_promocion: number) => {
               fechaFin,
               fechaInicio,
               imagen,
-              libros{
-                libro{
-                  titulo
-                }
+              ejemplares{
+                idEjemplar
               }
             }
           }`,
@@ -1360,7 +1358,7 @@ export const updatePromocion = async (
     imagen: string,
     fechaFin: string,
     fechaInicio: string,
-    libros: string[],
+    ejemplaresIsbn: string[],
     id_promocion: number
 ) => {
     const response = await fetch(`${SERVER_URL}/graphql`, {
@@ -1382,13 +1380,15 @@ export const updatePromocion = async (
     const promocion = await response.json()
     if (promocion.errors) throw 'Error in request'
 
-    await deleteLibroPromociones(id_promocion)
+    await deleteEjemplarPromociones(id_promocion)
 
     const dbLibros = await getProducts()
     dbLibros
-        .filter((dbL: any) => libros.find(l => dbL.titulo === l))
-        .forEach((dbL: any) => addLibroPromocion(dbL.isbn, id_promocion))
-
+        .flatMap((dbL: any) => dbL.ejemplares.map((ejemplar: any) => ({ libro: dbL, ejemplar })))
+        .filter(({ejemplar}: any) => ejemplaresIsbn.find(l => String(ejemplar.isbn) === l.trim()))
+        .forEach(({ejemplar}: any) =>
+            addEjemplarPromocion(ejemplar.isbn, promocion.data.createPromocionDescuento.promocionDescuento.idPromocionDescuento)
+        )
     return promocion.data
 }
 
