@@ -1380,19 +1380,24 @@ export const updatePromocion = async (
     if (promocion.errors) throw 'Error in request'
 
     await deleteEjemplarPromociones(id_promocion)
+    await addEjemplarPromociones(ejemplaresIsbn, promocion.data.updatePromocionDescuento.promocionDescuento.idPromocionDescuento);
 
-    const dbLibros = await getProducts()
-    dbLibros
-        .flatMap((dbL: any) => dbL.ejemplares.map((ejemplar: any) => ({ libro: dbL, ejemplar })))
-        .filter(({ ejemplar }: any) => ejemplaresIsbn.find(l => String(ejemplar.isbn) === l.trim()))
-        .forEach(({ ejemplar }: any) =>
-            addEjemplarPromocion(
-                ejemplar.isbn,
-                promocion.data.createPromocionDescuento.promocionDescuento.idPromocionDescuento
-            )
-        )
     return promocion.data
 }
+
+export const addEjemplarPromociones = async (ejemplaresIsbn: string[], id_promocion: number) => {
+  const dbLibros = await getProducts();
+  const ejemplaresPromocion = dbLibros
+      .flatMap((dbL: any) => dbL.ejemplares.map((ejemplar: any) => ({ ejemplar })))
+      .filter(({ ejemplar }: any) => ejemplaresIsbn.find(l => ejemplar.isbn === l.trim()))
+      .map(({ ejemplar }: any) => ejemplar);
+
+  const addPromises = ejemplaresPromocion.map((ejemplar: any) =>
+      addEjemplarPromocion(ejemplar.isbn, id_promocion)
+  );
+
+  await Promise.all(addPromises);
+};
 
 export const getFavoritos = async (id_usuario: string, id_session?: string) => {
     const response = await fetch(`${SERVER_URL}/graphql`, {
