@@ -115,7 +115,7 @@ export default function EditarPromocion({ params }: { params: { id: number } }) 
                 />
                 <label className="text-sm">Libros</label>
                 <AutocompleteBox
-                    availableOptions={fetchLibros()}
+                    availableOptions={fetchLibros}
                     category="libro"
                     onValuesChange={setLibros}
                     initialValues={libros}

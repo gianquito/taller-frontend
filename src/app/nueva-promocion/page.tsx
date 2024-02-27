@@ -15,8 +15,7 @@ export default function NuevaPromocion() {
     const [fechaFin, setFechaFin] = useState('')
     const [porcentaje, setPorcentaje] = useState<number | undefined>()
     const [librosIsbn, setLibrosIsbn] = useState<string[]>([])
-    const [loadingConfirm, setLoadingConfirm] = useState(false);
-
+    const [loadingConfirm, setLoadingConfirm] = useState(false)
 
     const user = useClientAuth()
 
@@ -40,13 +39,13 @@ export default function NuevaPromocion() {
         const libros = await getProducts()
         return libros.map(libro => libro.ejemplares.map(ejemplar => String(ejemplar.isbn))).flat()
     }
-    
+
     function addPromo() {
         if (!nombre.trim() || !filesContent.length || !fechaInicio || !fechaFin || !porcentaje || !librosIsbn.length) {
             toast.error('Los datos están incompletos')
             return
         }
-        setLoadingConfirm(true);
+        setLoadingConfirm(true)
         addPromocion(nombre, porcentaje, btoa(filesContent[0].content), fechaFin, fechaInicio, librosIsbn)
             .then(() => toast.success(`Se creó la promoción ${nombre}`))
             .catch(() => toast.error('Error al crear promoción'))
@@ -103,12 +102,12 @@ export default function NuevaPromocion() {
                 />
                 <label className="text-sm">ISBN de los ejemplares</label>
                 <AutocompleteBox
-                    availableOptions={fetchIsbn()}
+                    availableOptions={fetchIsbn}
                     category="libro"
                     onValuesChange={setLibrosIsbn}
                     preventAdd
                 />
-                <BlackButton text={loadingConfirm ? "Cargando..." : "Confirmar"} onClick={addPromo} />
+                <BlackButton text={loadingConfirm ? 'Cargando...' : 'Confirmar'} onClick={addPromo} />
             </div>
         </div>
     )

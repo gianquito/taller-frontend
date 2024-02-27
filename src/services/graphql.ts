@@ -1138,10 +1138,6 @@ export const addProduct = async (
             newEncuadernado = await addEncuadernado(ejemplar.encuadernado)
         }
 
-        console.log(newEditorial)
-        console.log(newEncuadernado)
-        console.log(libro.data.createLibro.libro.idLibro)
-
         const newEjemplar = await fetch(`${SERVER_URL}/graphql`, {
             method: 'POST',
             body: JSON.stringify({
@@ -1313,13 +1309,16 @@ export const addPromocion = async (
     const promocion = await response.json()
     if (promocion.errors) throw 'Error in request'
 
-    const dbLibros = await getProducts();
+    const dbLibros = await getProducts()
     dbLibros
         .flatMap((dbL: any) => dbL.ejemplares.map((ejemplar: any) => ({ ejemplar })))
         .filter(({ ejemplar }: any) => ejemplaresIsbn.find(l => ejemplar.isbn === l.trim()))
         .forEach(({ ejemplar }: any) =>
-            addEjemplarPromocion(ejemplar.isbn, promocion.data.createPromocionDescuento.promocionDescuento.idPromocionDescuento)
-    );
+            addEjemplarPromocion(
+                ejemplar.isbn,
+                promocion.data.createPromocionDescuento.promocionDescuento.idPromocionDescuento
+            )
+        )
 
     return promocion.data
 }
@@ -1385,9 +1384,12 @@ export const updatePromocion = async (
     const dbLibros = await getProducts()
     dbLibros
         .flatMap((dbL: any) => dbL.ejemplares.map((ejemplar: any) => ({ libro: dbL, ejemplar })))
-        .filter(({ejemplar}: any) => ejemplaresIsbn.find(l => String(ejemplar.isbn) === l.trim()))
-        .forEach(({ejemplar}: any) =>
-            addEjemplarPromocion(ejemplar.isbn, promocion.data.createPromocionDescuento.promocionDescuento.idPromocionDescuento)
+        .filter(({ ejemplar }: any) => ejemplaresIsbn.find(l => String(ejemplar.isbn) === l.trim()))
+        .forEach(({ ejemplar }: any) =>
+            addEjemplarPromocion(
+                ejemplar.isbn,
+                promocion.data.createPromocionDescuento.promocionDescuento.idPromocionDescuento
+            )
         )
     return promocion.data
 }
