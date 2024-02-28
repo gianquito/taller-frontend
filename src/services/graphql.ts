@@ -718,6 +718,8 @@ export const getPromocionImagen = async () => {
         body: JSON.stringify({
             query: `{
             promocionesDescuento{
+              fechaInicio
+              fechaFin
               imagen
             }
           }`,
@@ -730,7 +732,7 @@ export const getPromocionImagen = async () => {
     const promocion = await response.json()
     if (promocion.errors) throw promocion.errors[0]
     if (!promocion.data.promocionesDescuento.length) return null
-    return promocion.data.promocionesDescuento[0].imagen
+    return promocion.data.promocionesDescuento
 }
 
 export const getEditoriales = async (nombre: string) => {
