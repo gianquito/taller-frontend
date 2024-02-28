@@ -47,8 +47,18 @@ export function getDefaultEjemplar(product: libro) {
     // si el libro no tiene ejemplares en stock devuelve undefined
     if (!ejemplaresEnStock.length) return undefined
 
-    // busca si algun ejemplar en stock está en promocion y lo devuelve
-    const ejemplarConDescuento = ejemplaresEnStock.find(ejemplar => ejemplar.promociones.length > 0)
+    const currentDate = new Date().getTime()
+    // busca si algun ejemplar en stock tiene una promocion vigente y lo devuelve
+    const ejemplarConDescuento = ejemplaresEnStock.find(
+        ejemplar =>
+            ejemplar.promociones.filter(promocion => {
+                return (
+                    new Date(promocion.promocionDescuento.fechaFin).getTime() >= currentDate &&
+                    new Date(promocion.promocionDescuento.fechaInicio).getTime() <= currentDate
+                )
+            }).length > 0
+    )
+
     if (ejemplarConDescuento) return ejemplarConDescuento
 
     // devuelve el primer ejemplar de la lista

@@ -1,6 +1,6 @@
 'use client'
 import BlackButton from '@/components/BlackButton'
-import { addProduct, getAutores, getEditoriales, getEncuadernados, getGeneros } from '@/services/graphql'
+import { addProduct, getAutores, getGeneros } from '@/services/graphql'
 import { useEffect, useState } from 'react'
 import { useFilePicker } from 'use-file-picker'
 import { toast } from 'react-hot-toast'
@@ -79,15 +79,19 @@ export default function NuevoLibro() {
         setEjemplares(prevEjemplares => [...prevEjemplares.filter(ej => ej.isbn !== newEjemplar.isbn), newEjemplar])
     }
 
+    function handleRemoveEjemplar(newEjemplar: ejemplarForm) {
+        setEjemplares(prevEjemplares => prevEjemplares.filter(ej => newEjemplar.isbn !== ej.isbn))
+    }
+
     if (!user || user.rol !== 1) return null
     return (
         <div className="my-20 flex flex-col items-center justify-evenly lg:flex-row">
-            <div className="w-max">
+            <div className="w-max" onClick={openFilePicker}>
                 <p className=" text-center text-2xl font-semibold">Imagen</p>
                 {filesContent.length ? (
-                    <img className="w-[240px] lg:w-[350px]" src={filesContent[0].content} />
+                    <img className="w-[240px] cursor-pointer lg:w-[350px]" src={filesContent[0].content} />
                 ) : (
-                    <div className="h-[400px] w-[240px] bg-neutral-300 md:h-[550px] lg:w-[350px]"></div>
+                    <div className="h-[400px] w-[240px] cursor-pointer bg-neutral-300 md:h-[550px] lg:w-[350px]"></div>
                 )}
                 <button className="float-right text-lg underline" onClick={openFilePicker}>
                     Cargar imagen
@@ -125,7 +129,7 @@ export default function NuevoLibro() {
                         }
                     />
                 </div>
-                <TablaEjemplares ejemplares={ejemplares} submitFn={handleNewEjemplar} />
+                <TablaEjemplares ejemplares={ejemplares} submitFn={handleNewEjemplar} removeFn={handleRemoveEjemplar} />
                 <BlackButton text="Confirmar" onClick={addLibro} />
             </div>
         </div>

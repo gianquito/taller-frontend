@@ -6,7 +6,7 @@ export default async function EditarLibroProducto({ idLibro }: { idLibro: number
 
     if (!user || user.rol !== 1) return null
     return (
-        <Link href={`/nuevo-libro/${idLibro}`}>
+        <Link href={`/gestion/nuevo-libro/${idLibro}`}>
             <img className="h-5" src="/lapiz1.png" />
         </Link>
     )
