@@ -34,17 +34,20 @@ export default function EditarEjemplarDialog({ submitFn, currentEjemplar, trigge
             <DialogTrigger>{triggerElement}</DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Editar ejemplar</DialogTitle>
+                    <DialogTitle>{currentEjemplar ? 'Editar ejemplar' : 'Nuevo ejemplar'}</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col">
                     <label className="text-sm">ISBN</label>
                     <input
-                        className="mb-3 border border-black px-5 py-3"
+                        className={`mb-3 border border-black px-5 py-3 ${
+                            ejemplar?.preventDelete || currentEjemplar ? 'bg-neutral-200' : ''
+                        }`}
                         placeholder="ISBN"
                         value={ejemplar?.isbn}
                         type="number"
                         name="isbn"
                         min={0}
+                        disabled={ejemplar?.preventDelete || currentEjemplar !== undefined}
                         onChange={handleChange}
                     />
                     <label className="text-sm">Precio</label>

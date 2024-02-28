@@ -14,7 +14,7 @@ export default async function TablaLibrosGestion({ sessionId }: { sessionId: str
             <div className="flex justify-between">
                 <h1 className="text-3xl font-semibold">Libros</h1>
                 <div className="flex items-center gap-4">
-                    <ActionButton href="/nuevo-libro" text="Cargar Libro" icon="/plus.png" />
+                    <ActionButton href="/gestion/nuevo-libro" text="Cargar Libro" icon="/plus.png" />
                     <p className="text-sm">
                         <b>{libros.length}</b> Libros
                     </p>
@@ -70,7 +70,7 @@ export default async function TablaLibrosGestion({ sessionId }: { sessionId: str
                                             actionList={[
                                                 {
                                                     name: 'Editar',
-                                                    routeTo: `/nuevo-libro/${libro.isbn}`,
+                                                    routeTo: `/gestion/nuevo-libro/${libro.isbn}`,
                                                 },
                                             ]}
                                         />

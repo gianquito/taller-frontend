@@ -6,4 +6,5 @@ export type ejemplarForm = {
     stock: number
     editorial: string
     encuadernado: string
+    preventDelete?: boolean
 }

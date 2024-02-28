@@ -1078,6 +1078,26 @@ export const deleteEjemplarPromociones = async (id_promocion: number) => {
     })
 }
 
+export const getEjemplares = async (): Promise<{ isbn: number }[]> => {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `{
+            ejemplares{
+              isbn
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const encuadernado = await response.json()
+    if (encuadernado.errors) throw 'Error in request'
+    return encuadernado.data.ejemplares
+}
+
 export const addProduct = async (
     autores: string[],
     generos: string[],
@@ -1171,28 +1191,19 @@ export const addProduct = async (
 }
 
 export const updateProduct = async (
+    id_libro: number,
     autores: string[],
-    editoriales: string[],
     generos: string[],
-    encuadernados: string[],
     descripcion: string,
-    dimensiones: string,
     imagen: string,
-    isbn: number,
-    paginas: number,
-    precio: number,
-    stock: number,
-    titulo: string
+    titulo: string,
+    ejemplares: ejemplarForm[]
 ) => {
     const dbAutores = await getAutores('')
-    const dbEditoriales = await getEditoriales('')
     const dbGeneros = await getGeneros('')
-    const dbEncuadernados = await getEncuadernados('')
 
     const newAutores = autores.filter(a => !dbAutores.find((dbA: any) => dbA.nombreAutor === a.trim()))
-    const newEditoriales = editoriales.filter(e => !dbEditoriales.find((dbE: any) => dbE.nombreEditorial === e.trim()))
     const newGeneros = generos.filter(g => !dbGeneros.find((dbG: any) => dbG.nombreGenero === g.trim()))
-    const newEncuadernados = encuadernados.filter(e => !dbEncuadernados.find((dbE: any) => dbE.tipo === e.trim()))
 
     //Crear nuevos autores, editoriales, generos, encuadernados
     newAutores.forEach(a =>
@@ -1200,39 +1211,23 @@ export const updateProduct = async (
             dbAutores.push({ nombreAutor: a.trim(), idAutor: created.createAutor.autor.idAutor })
         )
     )
-    newEditoriales.forEach(e =>
-        addEditorial(e.trim()).then(created =>
-            dbEditoriales.push({
-                nombreEditorial: e.trim(),
-                idEditorial: created.createEditorial.editorial.idEditorial,
-            })
-        )
-    )
     newGeneros.forEach(g =>
         addGenero(g.trim()).then(created =>
             dbGeneros.push({ nombreGenero: g.trim(), idGenero: created.createGenero.genero.idGenero })
         )
     )
-    newEncuadernados.forEach(e =>
-        addEncuadernado(e.trim()).then(created =>
-            dbEncuadernados.push({
-                tipo: e.trim(),
-                idEncuadernado: created.createEncuadernado.encuadernado.idEncuadernado,
-            })
-        )
-    )
 
-    //Crear libro
-    const response = await fetch(`${SERVER_URL}/graphql`, {
+    //Actualizar libro
+    const newLibro = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
-            updateLibro(descripcion: "${descripcion}", dimensiones: "${dimensiones}", imagen: "${imagen}", isbn: ${isbn}, paginas: ${paginas}, precio: ${precio}, stock: ${stock}, titulo: "${titulo}"){
-              libro{
-                isbn
+              updateLibro(idLibro: ${id_libro}, descripcion:"${descripcion}", imagen: "${imagen}", titulo: "${titulo}"){
+                libro{
+                  idLibro
+                }
               }
-            }
-          }`,
+            }`,
         }),
         headers: {
             'Content-Type': 'application/json',
@@ -1240,27 +1235,64 @@ export const updateProduct = async (
         },
     })
 
-    //borrar todas las lineas??
+    const libro = await newLibro.json()
 
-    await deleteLibroAutores(isbn)
-    await deleteLibroGeneros(isbn)
-    await deleteLibroEditoriales(isbn)
-    await deleteLibroEncuadernados(isbn)
+    const dbEjemplares = await getEjemplares()
+
+    //Actualizar ejemplares
+    ejemplares.forEach(async ejemplar => {
+        const dbEditoriales = await getEditoriales('')
+        const dbEncuadernados = await getEncuadernados('')
+
+        //crear editorial
+        let newEditorial = dbEditoriales.find((dbE: any) => dbE.nombreEditorial === ejemplar.editorial)
+        //si la editorial no existe se crea
+        if (!newEditorial) {
+            newEditorial = await addEditorial(ejemplar.editorial)
+        }
+        //crear encuadernado
+        let newEncuadernado = dbEncuadernados.find((dbE: any) => dbE.tipo === ejemplar.encuadernado)
+        if (!newEncuadernado) {
+            newEncuadernado = await addEncuadernado(ejemplar.encuadernado)
+        }
+
+        // | SI EXISTE
+        //  -| ACTUALIZARLO
+
+        // | SI NO EXISTE
+        //  -| AGREGARLO
+        const mutationType = dbEjemplares.find(dbEj => dbEj.isbn === ejemplar.isbn)
+            ? 'updateEjemplar'
+            : 'createEjemplar'
+
+        const newEjemplar = await fetch(`${SERVER_URL}/graphql`, {
+            method: 'POST',
+            body: JSON.stringify({
+                query: `mutation{
+                  ${mutationType}(isbn: ${ejemplar.isbn}, dimensiones: "${ejemplar.dimensiones}", paginas: ${ejemplar.paginas}, precio: ${ejemplar.precio}, stock: ${ejemplar.stock}, idEditorial: ${newEditorial.idEditorial}, idEncuadernado: ${newEncuadernado.idEncuadernado},idLibro: ${libro.data.updateLibro.libro.idLibro}){
+                    ejemplar{
+                      isbn
+                    }
+                  }
+                }`,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                sesionId: getCookie('sesionId') ?? '',
+            },
+        })
+    })
+
+    await deleteLibroAutores(id_libro)
+    await deleteLibroGeneros(id_libro)
 
     dbAutores
         .filter((dbA: any) => autores.find(a => a.trim() === dbA.nombreAutor))
-        .forEach((autor: any) => addLibroAutor(autor.idAutor, isbn))
-    dbEditoriales
-        .filter((dbE: any) => editoriales.find(e => e.trim() === dbE.nombreEditorial))
-        .forEach((editorial: any) => addLibroEditorial(editorial.idEditorial, isbn))
+        .forEach((autor: any) => addLibroAutor(autor.idAutor, id_libro))
     dbGeneros
         .filter((dbG: any) => generos.find(g => g.trim() === dbG.nombreGenero))
-        .forEach((genero: any) => addLibroGenero(genero.idGenero, isbn))
-    dbEncuadernados
-        .filter((dbE: any) => encuadernados.find(e => e.trim() === dbE.tipo))
-        .forEach((encuadernado: any) => addLibroEncuadernado(encuadernado.idEncuadernado, isbn))
+        .forEach((genero: any) => addLibroGenero(genero.idGenero, id_libro))
 
-    const libro = await response.json()
     if (libro.errors) throw 'Error en request'
     return libro.data
 }
@@ -1382,24 +1414,25 @@ export const updatePromocion = async (
     if (promocion.errors) throw 'Error in request'
 
     await deleteEjemplarPromociones(id_promocion)
-    await addEjemplarPromociones(ejemplaresIsbn, promocion.data.updatePromocionDescuento.promocionDescuento.idPromocionDescuento);
+    await addEjemplarPromociones(
+        ejemplaresIsbn,
+        promocion.data.updatePromocionDescuento.promocionDescuento.idPromocionDescuento
+    )
 
     return promocion.data
 }
 
 export const addEjemplarPromociones = async (ejemplaresIsbn: string[], id_promocion: number) => {
-  const dbLibros = await getProducts();
-  const ejemplaresPromocion = dbLibros
-      .flatMap((dbL: any) => dbL.ejemplares.map((ejemplar: any) => ({ ejemplar })))
-      .filter(({ ejemplar }: any) => ejemplaresIsbn.find(l => ejemplar.isbn === l.trim()))
-      .map(({ ejemplar }: any) => ejemplar);
+    const dbLibros = await getProducts()
+    const ejemplaresPromocion = dbLibros
+        .flatMap((dbL: any) => dbL.ejemplares.map((ejemplar: any) => ({ ejemplar })))
+        .filter(({ ejemplar }: any) => ejemplaresIsbn.find(l => ejemplar.isbn === l.trim()))
+        .map(({ ejemplar }: any) => ejemplar)
 
-  const addPromises = ejemplaresPromocion.map((ejemplar: any) =>
-      addEjemplarPromocion(ejemplar.isbn, id_promocion)
-  );
+    const addPromises = ejemplaresPromocion.map((ejemplar: any) => addEjemplarPromocion(ejemplar.isbn, id_promocion))
 
-  await Promise.all(addPromises);
-};
+    await Promise.all(addPromises)
+}
 
 export const getFavoritos = async (id_usuario: string, id_session?: string) => {
     const response = await fetch(`${SERVER_URL}/graphql`, {
