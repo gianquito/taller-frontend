@@ -240,6 +240,10 @@ export const getProductsByName = async (nombre: string): Promise<libro[]> => {
                   autor{
                     nombreAutor
                   }
+                }usuariosFavoritos{
+                  idUsuario
+                }resenias{
+                  valoracion
                 }
               }
             }`,
