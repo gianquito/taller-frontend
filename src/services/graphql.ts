@@ -674,10 +674,12 @@ export const getProductsSales = async (id_session: string) => {
         method: 'POST',
         body: JSON.stringify({
             query: `{
-            lineasPedidos{
-              idLibro
-            }
-          }`,
+              lineasPedidos{
+                ejemplar{
+                  idLibro
+                }
+              }
+            }`,
         }),
         headers: {
             'Content-Type': 'application/json',

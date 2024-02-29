@@ -1,3 +1,5 @@
+'use client'
+
 import { ScrollArea, ScrollBar } from './ui/scroll-area'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table'
 import { ejemplarForm } from '@/types/ejemplarForm'
@@ -7,8 +9,8 @@ import Image from 'next/image'
 
 interface TablaEjemplaresProps {
     ejemplares: ejemplarForm[]
-    submitFn: (newEjemplar: ejemplarForm | undefined) => void
-    removeFn: (newEjemplar: ejemplarForm) => void
+    submitFn?: (newEjemplar: ejemplarForm | undefined) => void
+    removeFn?: (newEjemplar: ejemplarForm) => void
 }
 
 export default function TablaEjemplares({ ejemplares, submitFn, removeFn }: TablaEjemplaresProps) {
@@ -34,25 +36,28 @@ export default function TablaEjemplares({ ejemplares, submitFn, removeFn }: Tabl
                             <TableRow key={ejemplar.isbn}>
                                 <TableCell>
                                     <div className="flex items-center gap-4">
-                                        <EditarEjemplarDialog
-                                            currentEjemplar={ejemplar}
-                                            submitFn={submitFn}
-                                            triggerElement={
-                                                <div className="w-[14px] cursor-pointer select-none">
-                                                    <Image
-                                                        src="/lapiz1.png"
-                                                        alt="Editar ejemplar"
-                                                        draggable={false}
-                                                        width={14}
-                                                        height={14}
-                                                    />
-                                                </div>
-                                            }
-                                        />
+                                        {submitFn !== undefined && (
+                                            <EditarEjemplarDialog
+                                                currentEjemplar={ejemplar}
+                                                submitFn={submitFn}
+                                                triggerElement={
+                                                    <div className="w-[14px] cursor-pointer select-none">
+                                                        <Image
+                                                            src="/lapiz1.png"
+                                                            alt="Editar ejemplar"
+                                                            draggable={false}
+                                                            width={14}
+                                                            height={14}
+                                                        />
+                                                    </div>
+                                                }
+                                            />
+                                        )}
+
                                         {!ejemplar.preventDelete && (
                                             <div
                                                 className="w-[14px] cursor-pointer select-none"
-                                                onClick={() => removeFn(ejemplar)}
+                                                onClick={() => removeFn!(ejemplar)}
                                             >
                                                 <Image
                                                     src="/trash-can.png"

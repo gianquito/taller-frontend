@@ -20,10 +20,10 @@ export default async function TablaPromocionesGestion() {
                     <TableHeader>
                         <TableRow>
                             <TableHead>Nombre</TableHead>
-                            <TableHead className="text-center">Libros</TableHead>
+                            <TableHead className="text-center">Ejemplares</TableHead>
                             <TableHead className="text-center">Descuento</TableHead>
-                            <TableHead className="text-center">Fecha inicio</TableHead>
-                            <TableHead className="text-center">Fecha fin</TableHead>
+                            <TableHead className="text-center">Fecha de inicio</TableHead>
+                            <TableHead className="text-center">Fecha de fin</TableHead>
                             <TableHead className="text-center">Acciones</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -31,7 +31,7 @@ export default async function TablaPromocionesGestion() {
                         {promociones.map(promocion => (
                             <TableRow key={promocion.idPromocionDescuento}>
                                 <TableCell>{promocion.nombrePromocion}</TableCell>
-                                <TableCell className="text-center">{promocion.libros.length}</TableCell>
+                                <TableCell className="text-center">{promocion.ejemplares.length}</TableCell>
                                 <TableCell className="text-center">{promocion.porcentaje + '%'}</TableCell>
                                 <TableCell className="text-center">
                                     {new Date(promocion.fechaInicio).toLocaleDateString('es-ar')}

@@ -1,6 +1,6 @@
 export default function Footer() {
     return (
-        <div className="mt-auto flex flex-col items-center justify-around gap-2 bg-[#C4C4C4] py-2 text-sm md:flex-row">
+        <div className="mt-auto flex flex-col items-center justify-around gap-2 bg-neutral-300 py-2 text-sm md:flex-row">
             <div className="text-center md:text-left">
                 <p>9 de Julio 389, Piso 2, CP 3260</p>
                 <p>Concepcion del Uruguay, Entre Ríos</p>
