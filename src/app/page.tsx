@@ -8,7 +8,7 @@ export default function Home({ searchParams }: { searchParams?: { [key: string]:
         <main>
             <PromocionBanner />
             <div className="flex justify-center">
-                <ProductsContainerHome genero={searchParams?.genero} />
+                <ProductsContainerHome genero={searchParams?.genero} orden={searchParams?.orden}/>
             </div>
         </main>
     )
