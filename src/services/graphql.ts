@@ -1078,13 +1078,14 @@ export const deleteEjemplarPromociones = async (id_promocion: number) => {
     })
 }
 
-export const getEjemplares = async (): Promise<{ isbn: number }[]> => {
+export const getEjemplares = async (): Promise<{ isbn: number; stock: number }[]> => {
     const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `{
             ejemplares{
               isbn
+              stock
             }
           }`,
         }),

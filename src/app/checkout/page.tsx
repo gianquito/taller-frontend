@@ -12,6 +12,7 @@ import { calculateDiscount, formatPrice, getCookie } from '@/utils'
 import { direccion } from '@/types/direccion'
 import useClientAuth from '@/hooks/useAuth'
 import { ejemplar } from '@/types/ejemplar'
+import { getEjemplares } from '@/services/graphql';
 
 export default function Checkout() {
     const [selectedAddress, setSelectedAddress] = useState<string | null>(null)
@@ -21,7 +22,35 @@ export default function Checkout() {
     const [subtotal, setSubtotal] = useState(0)
     const [addresses, setAddresses] = useState<direccion[]>([])
     const [costoEnvios, setCostoEnvios] = useState<{ [id: string]: number }>({})
-
+    
+    async function verificarStock() {
+        const ejemplaresConStock = await getEjemplares();
+        const ejemplaresInsuficientes = cartProducts
+            .filter((product) => {
+                const ejemplar = ejemplaresConStock.find((e) => e.isbn === product.ejemplar.isbn);
+                return ejemplar && ejemplar.stock < product.cantidad;
+            })
+            .map((product) => {
+                const ejemplar = ejemplaresConStock.find((e) => e.isbn === product.ejemplar.isbn);
+                return {
+                    isbn: product.ejemplar.isbn,
+                    cantidadDeseada: product.cantidad,
+                    stockDisponible: ejemplar ? ejemplar.stock : 0,
+                };
+            });
+        if (ejemplaresInsuficientes.length > 0) {
+            const errorMessage = `No hay suficiente stock para los siguientes ejemplares en tu carrito:\n${ejemplaresInsuficientes
+                .map(
+                    (ejemplar) =>
+                        `ISBN: ${ejemplar.isbn}, Cantidad deseada: ${ejemplar.cantidadDeseada}, Stock disponible: ${ejemplar.stockDisponible}`
+                )
+                .join('\n')}`;
+    
+            toast.error(errorMessage, {duration: 10000});
+            return false;
+        }
+        return true;
+    }
     function handlePayment() {
         if (!user) {
             router.push('/ingresar')
@@ -32,31 +61,33 @@ export default function Checkout() {
             return
         }
         if (!costoEnvios.hasOwnProperty(selectedAddress)) return
-
-        fetch('/pago', {
-            method: 'POST',
-            body: JSON.stringify({
-                products: cartProducts.map(product => {
-                    const discount = calculateDiscount(product.ejemplar)
-                    return {
-                        quantity: product.cantidad,
-                        unit_price: discount.hasDiscount ? discount.discountedPrice : discount.originalPrice,
-                        title: product.ejemplar.libro.titulo,
-                        id: product.ejemplar.isbn,
-                        currency_id: 'ARS',
-                    }
-                }),
-                envio: costoEnvios[selectedAddress],
-                id_usuario: user.idUsuario,
-                total: cartProducts.reduce((acc, currVal) => currVal.cantidad * currVal.ejemplar.precio + acc, 0),
-                id_direccion: selectedAddress,
-            }),
-        })
-            .then(res => res.text())
-            .then(payment_url => router.push(payment_url))
-            .catch(() => toast.error('Error al crear pago'))
+        verificarStock().then((stockSuficiente) => {
+            if (stockSuficiente) {
+                fetch('/pago', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        products: cartProducts.map(product => {
+                            const discount = calculateDiscount(product.ejemplar)
+                            return {
+                                quantity: product.cantidad,
+                                unit_price: discount.hasDiscount ? discount.discountedPrice : discount.originalPrice,
+                                title: product.ejemplar.libro.titulo,
+                                id: product.ejemplar.isbn,
+                                currency_id: 'ARS',
+                            }
+                        }),
+                        envio: costoEnvios[selectedAddress],
+                        id_usuario: user.idUsuario,
+                        total: cartProducts.reduce((acc, currVal) => currVal.cantidad * currVal.ejemplar.precio + acc, 0),
+                        id_direccion: selectedAddress,
+                    }),
+                })
+                    .then(res => res.text())
+                    .then(payment_url => router.push(payment_url))
+                    .catch(() => toast.error('Error al crear pago'))
+            }
+        });
     }
-
     useEffect(() => {
         if (!user) return
         getProductsInCart(user.idCarrito).then(p => (p.length ? setCartProducts(p) : router.push('/')))
