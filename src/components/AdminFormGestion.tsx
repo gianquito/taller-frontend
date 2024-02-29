@@ -4,7 +4,7 @@ import { useState } from 'react'
 import BlackButton from './BlackButton'
 import { AutocompleteBox } from './ui/AutocompleteBox'
 
-export default function AdminFormGestion({ users }: { users: any }) {
+export default function AdminFormGestion({ users }: { users: { id_usuario: string; email: string; rol: number }[] }) {
     const [formValues, setFormValues] = useState<string[]>([])
 
     function handleSubmit() {
@@ -16,7 +16,7 @@ export default function AdminFormGestion({ users }: { users: any }) {
             <p className="self-start text-3xl font-semibold">Editar administradores</p>
             <div className="mt-4 flex w-1/2 items-center gap-2">
                 <AutocompleteBox
-                    availableOptions={
+                    availableOptions={() =>
                         new Promise(resolve => {
                             resolve(users.map(user => user.email))
                         })

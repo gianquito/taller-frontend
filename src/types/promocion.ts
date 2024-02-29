@@ -1,10 +1,10 @@
-import { libro } from './libro'
+import { ejemplar } from './ejemplar'
 
 export type promocion = {
     fechaFin: string
     fechaInicio: string
     idPromocionDescuento: string
-    libros: libro[]
+    ejemplares: ejemplar[]
     nombrePromocion: string
     porcentaje: number
 }

@@ -2,7 +2,10 @@ import { getPedidos, getProducts } from '@/services/graphql'
 import { formatPrice } from '@/utils'
 
 export default async function GestionCards({ sessionId, users }: { sessionId: string; users: any }) {
-    const stock = (await getProducts()).reduce((acc: number, curr) => acc + curr.stock, 0)
+    const stock = (await getProducts())
+        .map(libro => libro.ejemplares)
+        .flat()
+        .reduce((acc: number, curr) => acc + curr.stock, 0)
     const pedidos: { total: number }[] = await getPedidos(sessionId)
     const clientes = users.length
 
