@@ -55,6 +55,9 @@ export default function ProductCart({
 
         setAmountInput(prev => (exact ? newAmount : (prev += newAmount)))
         addProductToCart(id, cart_id, newAmount, exact)
+            .then(() => {
+                fetch_products(); // Actualizar productos después de agregar al carrito
+        })
     }
 
     useEffect(() => {
