@@ -10,7 +10,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { verificarStock } from '@/utils'
-import { toast } from 'react-hot-toast';  
 
 export default function Carrito() {
     const user = useClientAuth()
@@ -39,19 +38,19 @@ export default function Carrito() {
     console.log(products)
     async function handleCheckout() {
         if (!user) {
-            router.push('/ingresar');
-            return;
+            router.push('/ingresar')
+            return
         }
 
         try {
-            await verificarStock(products);  // Pasar los productos al verificarStock
-            router.push('/checkout');
+            await verificarStock(products) // Pasar los productos al verificarStock
+            router.push('/checkout')
         } catch (error) {
-            console.error('Error al verificar el stock o al pasar a checkout:', error);
+            console.error('Error al verificar el stock o al pasar a checkout:', error)
         }
     }
 
-    if (!user) return null;
+    if (!user) return null
 
     return (
         <div>

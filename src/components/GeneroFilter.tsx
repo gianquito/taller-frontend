@@ -1,25 +1,39 @@
 'use client'
 
 import { getGeneros } from '@/services/graphql'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { removeURLParameter } from '@/utils'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useCallback, useEffect, useState } from 'react'
 
 export default function GeneroFilter({ genero }: { genero: string | undefined }) {
     const [generos, setGeneros] = useState<{ nombreGenero: string; idGenero: string }[]>([])
     const [generoFilter, setGeneroFilter] = useState(genero ?? 'Todos')
     const router = useRouter()
+    const searchParams = useSearchParams()
+
     useEffect(() => {
         getGeneros().then(generos => setGeneros(generos))
     }, [])
 
+    const createQueryString = useCallback(
+        (name: string, value: string) => {
+            const params = new URLSearchParams(searchParams.toString())
+            params.set(name, value)
+
+            return params.toString()
+        },
+        [searchParams]
+    )
+
     useEffect(() => {
         const location = document.location
         if (generoFilter === 'Todos') {
-            if (location.search === '') return
-            router.push(location.origin + location.pathname)
+            if (searchParams.get('genero') === null) return
+
+            router.push(removeURLParameter(location.href, 'genero'))
             return
         }
-        router.push(`${location.origin + location.pathname}?genero=${generoFilter}`)
+        router.push(`${location.origin + location.pathname}?${createQueryString('genero', generoFilter)}`)
     }, [generoFilter])
 
     return (

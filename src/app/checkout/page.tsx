@@ -22,8 +22,7 @@ export default function Checkout() {
     const [subtotal, setSubtotal] = useState(0)
     const [addresses, setAddresses] = useState<direccion[]>([])
     const [costoEnvios, setCostoEnvios] = useState<{ [id: string]: number }>({})
-    
-    
+
     async function handlePayment() {
         if (!user) {
             router.push('/ingresar')
@@ -33,12 +32,12 @@ export default function Checkout() {
             toast.error('Debe seleccionar una direccíon para el envío')
             return
         }
-        if (!costoEnvios.hasOwnProperty(selectedAddress)) return;
+        if (!costoEnvios.hasOwnProperty(selectedAddress)) return
 
-        const updatedCartProducts = await getProductsInCart(user.idCarrito);
-        setCartProducts(updatedCartProducts);
+        const updatedCartProducts: { cantidad: number; ejemplar: ejemplar }[] = await getProductsInCart(user.idCarrito)
+        setCartProducts(updatedCartProducts)
         console.log(updatedCartProducts)
-        await verificarStock(updatedCartProducts);
+        await verificarStock(updatedCartProducts)
         fetch('/pago', {
             method: 'POST',
             body: JSON.stringify({
@@ -54,14 +53,16 @@ export default function Checkout() {
                 }),
                 envio: costoEnvios[selectedAddress],
                 id_usuario: user.idUsuario,
-                total: updatedCartProducts.reduce((acc, currVal) => currVal.cantidad * currVal.ejemplar.precio + acc, 0),
+                total: updatedCartProducts.reduce(
+                    (acc, currVal) => currVal.cantidad * currVal.ejemplar.precio + acc,
+                    0
+                ),
                 id_direccion: selectedAddress,
             }),
         })
             .then(res => res.text())
             .then(payment_url => router.push(payment_url))
             .catch(() => toast.error('Error al crear pago'))
-
     }
     useEffect(() => {
         if (!user) return
