@@ -6,12 +6,12 @@ import Kebab from './Kebab'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion'
 import TablaEjemplares from './TablaEjemplares'
 
-export default async function TablaLibrosGestion({ sessionId }: { sessionId: string }) {
+export default async function TablaLibrosGestion() {
     const libros = await getProducts()
-    const ventas = await getProductsSales(sessionId)
+    const ventas = await getProductsSales()
 
     return (
-        <div className="mx-auto max-w-[1200px]">
+        <div className="mx-auto mb-16 max-w-[1200px]">
             <div className="flex justify-between">
                 <h1 className="text-3xl font-semibold">Libros</h1>
                 <div className="flex items-center gap-4">
@@ -71,11 +71,11 @@ export default async function TablaLibrosGestion({ sessionId }: { sessionId: str
                                         </div>
                                     </TableCell>
                                 </TableRow>
-                                <TableRow className="-translate-y-3">
+                                <TableRow className="-translate-y-3 hover:bg-white">
                                     <TableCell colSpan={4}>
                                         <div className="flex items-center justify-center">
                                             <Accordion type="single" collapsible className="w-full">
-                                                <AccordionItem value="item-1">
+                                                <AccordionItem value="item-1" className="!border-0">
                                                     <AccordionTrigger className="justify-center">
                                                         Ejemplares
                                                     </AccordionTrigger>
