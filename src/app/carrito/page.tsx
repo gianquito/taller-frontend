@@ -9,13 +9,14 @@ import { formatPrice } from '@/utils'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { verificarStock } from '@/utils'
+import { toast } from 'react-hot-toast';  
 
 export default function Carrito() {
     const user = useClientAuth()
     const [products, setProducts] = useState<{ cantidad: number; ejemplar: ejemplar }[]>([])
     const [amounts, setAmounts] = useState<{ [id: string]: { amount: number; price: number } }>({})
     const [subtotal, setSubtotal] = useState(0)
-
     const router = useRouter()
 
     function fetchProducts() {
@@ -35,7 +36,23 @@ export default function Carrito() {
         if (!user) return
         fetchProducts()
     }, [user])
-    if (!user) return null
+    console.log(products)
+    async function handleCheckout() {
+        if (!user) {
+            router.push('/ingresar');
+            return;
+        }
+
+        try {
+            await verificarStock(products);  // Pasar los productos al verificarStock
+            router.push('/checkout');
+        } catch (error) {
+            console.error('Error al verificar el stock o al pasar a checkout:', error);
+        }
+    }
+
+    if (!user) return null;
+
     return (
         <div>
             <div className="mt-8 flex flex-col items-center justify-evenly lg:flex-row">
@@ -75,8 +92,8 @@ export default function Carrito() {
                             <p>{formatPrice(subtotal)}</p>
                         </div>
                     </div>
-                    <Link href={`${products.length ? '/checkout' : '#'}`}>
-                        <BlackButton text="Continuar" />
+                    <Link href={`${products.length ? '#' : '/checkout'}`}>
+                        <BlackButton text="Continuar" onClick={handleCheckout} />
                     </Link>
                 </div>
             </div>

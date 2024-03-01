@@ -1,5 +1,6 @@
 import { ejemplar } from './types/ejemplar'
 import { libro } from './types/libro'
+import toast from 'react-hot-toast'
 
 export const formatPrice = (price: number) =>
     new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(price).replace(/\s/g, '')
@@ -63,6 +64,27 @@ export function getDefaultEjemplar(product: libro) {
 
     // devuelve el primer ejemplar de la lista
     return ejemplaresEnStock[0]
+}
+
+export async function verificarStock(cartProducts) {
+    const ejemplaresInsuficientes = cartProducts
+        .filter((product) => product.ejemplar.stock < product.cantidad)
+        .map((product) => ({
+            isbn: product.ejemplar.isbn,
+            cantidadDeseada: product.cantidad,
+            stockDisponible: product.ejemplar.stock,
+        }));
+    if (ejemplaresInsuficientes.length > 0) {
+        const errorMessage = `No hay suficiente stock para los siguientes ejemplares en tu carrito:\n${ejemplaresInsuficientes
+            .map(
+                (ejemplar) =>
+                    `ISBN: ${ejemplar.isbn}, Cantidad deseada: ${ejemplar.cantidadDeseada}, Stock disponible: ${ejemplar.stockDisponible}`
+            )
+            .join('\n')}`;
+        toast.error(errorMessage, { duration: 10000 });
+        return Promise.reject();
+    }
+    return Promise.resolve();
 }
 
 export const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://127.0.0.1:5000'

@@ -12,6 +12,7 @@ import { calculateDiscount, formatPrice, getCookie } from '@/utils'
 import { direccion } from '@/types/direccion'
 import useClientAuth from '@/hooks/useAuth'
 import { ejemplar } from '@/types/ejemplar'
+import { verificarStock } from '@/utils'
 
 export default function Checkout() {
     const [selectedAddress, setSelectedAddress] = useState<string | null>(null)
@@ -21,8 +22,9 @@ export default function Checkout() {
     const [subtotal, setSubtotal] = useState(0)
     const [addresses, setAddresses] = useState<direccion[]>([])
     const [costoEnvios, setCostoEnvios] = useState<{ [id: string]: number }>({})
-
-    function handlePayment() {
+    
+    
+    async function handlePayment() {
         if (!user) {
             router.push('/ingresar')
             return
@@ -31,12 +33,16 @@ export default function Checkout() {
             toast.error('Debe seleccionar una direccíon para el envío')
             return
         }
-        if (!costoEnvios.hasOwnProperty(selectedAddress)) return
+        if (!costoEnvios.hasOwnProperty(selectedAddress)) return;
 
+        const updatedCartProducts = await getProductsInCart(user.idCarrito);
+        setCartProducts(updatedCartProducts);
+        console.log(updatedCartProducts)
+        await verificarStock(updatedCartProducts);
         fetch('/pago', {
             method: 'POST',
             body: JSON.stringify({
-                products: cartProducts.map(product => {
+                products: updatedCartProducts.map(product => {
                     const discount = calculateDiscount(product.ejemplar)
                     return {
                         quantity: product.cantidad,
@@ -48,15 +54,15 @@ export default function Checkout() {
                 }),
                 envio: costoEnvios[selectedAddress],
                 id_usuario: user.idUsuario,
-                total: cartProducts.reduce((acc, currVal) => currVal.cantidad * currVal.ejemplar.precio + acc, 0),
+                total: updatedCartProducts.reduce((acc, currVal) => currVal.cantidad * currVal.ejemplar.precio + acc, 0),
                 id_direccion: selectedAddress,
             }),
         })
             .then(res => res.text())
             .then(payment_url => router.push(payment_url))
             .catch(() => toast.error('Error al crear pago'))
-    }
 
+    }
     useEffect(() => {
         if (!user) return
         getProductsInCart(user.idCarrito).then(p => (p.length ? setCartProducts(p) : router.push('/')))
