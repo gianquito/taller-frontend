@@ -21,7 +21,7 @@ export default async function ProductsHome({
             ? data
             : data.filter(product => product.generos.find(g => g.genero.nombreGenero === genero))
 
-    const ventas = await getProductsSales((await getSsrUser())?.sessionId!)
+    const ventas = await getProductsSales()
     const getSortedProducts = () => {
         switch (orden) {
             case 'Reseñas':
