@@ -16,7 +16,11 @@ export default function Buscar({
                     Resultados para:
                     <b className="capitalize"> {decodeURI(params.id)}</b>
                 </p>
-                <ProductsContainerHome nombre={decodeURI(params.id)} genero={searchParams?.genero} />
+                <ProductsContainerHome
+                    nombre={decodeURI(params.id)}
+                    genero={searchParams?.genero}
+                    orden={searchParams?.orden}
+                />
             </div>
         </div>
     )

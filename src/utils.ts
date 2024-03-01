@@ -66,25 +66,45 @@ export function getDefaultEjemplar(product: libro) {
     return ejemplaresEnStock[0]
 }
 
-export async function verificarStock(cartProducts) {
+export async function verificarStock(cartProducts: { cantidad: number; ejemplar: ejemplar }[]) {
     const ejemplaresInsuficientes = cartProducts
-        .filter((product) => product.ejemplar.stock < product.cantidad)
-        .map((product) => ({
+        .filter(product => product.ejemplar.stock < product.cantidad)
+        .map(product => ({
             isbn: product.ejemplar.isbn,
             cantidadDeseada: product.cantidad,
             stockDisponible: product.ejemplar.stock,
-        }));
+        }))
     if (ejemplaresInsuficientes.length > 0) {
         const errorMessage = `No hay suficiente stock para los siguientes ejemplares en tu carrito:\n${ejemplaresInsuficientes
             .map(
-                (ejemplar) =>
+                ejemplar =>
                     `ISBN: ${ejemplar.isbn}, Cantidad deseada: ${ejemplar.cantidadDeseada}, Stock disponible: ${ejemplar.stockDisponible}`
             )
-            .join('\n')}`;
-        toast.error(errorMessage, { duration: 10000 });
-        return Promise.reject();
+            .join('\n')}`
+        toast.error(errorMessage, { duration: 10000 })
+        return Promise.reject()
     }
-    return Promise.resolve();
+    return Promise.resolve()
+}
+
+export function removeURLParameter(url: string, parameter: string) {
+    //prefer to use l.search if you have a location/link object
+    var urlparts = url.split('?')
+    if (urlparts.length >= 2) {
+        var prefix = encodeURIComponent(parameter) + '='
+        var pars = urlparts[1].split(/[&;]/g)
+
+        //reverse iteration as may be destructive
+        for (var i = pars.length; i-- > 0; ) {
+            //idiom for string.startsWith
+            if (pars[i].lastIndexOf(prefix, 0) !== -1) {
+                pars.splice(i, 1)
+            }
+        }
+
+        return urlparts[0] + (pars.length > 0 ? '?' + pars.join('&') : '')
+    }
+    return url
 }
 
 export const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://127.0.0.1:5000'

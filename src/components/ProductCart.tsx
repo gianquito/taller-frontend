@@ -54,9 +54,8 @@ export default function ProductCart({
         if (newAmount > stock && exact) return
 
         setAmountInput(prev => (exact ? newAmount : (prev += newAmount)))
-        addProductToCart(id, cart_id, newAmount, exact)
-            .then(() => {
-                fetch_products(); // Actualizar productos después de agregar al carrito
+        addProductToCart(id, cart_id, newAmount, exact).then(() => {
+            exact && fetch_products() // Actualizar productos después de agregar al carrito
         })
     }
 
