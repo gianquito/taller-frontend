@@ -8,7 +8,7 @@ export default async function TablaPromocionesGestion() {
     const promociones: promocion[] = await getPromociones()
 
     return (
-        <div className="mx-auto my-10 max-w-[1200px]">
+        <div className="mx-auto mb-16 max-w-[1200px]">
             <div className="flex justify-between">
                 <h1 className="text-3xl font-semibold">Promociones</h1>
                 <div className="flex items-center gap-4">

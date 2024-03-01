@@ -21,7 +21,7 @@ export default async function Gestion() {
                 <GestionCards sessionId={user.sessionId} users={users} />
             </div>
             <TablaPedidosGestion sessionId={user.sessionId} />
-            <TablaLibroGestion sessionId={user.sessionId} />
+            <TablaLibroGestion />
             <TablaPromocionesGestion />
             <AdminFormGestion users={users} />
         </div>

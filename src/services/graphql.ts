@@ -643,6 +643,50 @@ export const getPedidos = async (id_session: string) => {
     return pedidos.data.pedidos
 }
 
+export const getPedidosDetallado = async (id_session: string) => {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `{
+            pedidos{
+              idPedido,
+              total,
+              totalConDescuento,
+              fecha,
+              usuario{
+                email
+              }
+              direccion{
+                calle,
+                numero,
+                ciudad{
+                  cp,
+                  nombreCiudad
+                }
+              }
+              lineasPedido{
+                precio
+                cantidad
+                ejemplar{
+                  isbn
+                  libro{
+                    titulo
+                  }
+                }
+              }
+            }
+          }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: id_session ?? '',
+        },
+    })
+    const pedidos = await response.json()
+    if (pedidos.errors) throw 'Error in request'
+    return pedidos.data.pedidos
+}
+
 export const getPedidosByUser = async (id_usuario: string) => {
     const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
