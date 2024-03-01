@@ -669,7 +669,7 @@ export const getPedidosByUser = async (id_usuario: string) => {
     return pedidos.data.pedidos
 }
 
-export const getProductsSales = async (id_session: string) => {
+export const getProductsSales = async () => {
     const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
@@ -683,7 +683,6 @@ export const getProductsSales = async (id_session: string) => {
         }),
         headers: {
             'Content-Type': 'application/json',
-            sesionId: id_session ?? '',
         },
     })
     const pedidos = await response.json()
