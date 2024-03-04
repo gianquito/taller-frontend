@@ -20,7 +20,7 @@ export default function Carrito() {
 
     function fetchProducts() {
         if (!user) return
-        getProductsInCart(user.idCarrito)
+        getProductsInCart(user.idCarrito, user.sessionId)
             .then(p => setProducts(p))
             .catch(() => router.push('/ingresar'))
     }

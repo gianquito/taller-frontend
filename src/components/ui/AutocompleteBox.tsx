@@ -60,7 +60,7 @@ export function AutocompleteBox({
                     )}
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[220px] p-0 ">
+            <PopoverContent className="w-[250px] p-0 ">
                 <Command>
                     <CommandInput
                         placeholder={`Buscar ${category}...`}

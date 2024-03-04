@@ -346,7 +346,7 @@ export const addWishlisted = async (isbn: number, id_usuario: string) => {
     return data.data
 }
 
-export const getProductsInCart = async (id_carrito: number) => {
+export const getProductsInCart = async (id_carrito: number, id_session: string) => {
     const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
@@ -380,7 +380,7 @@ export const getProductsInCart = async (id_carrito: number) => {
         }),
         headers: {
             'Content-Type': 'application/json',
-            sesionId: getCookie('sesionId') ?? '',
+            sesionId: id_session ?? '',
         },
     })
     const products = await response.json()
@@ -389,7 +389,7 @@ export const getProductsInCart = async (id_carrito: number) => {
 }
 
 export const addProductToCart = async (id_ejemplar: number, id_carrito: number, amount = 1, exact = false) => {
-    const ejemplares = await getProductsInCart(id_carrito)
+    const ejemplares = await getProductsInCart(id_carrito, getCookie('sesionId') ?? '')
     const productInCart = ejemplares.find((prod: any) => prod.ejemplar.isbn == id_ejemplar)
     if (productInCart) {
         const res = await fetch(`${SERVER_URL}/graphql`, {

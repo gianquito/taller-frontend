@@ -34,7 +34,10 @@ export default function Checkout() {
         }
         if (!costoEnvios.hasOwnProperty(selectedAddress)) return
 
-        const updatedCartProducts: { cantidad: number; ejemplar: ejemplar }[] = await getProductsInCart(user.idCarrito)
+        const updatedCartProducts: { cantidad: number; ejemplar: ejemplar }[] = await getProductsInCart(
+            user.idCarrito,
+            user.sessionId
+        )
         setCartProducts(updatedCartProducts)
         console.log(updatedCartProducts)
         await verificarStock(updatedCartProducts)
@@ -53,6 +56,8 @@ export default function Checkout() {
                 }),
                 envio: costoEnvios[selectedAddress],
                 id_usuario: user.idUsuario,
+                id_carrito: user.idCarrito,
+                id_session: user.sessionId,
                 total: updatedCartProducts.reduce(
                     (acc, currVal) => currVal.cantidad * currVal.ejemplar.precio + acc,
                     0
@@ -66,7 +71,7 @@ export default function Checkout() {
     }
     useEffect(() => {
         if (!user) return
-        getProductsInCart(user.idCarrito).then(p => (p.length ? setCartProducts(p) : router.push('/')))
+        getProductsInCart(user.idCarrito, user.sessionId).then(p => (p.length ? setCartProducts(p) : router.push('/')))
         getDirecciones(user.idUsuario, getCookie('sesionId')!)
             .then(add => setAddresses(add))
             .catch(() => router.push('/ingresar'))
