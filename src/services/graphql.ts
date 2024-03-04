@@ -1539,7 +1539,6 @@ export const addPedido = async (
         id_envio = 1
     }
     const idDireccion = id_direccion == '-1' ? '' : ', idDireccion: ' + parseInt(id_direccion)
-    console.log(total_con_descuento)
     const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({

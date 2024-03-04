@@ -35,7 +35,7 @@ export default function Carrito() {
         if (!user) return
         fetchProducts()
     }, [user])
-    console.log(products)
+
     async function handleCheckout() {
         if (!user) {
             router.push('/ingresar')

@@ -26,7 +26,6 @@ export async function POST(request: Request) {
                         return item.id === product.ejemplar.isbn
                     })
                     if (compra_item) {
-                        console.log(typeof compra_item.quantity)
                         filtered.push({ stockActual: product.ejemplar.stock, compraCantidad: compra_item.quantity })
                     }
                     return filtered
