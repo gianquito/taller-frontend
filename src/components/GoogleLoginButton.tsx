@@ -15,7 +15,6 @@ export default function GoogleLoginButton() {
 
     const googleLogin = useGoogleLogin({
         onSuccess: tokenResponse => {
-            console.log(tokenResponse)
             fetch(`${SERVER_URL}/validate`, {
                 method: 'POST',
                 body: tokenResponse.code,
@@ -29,7 +28,6 @@ export default function GoogleLoginButton() {
                     document.location.href = '/'
                 })
                 .catch(err => {
-                    console.log(err)
                     setIsLoading(false)
                 })
         },

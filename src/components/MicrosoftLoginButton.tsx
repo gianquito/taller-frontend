@@ -22,7 +22,6 @@ export default function MicrosoftLoginButton() {
                 .then(res => res.text())
                 .then(data => {
                     if (data.includes('error')) return
-                    console.log(data)
                     const d = new Date()
                     d.setTime(d.getTime() + 30 * 24 * 60 * 60 * 1000)
                     document.cookie = `sesionId=${data}; expires=${d.toUTCString()}; path=/; SameSite=None; Secure`
@@ -30,7 +29,6 @@ export default function MicrosoftLoginButton() {
                     document.location.href = '/'
                 })
                 .catch(err => {
-                    console.log(err)
                     setIsLoading(false)
                 })
         }

@@ -39,8 +39,11 @@ export default function Checkout() {
             user.sessionId
         )
         setCartProducts(updatedCartProducts)
-        console.log(updatedCartProducts)
-        await verificarStock(updatedCartProducts)
+        try {
+            await verificarStock(updatedCartProducts)
+        } catch {
+            return
+        }
         fetch('/pago', {
             method: 'POST',
             body: JSON.stringify({
