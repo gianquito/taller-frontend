@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 export default function useClientAuth(preventRedirect?: boolean) {
-    const [user, setUser] = useState<userType | undefined>(undefined)
+    const [user, setUser] = useState<(userType & { sessionId: string }) | undefined>(undefined)
     const router = useRouter()
     useEffect(() => {
         const sessionId = getCookie('sesionId')
@@ -15,7 +15,7 @@ export default function useClientAuth(preventRedirect?: boolean) {
         }
         getUserBySesion(sessionId).then(res => {
             if (res) {
-                setUser(res)
+                setUser({ ...res, sessionId })
                 return
             }
             !preventRedirect && router.push('/ingresar')
