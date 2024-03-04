@@ -12,7 +12,7 @@ export default async function TablaPromocionesGestion() {
             <div className="flex justify-between">
                 <h1 className="text-3xl font-semibold">Promociones</h1>
                 <div className="flex items-center gap-4">
-                    <ActionButton href="/nueva-promocion" text="Cargar Promoción" icon="/plus.png" />
+                    <ActionButton href="/gestion/nueva-promocion" text="Cargar Promoción" icon="/plus.png" />
                 </div>
             </div>
             <div className="mt-4 max-h-[800px] overflow-x-auto">
@@ -45,7 +45,7 @@ export default async function TablaPromocionesGestion() {
                                             actionList={[
                                                 {
                                                     name: 'Editar',
-                                                    routeTo: `/nueva-promocion/${promocion.idPromocionDescuento}`,
+                                                    routeTo: `/gestion/nueva-promocion/${promocion.idPromocionDescuento}`,
                                                 },
                                             ]}
                                         />

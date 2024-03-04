@@ -3,6 +3,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { pedido } from '@/types/pedido'
 import { formatPrice } from '@/utils'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 export default async function TablaPedidosGestion({ sessionId }: { sessionId: string }) {
     const pedidos: pedido[] = await getPedidosDetallado(sessionId)
@@ -31,7 +37,9 @@ export default async function TablaPedidosGestion({ sessionId }: { sessionId: st
                                 <>
                                     <TableRow key={pedido.idPedido} className="border-b-0 border-t">
                                         <TableCell>{pedido.idPedido}</TableCell>
-                                        <TableCell>{new Date(pedido.fecha).toLocaleString('es-ar')}</TableCell>
+                                        <TableCell>
+                                            {dayjs.utc(pedido.fecha).utcOffset(-3).format('D/M/YYYY HH:mm:ss')}
+                                        </TableCell>
                                         <TableCell>{formatPrice(pedido.total)}</TableCell>
                                         <TableCell>{formatPrice(pedido.totalConDescuento)}</TableCell>
                                         <TableCell>
@@ -74,7 +82,7 @@ export default async function TablaPedidosGestion({ sessionId }: { sessionId: st
                                                                             </TableCell>
                                                                             <TableCell>{lp.cantidad}</TableCell>
                                                                             <TableCell>
-                                                                                {formatPrice(lp.precio)}
+                                                                                {formatPrice(lp.precio * lp.cantidad)}
                                                                             </TableCell>
                                                                         </TableRow>
                                                                     ))}

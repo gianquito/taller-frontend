@@ -87,6 +87,28 @@ export const updateUser = async (
     return data.data
 }
 
+export const updateUserRol = async (id_usuario: string, rol: number): Promise<userType | undefined> => {
+    const request = await fetch(`${SERVER_URL}/graphql`, {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+                updateUsuario(idUsuario: "${id_usuario}", rol: ${rol}){
+                  usuario{
+                    idUsuario
+                  }
+                }
+              }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            sesionId: getCookie('sesionId') ?? '',
+        },
+    })
+    const data = await request.json()
+    if (data.errors) throw 'Error in request'
+    return data.data
+}
+
 export const getProducts = async (): Promise<libro[]> => {
     const request = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
