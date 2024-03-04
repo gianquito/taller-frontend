@@ -40,7 +40,7 @@ export async function POST(request: Request) {
                     cost: envio,
                 },
                 additional_info: id_usuario,
-                notification_url: 'https://6ba5-45-70-223-80.ngrok-free.app/webhook',
+                notification_url: 'https://taller-frontend-sage.vercel.app/webhook',
                 auto_return: 'approved',
                 back_urls: {
                     success: 'http://localhost:3000',
