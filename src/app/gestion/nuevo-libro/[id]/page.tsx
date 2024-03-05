@@ -95,15 +95,7 @@ export default function EditarLibro({ params }: { params: { id: number } }) {
     }
 
     function handleNewEjemplar(newEjemplar: ejemplarForm | undefined) {
-        if (
-            newEjemplar === undefined ||
-            newEjemplar.isbn === undefined ||
-            newEjemplar.precio === undefined ||
-            newEjemplar.stock === undefined ||
-            newEjemplar.dimensiones.trim() == '' ||
-            newEjemplar.editorial === undefined ||
-            newEjemplar.encuadernado.trim() === undefined
-        ) {
+        if (newEjemplar === undefined) {
             toast.error('Todos los campos son obligatorios!')
             return
         }

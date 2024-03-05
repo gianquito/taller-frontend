@@ -14,7 +14,7 @@ interface ProductCartProps {
     author: string
     price: number
     amount: number
-    id: number
+    id: string
     cart_id: number
     stock: number
     fetch_products: () => void

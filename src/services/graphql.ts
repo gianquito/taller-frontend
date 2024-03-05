@@ -191,9 +191,11 @@ export const getProduct = async (idLibro: number): Promise<libro> => {
                     }
                   }
                   editorial{
+                    idEditorial
                     nombreEditorial
                   }
                   encuadernado{
+                    idEncuadernado
                     tipo
                   }
                 }
@@ -410,14 +412,14 @@ export const getProductsInCart = async (id_carrito: number, id_session: string) 
     return products.data.ejemplaresEnCarrito
 }
 
-export const addProductToCart = async (id_ejemplar: number, id_carrito: number, amount = 1, exact = false) => {
+export const addProductToCart = async (id_ejemplar: string, id_carrito: number, amount = 1, exact = false) => {
     const ejemplares = await getProductsInCart(id_carrito, getCookie('sesionId') ?? '')
     const productInCart = ejemplares.find((prod: any) => prod.ejemplar.isbn == id_ejemplar)
     if (productInCart) {
         const res = await fetch(`${SERVER_URL}/graphql`, {
             method: 'POST',
             body: JSON.stringify({
-                query: `mutation{updateLineaCarrito(idCarrito: ${id_carrito}, idEjemplar: ${id_ejemplar}, cantidad: ${
+                query: `mutation{updateLineaCarrito(idCarrito: ${id_carrito}, idEjemplar: "${id_ejemplar}", cantidad: ${
                     exact ? amount : productInCart.cantidad + amount
                 }){ lineaCarrito{ cantidad } }}`,
             }),
@@ -434,7 +436,7 @@ export const addProductToCart = async (id_ejemplar: number, id_carrito: number, 
         const res = await fetch(`${SERVER_URL}/graphql`, {
             method: 'POST',
             body: JSON.stringify({
-                query: `mutation{createLineaCarrito(idEjemplar: ${id_ejemplar}, idCarrito: ${id_carrito}, cantidad: ${amount}){ lineaCarrito{ cantidad } }}`,
+                query: `mutation{createLineaCarrito(idEjemplar: "${id_ejemplar}", idCarrito: ${id_carrito}, cantidad: ${amount}){ lineaCarrito{ cantidad } }}`,
             }),
             headers: {
                 'Content-Type': 'application/json',
@@ -447,12 +449,12 @@ export const addProductToCart = async (id_ejemplar: number, id_carrito: number, 
     }
 }
 
-export const deleteProductFromCart = async (id_carrito: number, id_ejemplar: number) => {
+export const deleteProductFromCart = async (id_carrito: number, id_ejemplar: string) => {
     const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
-            deleteLineaCarrito(idEjemplar: ${id_ejemplar}, idCarrito: ${id_carrito}){
+            deleteLineaCarrito(idEjemplar: "${id_ejemplar}", idCarrito: ${id_carrito}){
               lineaCarrito{
                 cantidad
               }
@@ -1149,7 +1151,7 @@ export const deleteEjemplarPromociones = async (id_promocion: number) => {
     })
 }
 
-export const getEjemplares = async (): Promise<{ isbn: number; stock: number }[]> => {
+export const getEjemplares = async (): Promise<{ isbn: string; stock: number }[]> => {
     const response = await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
@@ -1236,7 +1238,7 @@ export const addProduct = async (
             method: 'POST',
             body: JSON.stringify({
                 query: `mutation{
-                createEjemplar(dimensiones: "${ejemplar.dimensiones}", isbn: ${ejemplar.isbn}, paginas: ${ejemplar.paginas}, precio: ${ejemplar.precio}, stock: ${ejemplar.stock}, idEditorial: ${newEditorial.idEditorial}, idEncuadernado: ${newEncuadernado.idEncuadernado},idLibro: ${libro.data.createLibro.libro.idLibro}){
+                createEjemplar(dimensiones: "${ejemplar.dimensiones}", isbn: "${ejemplar.isbn}", paginas: ${ejemplar.paginas}, precio: ${ejemplar.precio}, stock: ${ejemplar.stock}, idEditorial: ${newEditorial.idEditorial}, idEncuadernado: ${newEncuadernado.idEncuadernado},idLibro: ${libro.data.createLibro.libro.idLibro}){
                   ejemplar{
                     isbn
                   }
@@ -1341,7 +1343,7 @@ export const updateProduct = async (
             method: 'POST',
             body: JSON.stringify({
                 query: `mutation{
-                  ${mutationType}(isbn: ${ejemplar.isbn}, dimensiones: "${ejemplar.dimensiones}", paginas: ${ejemplar.paginas}, precio: ${ejemplar.precio}, stock: ${ejemplar.stock}, idEditorial: ${newEditorial.idEditorial}, idEncuadernado: ${newEncuadernado.idEncuadernado},idLibro: ${libro.data.updateLibro.libro.idLibro}){
+                  ${mutationType}(isbn: "${ejemplar.isbn}", dimensiones: "${ejemplar.dimensiones}", paginas: ${ejemplar.paginas}, precio: ${ejemplar.precio}, stock: ${ejemplar.stock}, idEditorial: ${newEditorial.idEditorial}, idEncuadernado: ${newEncuadernado.idEncuadernado},idLibro: ${libro.data.updateLibro.libro.idLibro}){
                     ejemplar{
                       isbn
                     }
@@ -1369,12 +1371,12 @@ export const updateProduct = async (
     return libro.data
 }
 
-export const addEjemplarPromocion = async (id_ejemplar: number, id_promocion: number) => {
+export const addEjemplarPromocion = async (id_ejemplar: string, id_promocion: number) => {
     await fetch(`${SERVER_URL}/graphql`, {
         method: 'POST',
         body: JSON.stringify({
             query: `mutation{
-            createEjemplarPromocion(idEjemplar: ${id_ejemplar}, idPromocionDescuento: ${id_promocion}){
+            createEjemplarPromocion(idEjemplar: "${id_ejemplar}", idPromocionDescuento: ${id_promocion}){
               ejemplarPromocion{
                 idEjemplar
               }
