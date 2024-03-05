@@ -41,9 +41,12 @@ export default function Carrito() {
             router.push('/ingresar')
             return
         }
-
+        const CartProducts: { cantidad: number; ejemplar: ejemplar }[] = await getProductsInCart(
+            user.idCarrito, 
+            user.sessionId)
+        setProducts(CartProducts)
         try {
-            await verificarStock(products) // Pasar los productos al verificarStock
+            await verificarStock(CartProducts) // Pasar los productos al verificarStock
             router.push('/checkout')
         } catch (error) {
             console.error('Error al verificar el stock o al pasar a checkout:', error)
