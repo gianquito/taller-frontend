@@ -9,7 +9,7 @@ interface ProductCheckoutProps {
     price: number
     amount: number
     ejemplar: ejemplar
-    id: number
+    id: string
 }
 
 export default function ProductCheckout({ amount, author, image, price, title, ejemplar, id }: ProductCheckoutProps) {

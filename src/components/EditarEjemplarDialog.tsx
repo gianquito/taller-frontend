@@ -1,9 +1,10 @@
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog'
 import BlackButton from './BlackButton'
 import { ejemplarForm } from '@/types/ejemplarForm'
 import { AutocompleteBox } from './ui/AutocompleteBox'
 import { getEditoriales, getEncuadernados } from '@/services/graphql'
+import toast from 'react-hot-toast'
 
 interface EditarEjemplarDialogProps {
     submitFn: (newEjemplar: ejemplarForm | undefined) => void
@@ -13,6 +14,7 @@ interface EditarEjemplarDialogProps {
 
 export default function EditarEjemplarDialog({ submitFn, currentEjemplar, triggerElement }: EditarEjemplarDialogProps) {
     const [ejemplar, setEjemplar] = useState<ejemplarForm | undefined>(currentEjemplar)
+    const [errorMsg, setErrorMsg] = useState('Todos los campos son obligatorios!')
 
     function handleChange(e: ChangeEvent<HTMLInputElement>) {
         //@ts-ignore
@@ -29,6 +31,23 @@ export default function EditarEjemplarDialog({ submitFn, currentEjemplar, trigge
         return encuadernados.map((en: any) => en.tipo)
     }
 
+    useEffect(() => {
+        if (!/^\d{10,13}$/.test(ejemplar?.isbn!)) {
+            setErrorMsg('El ISBN debe estar compuesto por entre 10 y 13 números')
+        } else if (
+            ejemplar === undefined ||
+            ejemplar.precio === undefined ||
+            ejemplar.stock === undefined ||
+            ejemplar.dimensiones.trim() == '' ||
+            ejemplar.editorial === undefined ||
+            ejemplar.encuadernado === undefined
+        ) {
+            setErrorMsg('Todos los campos son obligatorios!')
+        } else {
+            setErrorMsg('')
+        }
+    }, [ejemplar])
+
     return (
         <Dialog onOpenChange={() => setEjemplar(currentEjemplar)}>
             <DialogTrigger>{triggerElement}</DialogTrigger>
@@ -44,9 +63,7 @@ export default function EditarEjemplarDialog({ submitFn, currentEjemplar, trigge
                         }`}
                         placeholder="ISBN"
                         value={ejemplar?.isbn}
-                        type="number"
                         name="isbn"
-                        min={0}
                         disabled={ejemplar?.preventDelete || currentEjemplar !== undefined}
                         onChange={handleChange}
                     />
@@ -92,7 +109,7 @@ export default function EditarEjemplarDialog({ submitFn, currentEjemplar, trigge
                     <AutocompleteBox
                         availableOptions={fetchEditoriales}
                         category="editorial"
-                        initialValues={ejemplar ? [ejemplar.editorial] : []}
+                        initialValues={ejemplar?.editorial ? [ejemplar.editorial] : []}
                         onValuesChange={values =>
                             //@ts-ignore
                             setEjemplar(prevEjemplar => ({ ...prevEjemplar, editorial: values[0] }))
@@ -103,7 +120,7 @@ export default function EditarEjemplarDialog({ submitFn, currentEjemplar, trigge
                     <AutocompleteBox
                         availableOptions={fetchEncuadernados}
                         category="encuadernado"
-                        initialValues={ejemplar ? [ejemplar.encuadernado] : []}
+                        initialValues={ejemplar?.encuadernado ? [ejemplar.encuadernado] : []}
                         onValuesChange={values =>
                             //@ts-ignore
                             setEjemplar(prevEjemplar => ({ ...prevEjemplar, encuadernado: values[0] }))
@@ -112,12 +129,18 @@ export default function EditarEjemplarDialog({ submitFn, currentEjemplar, trigge
                     />
                 </div>
                 <DialogFooter className="sm:justify-start">
-                    <DialogClose asChild>
-                        <div className="flex w-full gap-2">
+                    <div className="flex w-full gap-2">
+                        <DialogClose asChild>
                             <BlackButton text="Cancelar" className="bg-neutral-600 !py-3" />
-                            <BlackButton text="Confirmar" className="!py-3" onClick={() => submitFn(ejemplar)} />
-                        </div>
-                    </DialogClose>
+                        </DialogClose>
+                        {!errorMsg ? (
+                            <DialogClose asChild>
+                                <BlackButton text="Confirmar" className="!py-3" onClick={() => submitFn(ejemplar)} />
+                            </DialogClose>
+                        ) : (
+                            <BlackButton text="Confirmar" className="!py-3" onClick={() => toast.error(errorMsg)} />
+                        )}
+                    </div>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

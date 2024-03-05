@@ -19,41 +19,54 @@ export default function ProductOptionsSelector({
             <div>
                 <p>Editorial: </p>
                 <div className="mt-0.5 flex gap-3">
-                    {libro.ejemplares.map(ejemplar => (
-                        <button
-                            key={ejemplar.editorial.nombreEditorial}
-                            className={`rounded-lg border px-3 py-1 text-sm hover:border-black hover:bg-neutral-300 ${
-                                currentEjemplar.editorial.nombreEditorial === ejemplar.editorial.nombreEditorial
-                                    ? 'border-black text-black'
-                                    : 'border-neutral-400'
-                            }`}
-                            onClick={() => {
-                                router.replace(pathname + '?ejemplar=' + ejemplar.isbn)
-                            }}
-                        >
-                            {ejemplar.editorial.nombreEditorial}
-                        </button>
-                    ))}
+                    {libro.ejemplares
+                        .filter(
+                            (ed, idx) =>
+                                idx ===
+                                libro.ejemplares.findIndex(
+                                    e => e.editorial.nombreEditorial === ed.editorial.nombreEditorial
+                                )
+                        )
+                        .map(ejemplar => (
+                            <button
+                                key={ejemplar.editorial.idEditorial}
+                                className={`rounded-lg border px-3 py-1 text-sm hover:border-black hover:bg-neutral-300 ${
+                                    currentEjemplar.editorial.idEditorial === ejemplar.editorial.idEditorial
+                                        ? 'border-black text-black'
+                                        : 'border-neutral-400'
+                                }`}
+                                onClick={() => {
+                                    router.replace(pathname + '?ejemplar=' + ejemplar.isbn)
+                                }}
+                            >
+                                {ejemplar.editorial.nombreEditorial}
+                            </button>
+                        ))}
                 </div>
             </div>
             <div>
                 <p>Encuadernado: </p>
                 <div className="mt-0.5 flex gap-3">
-                    {libro.ejemplares.map(ejemplar => (
-                        <button
-                            key={ejemplar.encuadernado.tipo}
-                            className={`rounded-lg border px-3 py-1 text-sm hover:border-black hover:bg-neutral-300 ${
-                                currentEjemplar.encuadernado.tipo === ejemplar.encuadernado.tipo
-                                    ? 'border-black text-black'
-                                    : 'border-neutral-400'
-                            }`}
-                            onClick={() => {
-                                router.replace(pathname + '?ejemplar=' + ejemplar.isbn)
-                            }}
-                        >
-                            {ejemplar.encuadernado.tipo}
-                        </button>
-                    ))}
+                    {libro.ejemplares
+                        .filter(
+                            (en, idx) =>
+                                idx === libro.ejemplares.findIndex(e => e.encuadernado.tipo === en.encuadernado.tipo)
+                        )
+                        .map(ejemplar => (
+                            <button
+                                key={ejemplar.encuadernado.idEncuadernado}
+                                className={`rounded-lg border px-3 py-1 text-sm hover:border-black hover:bg-neutral-300 ${
+                                    currentEjemplar.encuadernado.idEncuadernado === ejemplar.encuadernado.idEncuadernado
+                                        ? 'border-black text-black'
+                                        : 'border-neutral-400'
+                                }`}
+                                onClick={() => {
+                                    router.replace(pathname + '?ejemplar=' + ejemplar.isbn)
+                                }}
+                            >
+                                {ejemplar.encuadernado.tipo}
+                            </button>
+                        ))}
                 </div>
             </div>
         </div>

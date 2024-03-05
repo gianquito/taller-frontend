@@ -16,7 +16,7 @@ export default async function Libro({
     searchParams,
 }: {
     params: { id: number }
-    searchParams?: { [key: string]: number }
+    searchParams?: { [key: string]: string }
 }) {
     const libro = await getProduct(params.id)
     if (!libro) {

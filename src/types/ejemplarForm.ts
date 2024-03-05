@@ -1,5 +1,5 @@
 export type ejemplarForm = {
-    isbn: number
+    isbn: string
     precio: number
     dimensiones: string
     paginas: number

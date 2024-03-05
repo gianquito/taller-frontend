@@ -1,7 +1,7 @@
 import { libro } from './libro'
 
 export type ejemplar = {
-    isbn: number
+    isbn: string
     precio: number
     stock: number
     paginas: number
@@ -14,9 +14,11 @@ export type ejemplar = {
         }
     }[]
     editorial: {
+        idEditorial: number
         nombreEditorial: string
     }
     encuadernado: {
+        idEncuadernado: number
         tipo: string
     }
     libro: libro
