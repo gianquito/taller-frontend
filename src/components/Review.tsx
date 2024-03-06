@@ -1,5 +1,6 @@
 import { userType } from '@/types/user'
 import DeleteReviewButton from './DeleteReviewButton'
+import clearCachesByServerAction from '@/app/libro/[id]/reviews/revalidate'
 
 interface ReviewProps {
     reviewUser: { idUsuario: string; nombre: string; apellido: string }
@@ -19,7 +20,12 @@ export default function Review({ reviewUser, score, text, user, idLibro }: Revie
             </div>
             <p className="text-sm font-medium text-neutral-700">{`${reviewUser.nombre} ${reviewUser.apellido}`}</p>
             <p className="font-medium">{text}</p>
-            <DeleteReviewButton user={user} reviewUser={reviewUser} idLibro={idLibro} />
+            <DeleteReviewButton
+                user={user}
+                reviewUser={reviewUser}
+                idLibro={idLibro}
+                revalidate={clearCachesByServerAction}
+            />
         </div>
     )
 }

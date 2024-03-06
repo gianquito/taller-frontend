@@ -6,7 +6,7 @@ export default function Footer() {
                 <p>Concepcion del Uruguay, Entre Ríos</p>
             </div>
             <div className="order-1 flex gap-1 md:order-none">
-                <p>© 2023 | </p>
+                <p>© 2024 | </p>
                 <p className="font-bold">LibrosCdelU</p>
             </div>
             <div className="font-bold md:text-lg">

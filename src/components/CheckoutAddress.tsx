@@ -38,29 +38,23 @@ export default function CheckoutAdress({
             setCostoEnvios(prev => ({ ...prev, [-1]: 0 }))
             return
         }
-        fetch('https://corsproxy.io/?https://cotizador-api.andreani.com/api/v1/Cotizar', {
+        fetch('https://corsproxy.io/?https://www6.oca.com.ar/PlataformaEnvios/Home/ObtenerPrecioEnvio', {
             method: 'POST',
             body: JSON.stringify({
-                codigoPostalOrigen: '3260',
-                codigoPostalDestino: cp.toString(),
-                tipoDeEnvioId: '9c16612c-a916-48cf-9fbb-dbad2b097e9e',
-                itemId: '9a4edc9d-1299-41fb-8f9d-b268cabcb5f3',
-                altoCm: '1',
-                anchoCm: '1',
-                largoCm: '1',
-                peso: '1000',
-                valorDeclarado: '1000',
-                volumen: '1',
+                peso: '0.25',
+                volumen: '0.001',
+                cpOrigen: '3260',
+                cpDestino: cp.toString(),
+                idOperativa: '302964',
             }),
             headers: {
-                'content-type': 'application/json',
-                Xapikey: 'TEST_XqPMiwXzTRKHH0mF3gmtPtQt3LNGIuqCTdgaUHINMdmlaFid0x9MzlYTKXPxluYQ',
+                'Content-Type': 'application/json; charset=UTF-8',
             },
         })
             .then(res => res.json())
             .then(data => {
-                setEnvio(data[1].tarifaSinIva)
-                setCostoEnvios(prev => ({ ...prev, [id]: data[1].tarifaSinIva }))
+                setEnvio(data.Respuesta.PrecioDeEnvioConIVA)
+                setCostoEnvios(prev => ({ ...prev, [id]: parseInt(data.Respuesta.PrecioDeEnvioConIVA) }))
             })
             .catch(() => {
                 setEnvio(undefined)
