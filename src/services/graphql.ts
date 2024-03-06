@@ -1721,3 +1721,66 @@ export const deleteReview = async (id_libro: number, id_usuario: string) => {
     if (review.errors) throw review.errors
     return review.data
 }
+
+export const getPreguntasFrecuentes = async (): Promise<{ id: number; pregunta: string; respuesta: string }[]> => {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `{
+              preguntasFrecuentes{
+                id,
+                pregunta,
+                respuesta
+              }
+            }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    const preguntas = await response.json()
+    if (preguntas.errors) throw preguntas.errors
+    return preguntas.data.preguntasFrecuentes
+}
+
+export const addPreguntaFrecuente = async (pregunta: string, respuesta: string) => {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+              createPreguntaFrecuente(pregunta: "${pregunta}", respuesta: "${respuesta}"){
+                preguntaFrecuente{
+                  id
+                }
+              }
+            }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    const preguntas = await response.json()
+    if (preguntas.errors) throw preguntas.errors
+    return preguntas.data
+}
+
+export const deletePreguntaFrecuente = async (id_pregunta: number) => {
+    const response = await fetch(`${SERVER_URL}/graphql`, {
+        method: 'POST',
+        body: JSON.stringify({
+            query: `mutation{
+              deletePreguntaFrecuente(id: ${id_pregunta}){
+                preguntaFrecuente{
+                  id
+                }
+              }
+            }`,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    const preguntas = await response.json()
+    if (preguntas.errors) throw preguntas.errors
+    return preguntas.data
+}

@@ -4,7 +4,6 @@ import CargarLibroHome from './CargarLibroHome'
 import GeneroFilter from './GeneroFilter'
 import { getDefaultEjemplar } from '@/utils'
 import OrdenarFilter from './OrdenarFilter'
-import { getSsrUser } from '@/ssrUtils'
 
 export default async function ProductsHome({
     nombre,
@@ -15,13 +14,12 @@ export default async function ProductsHome({
     genero: string | undefined
     orden: string | undefined
 }) {
-    const data = await getProductsByName(nombre ?? '')
+    const [data, ventas] = await Promise.all([getProductsByName(nombre ?? ''), getProductsSales()])
     const products =
         genero === undefined || genero === 'Todos'
             ? data
             : data.filter(product => product.generos.find(g => g.genero.nombreGenero === genero))
 
-    const ventas = await getProductsSales()
     const getSortedProducts = () => {
         switch (orden) {
             case 'Reseñas':
