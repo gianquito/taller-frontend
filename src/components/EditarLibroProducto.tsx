@@ -1,9 +1,7 @@
-import { getSsrUser } from '@/ssrUtils'
+import { userType } from '@/types/user'
 import Link from 'next/link'
 
-export default async function EditarLibroProducto({ idLibro }: { idLibro: number }) {
-    const user = await getSsrUser()
-
+export default function EditarLibroProducto({ idLibro, user }: { idLibro: number; user: userType | undefined }) {
     if (!user || user.rol !== 1) return null
     return (
         <Link href={`/gestion/nuevo-libro/${idLibro}`}>

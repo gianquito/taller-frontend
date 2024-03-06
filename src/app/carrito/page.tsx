@@ -6,7 +6,6 @@ import useClientAuth from '@/hooks/useAuth'
 import { getProductsInCart } from '@/services/graphql'
 import { ejemplar } from '@/types/ejemplar'
 import { formatPrice } from '@/utils'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { verificarStock } from '@/utils'
@@ -42,8 +41,9 @@ export default function Carrito() {
             return
         }
         const CartProducts: { cantidad: number; ejemplar: ejemplar }[] = await getProductsInCart(
-            user.idCarrito, 
-            user.sessionId)
+            user.idCarrito,
+            user.sessionId
+        )
         setProducts(CartProducts)
         try {
             await verificarStock(CartProducts) // Pasar los productos al verificarStock
@@ -94,9 +94,12 @@ export default function Carrito() {
                             <p>{formatPrice(subtotal)}</p>
                         </div>
                     </div>
-                    <Link href={`${products.length ? '#' : '/checkout'}`}>
-                        <BlackButton text="Continuar" onClick={handleCheckout} />
-                    </Link>
+                    <BlackButton
+                        text="Continuar"
+                        onClick={handleCheckout}
+                        disabled={products.length === 0}
+                        disabledText="Continuar"
+                    />
                 </div>
             </div>
         </div>

@@ -9,9 +9,10 @@ interface DeleteReviewButtonProps {
     user: userType | undefined
     reviewUser: { idUsuario: string; nombre: string; apellido: string }
     idLibro: number
+    revalidate: (path: string) => Promise<void>
 }
 
-export default function DeleteReviewButton({ user, reviewUser, idLibro }: DeleteReviewButtonProps) {
+export default function DeleteReviewButton({ user, reviewUser, idLibro, revalidate }: DeleteReviewButtonProps) {
     const router = useRouter()
 
     if (!user || user.idUsuario !== reviewUser.idUsuario) return null
@@ -21,9 +22,10 @@ export default function DeleteReviewButton({ user, reviewUser, idLibro }: Delete
         deleteReview(idLibro, user.idUsuario)
             .then(() => {
                 toast.success('Se eliminó tu reseña')
-                router.refresh()
+                revalidate(`/libro/${idLibro}`)
+                router.push(`/libro/${idLibro}`)
             })
-            .catch(() => toast.error('Error al eliminar reseña'))
+            .catch(err => console.log(err))
     }
 
     return (

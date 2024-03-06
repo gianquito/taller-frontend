@@ -3,6 +3,7 @@ import Review from '@/components/Review'
 import ReviewForm from '@/components/ReviewForm'
 import { getReviews } from '@/services/graphql'
 import { getSsrUser } from '@/ssrUtils'
+import clearCachesByServerAction from './revalidate'
 
 export const dynamic = 'force-dynamic'
 
@@ -72,7 +73,7 @@ export default async function Reviews({ params }: { params: { id: number } }) {
                                 idLibro={params.id}
                             />
                         ))}
-                        <ReviewForm idLibro={params.id} user={user} />
+                        <ReviewForm idLibro={params.id} user={user} revalidate={clearCachesByServerAction} />
                     </div>
                 </div>
             </div>

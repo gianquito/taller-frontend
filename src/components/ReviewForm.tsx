@@ -12,9 +12,10 @@ import { userType } from '@/types/user'
 interface ReviewFormProps {
     idLibro: number
     user: userType | undefined
+    revalidate: (path: string) => Promise<void>
 }
 
-export default function ReviewForm({ idLibro, user }: ReviewFormProps) {
+export default function ReviewForm({ idLibro, user, revalidate }: ReviewFormProps) {
     const [selectedRating, setSelectedRating] = useState<0 | 1 | 2 | 3 | 4 | 5>(0)
     const [ratingText, setRatingText] = useState('')
     const [showForm, setShowForm] = useState(false)
@@ -62,7 +63,8 @@ export default function ReviewForm({ idLibro, user }: ReviewFormProps) {
                         .then(() => {
                             toast.success('Se agregó tu reseña')
                             setShowForm(false)
-                            router.refresh()
+                            revalidate(`/libro/${idLibro}`)
+                            router.push(`/libro/${idLibro}`)
                         })
                         .catch(() => toast.error('Error al agregar reseña'))
                 }

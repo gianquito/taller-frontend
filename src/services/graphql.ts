@@ -225,6 +225,7 @@ export const getProduct = async (idLibro: number): Promise<libro> => {
             'Content-Type': 'application/json',
             sesionId: getCookie('sesionId') ?? '',
         },
+        cache: 'no-store',
     })
     const products = await request.json()
     if (products.errors) throw 'Error in request ' + JSON.stringify(products.errors)
@@ -1654,6 +1655,7 @@ export const getReviews = async (
         headers: {
             'Content-Type': 'application/json',
         },
+        cache: 'no-store',
     })
     const reviews = await response.json()
     if (reviews.errors) throw reviews.errors

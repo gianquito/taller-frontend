@@ -44,6 +44,7 @@ export default async function Libro({
                 <Link
                     href={`${params.id}/reviews`}
                     className="group mt-0.5 flex w-max flex-row items-center gap-2 lg:flex-col lg:gap-0"
+                    prefetch={false}
                 >
                     <div className="flex items-center justify-center gap-2 ">
                         <img src="/Star.svg" />
@@ -70,7 +71,7 @@ export default async function Libro({
             <div className="mt-4 flex min-w-[350px] max-w-xl flex-col items-center md:min-w-[400px] lg:mt-0 lg:items-baseline">
                 <div className="flex items-center gap-2">
                     <h1 className="text-center text-4xl font-semibold lg:text-left">{libro.titulo}</h1>
-                    <EditarLibroProducto idLibro={libro.idLibro} />
+                    <EditarLibroProducto idLibro={libro.idLibro} user={user} />
                 </div>
                 <div className="mt-2 flex w-full items-center justify-evenly lg:mt-0 lg:flex-col lg:items-baseline">
                     <div className="mt-1 flex flex-col items-center gap-2 lg:flex-row">
